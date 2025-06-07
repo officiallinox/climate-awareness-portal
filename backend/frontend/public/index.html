@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimAware Portal - Climate Action for Everyone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light theme colors */
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --bg-overlay: rgba(255, 255, 255, 0.95);
+            
+            --border-color: #e5e7eb;
+            --border-light: #f3f4f6;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --gradient-primary: linear-gradient(135deg, #10b981, #059669);
+            --gradient-secondary: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --gradient-hero: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --primary-color: #34d399;
+            --primary-hover: #10b981;
+            --secondary-color: #60a5fa;
+            --accent-color: #fbbf24;
+            
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --bg-overlay: rgba(17, 24, 39, 0.95);
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            
+            --gradient-primary: linear-gradient(135deg, #34d399, #10b981);
+            --gradient-secondary: linear-gradient(135deg, #60a5fa, #3b82f6);
+            --gradient-hero: linear-gradient(135deg, #34d399 0%, #60a5fa 50%, #a78bfa 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+            transform: translateY(-1px);
+        }
+
+        nav a.active {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            width: 50px;
+            height: 28px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .theme-toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            left: 2px;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        .login-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav nav {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav nav a {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            background: var(--gradient-hero);
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .cta-primary {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .cta-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.8s both;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: var(--bg-primary);
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-link:hover {
+            gap: 0.75rem;
+        }
+
+        /* Impact Section */
+        .impact-section {
+            padding: 6rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .impact-card {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .impact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .impact-description {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            background: var(--gradient-hero);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="b" cx="50%" cy="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="100" cy="800" r="200" fill="url(%23b)"/><circle cx="900" cy="200" r="150" fill="url(%23b)"/></svg>');
+            opacity: 0.5;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header-container {
+                padding: 1rem;
+            }
+
+            .section-container {
+                padding: 0 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .cta-primary,
+            .cta-secondary {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .impact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 0.75rem 1rem;
+            }
+
+            .hero-container {
+                padding: 0 1rem;
+            }
+
+            .section-container {
+                padding: 0 1rem;
+            }
+
+            .feature-card,
+            .impact-card {
+                padding: 1.5rem;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-stats {
+                padding: 1.5rem;
+                margin-top: 2rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        /* Scroll Animations */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .scroll-animate.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .feature-card:nth-child(1) { animation-delay: 0.1s; }
+        .feature-card:nth-child(2) { animation-delay: 0.2s; }
+        .feature-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">🌍</div>
+                <div class="logo-text">ClimAware</div>
+            </a>
+            
+            <div class="nav-container">
+                <nav>
+                    <a href="#" class="active">Home</a>
+                    <a href="../initiatives.html">Initiatives</a>
+                    <a href="../articles.html">Articles</a>
+                    <a href="../weather.html">Weather</a>
+                </nav>
+                
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="theme-toggle-slider">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    <a href="../login.html" class="login-btn">
+                        <i class="fas fa-user"></i>
+                        Login
+                    </a>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mobile-nav" id="mobileNav">
+            <nav>
+                <a href="#" class="active">Home</a>
+                <a href="../initiatives.html">Initiatives</a>
+                <a href="../articles.html">Articles</a>
+                <a href="../weather.html">Weather</a>
+                <a href="../login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-badge">
+                <i class="fas fa-leaf"></i>
+                Climate Action Starts Here
+            </div>
+            
+            <h1 class="hero-title">
+                From Ideas to <span style="background: linear-gradient(135deg, #34d399, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Impact</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Join us for a season of meaningful engagement and community-driven action. 
+                Connect with like-minded individuals and participate in hands-on activities that foster 
+                environmental awareness, creativity, and sustainable living.
+            </p>
+            
+            <div class="hero-actions">
+                <a href="#" class="cta-primary" onclick="handleGetStarted(event)">
+                    <i class="fas fa-rocket"></i>
+                    Get Started
+                </a>
+                <a href="#features" class="cta-secondary">
+                    <i class="fas fa-play"></i>
+                    Learn More
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="activeMembers">0</span>
+                    <span class="stat-label">Active Members</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalInitiatives">0</span>
+                    <span class="stat-label">Initiatives</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="carbonSaved">0</span>
+                    <span class="stat-label">CO₂ Saved (kg)</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalArticles">0</span>
+                    <span class="stat-label">Articles</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="section-container">
+            <div class="section-header scroll-animate">
+                <div class="section-badge">Our Features</div>
+                <h2 class="section-title">Everything You Need for Climate Action</h2>
+                <p class="section-subtitle">
+                    Discover powerful tools and resources designed to help you make a meaningful impact on our planet.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Environmental Awareness</h3>
+                    <p>Access <span id="articlesCount">0</span> expert articles on climate science, sustainability practices, and environmental solutions from leading researchers.</p>
+                    <a href="../articles.html" class="feature-link">
+                        Explore Articles <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Community Action</h3>
+                    <p>Join <span id="initiativesCount">0</span> active initiatives in your area. Connect with <span id="membersCount">0</span> climate champions making real environmental impact.</p>
+                    <a href="../initiatives.html" class="feature-link">
+                        Join Initiatives <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Track Progress</h3>
+                    <p>Monitor your personal carbon footprint reduction and track <span id="userActivities">0</span> eco-friendly activities with detailed analytics and insights.</p>
+                    <a href="#" class="feature-link" onclick="handleGetStarted(event)">
+                        View Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-cloud-sun"></i>
+                    </div>
+                    <h3>Tanzania Weather</h3>
+                    <p>Explore real-time weather data for <span id="weatherCities">12</span> major Tanzania cities with interactive maps, climate statistics, and regional analysis.</p>
+                    <a href="../weather.html" class="feature-link">
+                        Explore Weather <i class="fas fa-map-marked-alt"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Achievements</h3>
+                    <p>Unlock <span id="totalBadges">25+</span> eco-badges and earn recognition for your environmental contributions. Compete with friends and inspire others!</p>
+                    <a href="#" class="feature-link" onclick="handleGetStarted(event)">
+                        View Achievements <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="feature-card scroll-animate">
+                    <div class="feature-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <h3>Global Impact</h3>
+                    <p>Track collective impact: <span id="globalCO2">150K+ kg</span> CO₂ reduced, <span id="globalTrees">2.5M+</span> trees planted across <span id="globalCountries">50+</span> countries.</p>
+                    <a href="#" class="feature-link" onclick="handleGetStarted(event)">
+                        Global Stats <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section class="impact-section">
+        <div class="section-container">
+            <div class="section-header scroll-animate">
+                <div class="section-badge">Our Impact</div>
+                <h2 class="section-title">Making a Real Difference</h2>
+                <p class="section-subtitle">
+                    Together, we're creating measurable positive change for our planet and future generations.
+                </p>
+            </div>
+            
+            <div class="impact-grid">
+                <div class="impact-card scroll-animate">
+                    <div class="impact-number" id="impactTrees">0</div>
+                    <div class="impact-label">Trees Planted</div>
+                    <div class="impact-description">Through our reforestation initiatives</div>
+                </div>
+                
+                <div class="impact-card scroll-animate">
+                    <div class="impact-number" id="impactCO2">0</div>
+                    <div class="impact-label">Kg CO₂ Reduced</div>
+                    <div class="impact-description">Carbon footprint reduction achieved</div>
+                </div>
+                
+                <div class="impact-card scroll-animate">
+                    <div class="impact-number" id="impactProjects">0</div>
+                    <div class="impact-label">Active Projects</div>
+                    <div class="impact-description">Ongoing environmental initiatives</div>
+                </div>
+                
+                <div class="impact-card scroll-animate">
+                    <div class="impact-number" id="impactPartners">0</div>
+                    <div class="impact-label">Partner Organizations</div>
+                    <div class="impact-description">Collaborating for greater impact</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="section-container">
+            <div class="cta-content scroll-animate">
+                <h2 class="cta-title">Ready to Make a Difference?</h2>
+                <p class="cta-subtitle">
+                    Join thousands of climate champions who are already taking action. 
+                    Start your journey towards a sustainable future today.
+                </p>
+                <div class="hero-actions">
+                    <a href="#" class="cta-primary" onclick="handleGetStarted(event)">
+                        <i class="fas fa-user-plus"></i>
+                        Join Now
+                    </a>
+                    <a href="../initiatives.html" class="cta-secondary">
+                        <i class="fas fa-eye"></i>
+                        Browse Initiatives
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ClimAware Portal</h4>
+                    <p>Empowering individuals and communities to take meaningful climate action through education, collaboration, and innovation.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="../initiatives.html">Initiatives</a>
+                        <a href="../articles.html">Articles</a>
+                        <a href="../weather.html">Weather</a>
+                        <a href="../dashboard.html">Dashboard</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <div class="footer-links">
+                        <a href="#">Climate Guide</a>
+                        <a href="#">Community Forum</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">API Documentation</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="footer-links">
+                        <a href="#">Newsletter</a>
+                        <a href="#">Social Media</a>
+                        <a href="#">Contact Us</a>
+                        <a href="#">Partnerships</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ClimAware Portal. All rights reserved. Building a sustainable future together.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Admin Login Modal (Hidden) -->
+    <div id="loginFormContainer" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--bg-primary); padding:2rem; border-radius:16px; box-shadow:var(--shadow-xl); z-index:1001; border:1px solid var(--border-color);">
+        <h2 style="margin-bottom:1rem; color:var(--text-primary);">Admin Login</h2>
+        <input type="text" id="adminUsername" placeholder="Username" style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-secondary); color:var(--text-primary);">
+        <input type="password" id="adminPassword" placeholder="Password" style="width:100%; padding:0.75rem; margin-bottom:1rem; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-secondary); color:var(--text-primary);">
+        <button onclick="adminLogin()" style="width:100%; padding:0.75rem; background:var(--gradient-primary); color:white; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Login</button>
+        <button onclick="document.getElementById('loginFormContainer').style.display='none'" style="width:100%; padding:0.5rem; background:transparent; color:var(--text-secondary); border:none; margin-top:0.5rem; cursor:pointer;">Cancel</button>
+    </div>
+
+    <script>
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.querySelector('.theme-toggle-slider i');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-moon';
+            } else {
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn i');
+            
+            mobileNav.classList.toggle('active');
+            
+            if (mobileNav.classList.contains('active')) {
+                menuBtn.className = 'fas fa-times';
+            } else {
+                menuBtn.className = 'fas fa-bars';
+            }
+        }
+
+        // Scroll Animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Smooth Scrolling
+        function initSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Handle Get Started button click
+        function handleGetStarted(event) {
+            event.preventDefault();
+            
+            // Add button feedback
+            const button = event.target.closest('a') || event.target;
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = '';
+            }, 150);
+            
+            // Show welcome message and redirect to login
+            showNotification('Welcome to ClimAware Portal! Please login to get started.', 'info');
+            setTimeout(() => {
+                // Store the intended destination (dashboard)
+                localStorage.setItem('redirectAfterLogin', '../dashboard.html');
+                window.location.href = '../login.html';
+            }, 2000);
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            // Add notification styles
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                animation: slideInRight 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Admin Login
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (username === 'admin@portal.com' && password === 'admin123') {
+                showNotification('Login successful! Redirecting to admin dashboard...', 'success');
+                document.getElementById('loginFormContainer').style.display = 'none';
+                
+                // Store admin token
+                localStorage.setItem('adminToken', 'admin-logged-in');
+                
+                setTimeout(() => {
+                    window.location.href = '../admin.html';
+                }, 1500);
+            } else {
+                showNotification('Invalid credentials. Please try again.', 'error');
+            }
+        }
+
+        // Navigation Active State
+        function updateActiveNavigation() {
+            const currentPage = window.location.pathname;
+            document.querySelectorAll('nav a').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === currentPage || 
+                    (currentPage.includes('index.html') && link.textContent === 'Home')) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Loading Animation
+        function initLoadingAnimations() {
+            document.querySelectorAll('.loading').forEach((el, index) => {
+                el.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+
+        // Fetch Real Data
+        async function fetchRealData() {
+            try {
+                // Fetch public statistics from backend
+                const response = await fetch('/api/public/stats');
+                const stats = await response.json();
+
+                // Update hero stats with real data
+                animateCounter('activeMembers', stats.users.total);
+                animateCounter('totalInitiatives', stats.initiatives.total);
+                animateCounter('totalArticles', stats.articles.total);
+                animateCounter('carbonSaved', stats.impact.carbonSaved);
+
+                // Update feature card counts
+                document.getElementById('articlesCount').textContent = stats.articles.total;
+                document.getElementById('initiativesCount').textContent = stats.initiatives.total;
+                document.getElementById('membersCount').textContent = stats.users.total;
+                document.getElementById('userActivities').textContent = stats.impact.userActivities;
+
+                // Update impact section with real values
+                animateCounter('impactTrees', stats.impact.treesPlanted);
+                animateCounter('impactCO2', stats.impact.carbonSaved);
+                animateCounter('impactProjects', stats.initiatives.active);
+                animateCounter('impactPartners', stats.impact.partnerOrgs);
+
+                // Update global stats in feature cards
+                document.getElementById('globalCO2').textContent = formatNumber(stats.global.co2Reduced) + ' kg';
+                document.getElementById('globalTrees').textContent = formatNumber(stats.global.treesPlanted);
+                document.getElementById('globalCountries').textContent = stats.global.countries + '+';
+
+                console.log('✅ Real data loaded successfully');
+
+            } catch (error) {
+                console.log('Using fallback data due to:', error.message);
+                // Use fallback data if API fails
+                animateCounter('activeMembers', 1247);
+                animateCounter('totalInitiatives', 89);
+                animateCounter('totalArticles', 156);
+                animateCounter('carbonSaved', 11125);
+                
+                document.getElementById('articlesCount').textContent = '156';
+                document.getElementById('initiativesCount').textContent = '89';
+                document.getElementById('membersCount').textContent = '1247';
+                document.getElementById('userActivities').textContent = '3741';
+                
+                animateCounter('impactTrees', 4450);
+                animateCounter('impactCO2', 11125);
+                animateCounter('impactProjects', 89);
+                animateCounter('impactPartners', 124);
+                
+                document.getElementById('globalCO2').textContent = '150K+ kg';
+                document.getElementById('globalTrees').textContent = '2.5M+';
+                document.getElementById('globalCountries').textContent = '50+';
+            }
+        }
+
+        // Format large numbers for display
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M+';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K+';
+            }
+            return num.toString();
+        }
+
+        // Animate counter numbers
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function for smooth animation
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+                
+                // Format large numbers
+                if (targetValue >= 1000) {
+                    element.textContent = (currentValue / 1000).toFixed(1) + 'K';
+                } else {
+                    element.textContent = currentValue.toLocaleString();
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    // Final value formatting
+                    if (targetValue >= 1000) {
+                        element.textContent = (targetValue / 1000).toFixed(1) + 'K';
+                    } else {
+                        element.textContent = targetValue.toLocaleString();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Check Authentication Status
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const loginBtn = document.querySelector('.login-btn');
+            
+            if (token) {
+                // User is logged in, update login button to show user menu
+                loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> Account';
+                loginBtn.href = '../dashboard.html';
+                loginBtn.onclick = null; // Remove any onclick handlers
+            } else {
+                // User not logged in, keep login button as is
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                loginBtn.href = '../login.html';
+            }
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            initScrollAnimations();
+            initSmoothScrolling();
+            updateActiveNavigation();
+            initLoadingAnimations();
+            checkAuthStatus();
+            
+            // Add loading class to animated elements
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                el.classList.add('loading');
+            });
+            
+            // Fetch and display real data
+            setTimeout(fetchRealData, 1000); // Delay for better UX
+        });
+
+        // Handle theme preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+                updateThemeIcon();
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileNav.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileNav.classList.remove('active');
+                document.querySelector('.mobile-menu-btn i').className = 'fas fa-bars';
+            }
+        });
+
+        // Add CSS for notifications
+        const notificationStyles = document.createElement('style');
+        notificationStyles.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                color: var(--text-primary);
+            }
+            
+            .notification-content button {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 1.2rem;
+                margin-left: auto;
+            }
+        `;
+        document.head.appendChild(notificationStyles);
+    </script>
+</body>
+</html>

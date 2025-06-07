@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimAware Portal - Tanzania Climate Data</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Tanzania-focused Brand Colors */
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --primary-light: #d1fae5;
+            --secondary-color: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* Tanzania Flag Colors */
+            --tanzania-green: #00a86b;
+            --tanzania-blue: #0066cc;
+            --tanzania-yellow: #ffd700;
+            --tanzania-black: #000000;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-tanzania: linear-gradient(135deg, #00a86b 0%, #0066cc 50%, #ffd700 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing */
+            --container-padding: 1.5rem;
+            --section-spacing: 4rem;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --border-light: #475569;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-tanzania);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+        }
+
+        .theme-toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--gradient-primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        .mobile-nav {
+            display: none;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem var(--container-padding);
+        }
+
+        .mobile-nav.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        .mobile-nav nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mobile-nav nav a {
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--gradient-tanzania);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .page-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.7;
+        }
+
+        .tanzania-flag {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .flag-icon {
+            font-size: 3rem;
+            animation: wave 2s ease-in-out infinite;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+
+        .main-content {
+            padding: var(--section-spacing) 0;
+        }
+
+        /* Climate Overview Cards */
+        .climate-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .climate-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .climate-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .climate-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+
+        .climate-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .climate-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .climate-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .climate-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Interactive Map Section */
+        .map-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .map-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+
+        .map-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .map-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .map-subtitle {
+            opacity: 0.9;
+        }
+
+        #tanzaniaMap {
+            height: 500px;
+            width: 100%;
+        }
+
+        .map-legend {
+            background: var(--bg-primary);
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Regional Weather Data */
+        .regional-weather {
+            margin-bottom: 3rem;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .weather-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .weather-header {
+            background: var(--gradient-secondary);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .weather-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+        }
+
+        .city-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .region-name {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .weather-content {
+            padding: 2rem;
+        }
+
+        .current-weather {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .weather-main {
+            text-align: center;
+        }
+
+        .temperature {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .weather-description {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            text-transform: capitalize;
+        }
+
+        .weather-icon-large {
+            font-size: 4rem;
+            color: var(--accent-color);
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .detail-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Climate Statistics */
+        .climate-stats {
+            margin-bottom: 3rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Loading States */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error-color);
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .retry-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 2rem;
+            margin-top: var(--section-spacing);
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .animate-fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .animate-fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .animate-fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .animate-fade-in:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .climate-overview {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .weather-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .page-subtitle {
+                font-size: 1rem;
+            }
+            
+            .climate-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .weather-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .legend-items {
+                flex-direction: column;
+            }
+            
+            #tanzaniaMap {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --container-padding: 1rem;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+            
+            .climate-value {
+                font-size: 2rem;
+            }
+            
+            .temperature {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* Custom Leaflet Styles */
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .leaflet-popup-tip {
+            background: var(--bg-primary);
+        }
+
+        .custom-popup {
+            text-align: center;
+            padding: 0.5rem;
+        }
+
+        .popup-city {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .popup-temp {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .popup-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="public/index.html" class="logo">
+                <div class="logo-icon">🇹🇿</div>
+                <div class="logo-text">ClimAware</div>
+            </a>
+            
+            <div class="nav-container">
+                <nav class="nav">
+                    <a href="public/index.html">Home</a>
+                    <a href="initiatives.html">Initiatives</a>
+                    <a href="articles.html">Articles</a>
+                    <a href="weather.html" class="active">Weather</a>
+                </nav>
+                
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="theme-toggle-slider">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    <a href="login.html" class="login-btn" id="loginBtn">
+                        <i class="fas fa-user"></i>
+                        Login
+                    </a>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mobile-nav" id="mobileNav">
+            <nav>
+                <a href="public/index.html">Home</a>
+                <a href="initiatives.html">Initiatives</a>
+                <a href="articles.html">Articles</a>
+                <a href="weather.html" class="active">Weather</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">Tanzania Climate Data</h1>
+            <p class="page-subtitle">
+                Real-time weather conditions, climate statistics, and environmental monitoring 
+                across Tanzania's diverse regions and ecosystems.
+            </p>
+            <div class="tanzania-flag">
+                <span class="flag-icon">🇹🇿</span>
+                <span style="font-size: 1.2rem; font-weight: 600;">United Republic of Tanzania</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Climate Overview -->
+            <section class="climate-overview" id="climateOverview">
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <p>Loading Tanzania climate data...</p>
+                </div>
+            </section>
+
+            <!-- Interactive Map -->
+            <section class="map-section">
+                <div class="section-header">
+                    <h2 class="section-title">Interactive Climate Map</h2>
+                    <p class="section-subtitle">
+                        Explore real-time weather conditions across Tanzania's major cities and regions
+                    </p>
+                </div>
+                
+                <div class="map-container">
+                    <div class="map-header">
+                        <h3 class="map-title">Tanzania Weather Map</h3>
+                        <p class="map-subtitle">Click on markers to view detailed weather information</p>
+                    </div>
+                    <div id="tanzaniaMap"></div>
+                    <div class="map-legend">
+                        <h4 class="legend-title">Legend</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #059669;"></div>
+                                <span>Major Cities</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #0ea5e9;"></div>
+                                <span>Coastal Areas</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #f59e0b;"></div>
+                                <span>Highland Regions</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ef4444;"></div>
+                                <span>Arid Zones</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Regional Weather Data -->
+            <section class="regional-weather">
+                <div class="section-header">
+                    <h2 class="section-title">Regional Weather Conditions</h2>
+                    <p class="section-subtitle">
+                        Current weather data from Tanzania's major cities and climate zones
+                    </p>
+                </div>
+                
+                <div class="weather-grid" id="weatherGrid">
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p>Loading regional weather data...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Climate Statistics -->
+            <section class="climate-stats">
+                <div class="section-header">
+                    <h2 class="section-title">Tanzania Climate Statistics</h2>
+                    <p class="section-subtitle">
+                        Key environmental indicators and climate trends for Tanzania
+                    </p>
+                </div>
+                
+                <div class="stats-grid" id="statsGrid">
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <p>Loading climate statistics...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Tanzania Climate Portal</h4>
+                    <p>Providing real-time climate data and environmental monitoring for Tanzania's diverse ecosystems and communities.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Data Sources</h4>
+                    <div class="footer-links">
+                        <a href="#">Tanzania Meteorological Authority</a>
+                        <a href="#">OpenWeatherMap API</a>
+                        <a href="#">Climate Research Centers</a>
+                        <a href="#">Environmental Monitoring Networks</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Climate Zones</h4>
+                    <div class="footer-links">
+                        <a href="#">Coastal Plains</a>
+                        <a href="#">Central Plateau</a>
+                        <a href="#">Northern Highlands</a>
+                        <a href="#">Southern Highlands</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <div class="footer-links">
+                        <a href="#">Climate Reports</a>
+                        <a href="#">Weather Alerts</a>
+                        <a href="#">Agricultural Guidance</a>
+                        <a href="#">Emergency Contacts</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ClimAware Portal. Real-time climate data for Tanzania. Data updated every hour.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Global variables
+        let map;
+        let weatherData = {};
+
+        // Tanzania major cities with coordinates
+        const tanzaniaCities = [
+            { name: 'Dar es Salaam', lat: -6.7924, lng: 39.2083, region: 'Coastal', type: 'major' },
+            { name: 'Dodoma', lat: -6.1630, lng: 35.7516, region: 'Central', type: 'major' },
+            { name: 'Arusha', lat: -3.3869, lng: 36.6830, region: 'Northern', type: 'major' },
+            { name: 'Mwanza', lat: -2.5164, lng: 32.9175, region: 'Lake Zone', type: 'major' },
+            { name: 'Zanzibar', lat: -6.1659, lng: 39.2026, region: 'Coastal', type: 'coastal' },
+            { name: 'Mbeya', lat: -8.9094, lng: 33.4607, region: 'Southern Highlands', type: 'highland' },
+            { name: 'Morogoro', lat: -6.8235, lng: 37.6536, region: 'Eastern', type: 'major' },
+            { name: 'Tabora', lat: -5.0169, lng: 32.8333, region: 'Western', type: 'major' },
+            { name: 'Kigoma', lat: -4.8765, lng: 29.6269, region: 'Western', type: 'major' },
+            { name: 'Iringa', lat: -7.7669, lng: 35.6975, region: 'Southern Highlands', type: 'highland' },
+            { name: 'Songea', lat: -10.6839, lng: 35.6503, region: 'Southern', type: 'major' },
+            { name: 'Musoma', lat: -1.5000, lng: 33.8000, region: 'Lake Zone', type: 'major' }
+        ];
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.querySelector('.theme-toggle-slider i');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-moon';
+            } else {
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn i');
+            
+            mobileNav.classList.toggle('active');
+            
+            if (mobileNav.classList.contains('active')) {
+                menuBtn.className = 'fas fa-times';
+            } else {
+                menuBtn.className = 'fas fa-bars';
+            }
+        }
+
+        // Check Authentication Status
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (token) {
+                loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> Account';
+                loginBtn.href = 'dashboard.html';
+            } else {
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                loginBtn.href = 'login.html';
+            }
+        }
+
+        // Initialize Map
+        function initMap() {
+            // Initialize the map centered on Tanzania
+            map = L.map('tanzaniaMap').setView([-6.369028, 34.888822], 6);
+
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add markers for each city
+            tanzaniaCities.forEach(city => {
+                const markerColor = getMarkerColor(city.type);
+                const marker = L.circleMarker([city.lat, city.lng], {
+                    radius: city.type === 'major' ? 12 : 8,
+                    fillColor: markerColor,
+                    color: '#ffffff',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                }).addTo(map);
+
+                // Add popup with weather data
+                marker.bindPopup(`
+                    <div class="custom-popup">
+                        <div class="popup-city">${city.name}</div>
+                        <div class="popup-temp" id="temp-${city.name.replace(/\s+/g, '')}">Loading...</div>
+                        <div class="popup-desc" id="desc-${city.name.replace(/\s+/g, '')}">Loading weather data...</div>
+                    </div>
+                `);
+            });
+        }
+
+        function getMarkerColor(type) {
+            switch (type) {
+                case 'major': return '#059669';
+                case 'coastal': return '#0ea5e9';
+                case 'highland': return '#f59e0b';
+                default: return '#ef4444';
+            }
+        }
+
+        // Fetch Weather Data
+        async function fetchWeatherData() {
+            try {
+                const weatherPromises = tanzaniaCities.map(async (city) => {
+                    try {
+                        const response = await fetch(`/api/weather/current?city=${encodeURIComponent(city.name)}`);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const data = await response.json();
+                        return { city: city.name, data, region: city.region, type: city.type };
+                    } catch (error) {
+                        console.error(`Error fetching weather for ${city.name}:`, error);
+                        return { 
+                            city: city.name, 
+                            data: generateMockWeatherData(city), 
+                            region: city.region, 
+                            type: city.type,
+                            mock: true 
+                        };
+                    }
+                });
+
+                const results = await Promise.all(weatherPromises);
+                
+                results.forEach(result => {
+                    weatherData[result.city] = result;
+                    updateMapPopup(result.city, result.data);
+                });
+
+                renderClimateOverview();
+                renderWeatherGrid();
+                renderClimateStats();
+
+            } catch (error) {
+                console.error('Error fetching weather data:', error);
+                showErrorState();
+            }
+        }
+
+        // Generate mock weather data for fallback
+        function generateMockWeatherData(city) {
+            const baseTemp = city.type === 'coastal' ? 28 : city.type === 'highland' ? 18 : 25;
+            const tempVariation = (Math.random() - 0.5) * 6;
+            
+            return {
+                temperature: Math.round(baseTemp + tempVariation),
+                description: ['sunny', 'partly cloudy', 'cloudy', 'light rain'][Math.floor(Math.random() * 4)],
+                humidity: Math.round(60 + Math.random() * 30),
+                windSpeed: Math.round(5 + Math.random() * 15),
+                pressure: Math.round(1010 + Math.random() * 20),
+                visibility: Math.round(8 + Math.random() * 7),
+                feelsLike: Math.round(baseTemp + tempVariation + (Math.random() - 0.5) * 4)
+            };
+        }
+
+        // Update map popup with weather data
+        function updateMapPopup(cityName, weatherData) {
+            const cityId = cityName.replace(/\s+/g, '');
+            const tempElement = document.getElementById(`temp-${cityId}`);
+            const descElement = document.getElementById(`desc-${cityId}`);
+            
+            if (tempElement && descElement) {
+                tempElement.textContent = `${weatherData.temperature}°C`;
+                descElement.textContent = weatherData.description;
+            }
+        }
+
+        // Render Climate Overview
+        function renderClimateOverview() {
+            const container = document.getElementById('climateOverview');
+            const cities = Object.values(weatherData);
+            
+            if (cities.length === 0) {
+                container.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div><p>Loading climate data...</p></div>';
+                return;
+            }
+
+            const avgTemp = Math.round(cities.reduce((sum, city) => sum + city.data.temperature, 0) / cities.length);
+            const avgHumidity = Math.round(cities.reduce((sum, city) => sum + city.data.humidity, 0) / cities.length);
+            const avgWindSpeed = Math.round(cities.reduce((sum, city) => sum + city.data.windSpeed, 0) / cities.length);
+            const avgPressure = Math.round(cities.reduce((sum, city) => sum + city.data.pressure, 0) / cities.length);
+
+            container.innerHTML = `
+                <div class="climate-card animate-fade-in">
+                    <div class="climate-icon">🌡️</div>
+                    <div class="climate-value">${avgTemp}°C</div>
+                    <div class="climate-label">Average Temperature</div>
+                    <div class="climate-description">Current average temperature across Tanzania's major cities</div>
+                </div>
+                
+                <div class="climate-card animate-fade-in">
+                    <div class="climate-icon">💧</div>
+                    <div class="climate-value">${avgHumidity}%</div>
+                    <div class="climate-label">Average Humidity</div>
+                    <div class="climate-description">Relative humidity levels indicating moisture content in the air</div>
+                </div>
+                
+                <div class="climate-card animate-fade-in">
+                    <div class="climate-icon">💨</div>
+                    <div class="climate-value">${avgWindSpeed} m/s</div>
+                    <div class="climate-label">Average Wind Speed</div>
+                    <div class="climate-description">Wind conditions affecting weather patterns and air quality</div>
+                </div>
+                
+                <div class="climate-card animate-fade-in">
+                    <div class="climate-icon">🌊</div>
+                    <div class="climate-value">${avgPressure} hPa</div>
+                    <div class="climate-label">Average Pressure</div>
+                    <div class="climate-description">Atmospheric pressure indicating weather system movements</div>
+                </div>
+            `;
+        }
+
+        // Render Weather Grid
+        function renderWeatherGrid() {
+            const container = document.getElementById('weatherGrid');
+            const cities = Object.values(weatherData);
+            
+            if (cities.length === 0) {
+                container.innerHTML = '<div class="loading-container"><div class="loading-spinner"></div><p>Loading weather data...</p></div>';
+                return;
+            }
+
+            container.innerHTML = cities.map(cityData => {
+                const { city, data, region, mock } = cityData;
+                const weatherIcon = getWeatherIcon(data.description);
+                
+                return `
+                    <div class="weather-card animate-fade-in">
+                        <div class="weather-header">
+                            <div class="city-name">${city}</div>
+                            <div class="region-name">${region} Region</div>
+                        </div>
+                        <div class="weather-content">
+                            <div class="current-weather">
+                                <div class="weather-main">
+                                    <div class="temperature">${data.temperature}°C</div>
+                                    <div class="weather-description">${data.description}</div>
+                                </div>
+                                <div class="weather-icon-large">${weatherIcon}</div>
+                            </div>
+                            <div class="weather-details">
+                                <div class="detail-item">
+                                    <div class="detail-icon">🌡️</div>
+                                    <div class="detail-value">${data.feelsLike || data.temperature + 2}°C</div>
+                                    <div class="detail-label">Feels Like</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">💧</div>
+                                    <div class="detail-value">${data.humidity}%</div>
+                                    <div class="detail-label">Humidity</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">💨</div>
+                                    <div class="detail-value">${data.windSpeed} m/s</div>
+                                    <div class="detail-label">Wind Speed</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-icon">👁️</div>
+                                    <div class="detail-value">${data.visibility || 10} km</div>
+                                    <div class="detail-label">Visibility</div>
+                                </div>
+                            </div>
+                            ${mock ? '<div style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--text-muted);">📊 Simulated data</div>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render Climate Statistics
+        function renderClimateStats() {
+            const container = document.getElementById('statsGrid');
+            
+            // Tanzania climate statistics
+            const stats = [
+                {
+                    icon: '🌍',
+                    value: '947,303',
+                    label: 'Total Area (km²)',
+                    description: 'Tanzania is the largest country in East Africa'
+                },
+                {
+                    icon: '🏔️',
+                    value: '5,895m',
+                    label: 'Highest Point',
+                    description: 'Mount Kilimanjaro peak (Uhuru Peak)'
+                },
+                {
+                    icon: '🌊',
+                    value: '1,424km',
+                    label: 'Coastline Length',
+                    description: 'Indian Ocean coastline with diverse marine ecosystems'
+                },
+                {
+                    icon: '🌧️',
+                    value: '1,071mm',
+                    label: 'Annual Rainfall',
+                    description: 'Average annual precipitation across the country'
+                },
+                {
+                    icon: '🌡️',
+                    value: '25°C',
+                    label: 'Average Temperature',
+                    description: 'Mean annual temperature varies by altitude and region'
+                },
+                {
+                    icon: '🌿',
+                    value: '38%',
+                    label: 'Forest Cover',
+                    description: 'Protected areas and national parks coverage'
+                },
+                {
+                    icon: '💧',
+                    value: '6.2%',
+                    label: 'Water Bodies',
+                    description: 'Lakes, rivers, and wetlands including Lake Victoria'
+                },
+                {
+                    icon: '🌾',
+                    value: '43%',
+                    label: 'Agricultural Land',
+                    description: 'Land used for farming and livestock'
+                }
+            ];
+
+            container.innerHTML = stats.map((stat, index) => `
+                <div class="stat-card animate-fade-in" style="animation-delay: ${index * 0.1}s">
+                    <div class="stat-icon">${stat.icon}</div>
+                    <div class="stat-value">${stat.value}</div>
+                    <div class="stat-label">${stat.label}</div>
+                    <div class="stat-description">${stat.description}</div>
+                </div>
+            `).join('');
+        }
+
+        // Get weather icon based on description
+        function getWeatherIcon(description) {
+            const desc = description.toLowerCase();
+            if (desc.includes('sun') || desc.includes('clear')) return '☀️';
+            if (desc.includes('cloud')) return '☁️';
+            if (desc.includes('rain')) return '🌧️';
+            if (desc.includes('storm')) return '⛈️';
+            if (desc.includes('snow')) return '❄️';
+            if (desc.includes('fog') || desc.includes('mist')) return '🌫️';
+            return '🌤️';
+        }
+
+        // Show error state
+        function showErrorState() {
+            const containers = ['climateOverview', 'weatherGrid', 'statsGrid'];
+            
+            containers.forEach(containerId => {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="error-state">
+                        <div class="error-icon">⚠️</div>
+                        <h3 class="error-title">Unable to Load Data</h3>
+                        <p class="error-description">
+                            We're having trouble loading the climate data. Please check your connection and try again.
+                        </p>
+                        <button class="retry-btn" onclick="loadAllData()">
+                            <i class="fas fa-refresh"></i>
+                            Try Again
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        // Load all data
+        function loadAllData() {
+            fetchWeatherData();
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            checkAuthStatus();
+            initMap();
+            loadAllData();
+        });
+
+        // Handle theme preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+                updateThemeIcon();
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileNav.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileNav.classList.remove('active');
+                document.querySelector('.mobile-menu-btn i').className = 'fas fa-bars';
+            }
+        });
+    </script>
+</body>
+</html>

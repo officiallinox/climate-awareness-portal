@@ -1,0 +1,3052 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimAware Portal - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* General Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #5D5CDE;
+            --primary-hover: #4A49C7;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666;
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #f8f9fa;
+            --border-color: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --error-color: #dc2626;
+            --success-color: #059669;
+        }
+
+        body.dark {
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --bg-primary: #181818;
+            --bg-secondary: #262626;
+            --border-color: #404040;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 0;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        nav a,
+        nav button {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        nav a:hover,
+        nav button:hover {
+            color: var(--primary-color);
+            background-color: var(--bg-secondary);
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            width: 100%;
+            padding: 2rem;
+            background-color: var(--bg-secondary);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Dashboard Navigation */
+        .dashboard-nav {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .dashboard-nav button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: color 0.3s ease, border-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .dashboard-nav button.active {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .dashboard-nav button:hover {
+            color: var(--primary-color);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Table Styles */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .data-table th {
+            font-weight: 600;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Form Styles */
+        .data-form {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .data-form label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .data-form input,
+        .data-form textarea,
+        .data-form select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .data-form input:focus,
+        .data-form textarea:focus,
+        .data-form select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .data-form button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .data-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        .action-buttons button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .action-buttons button.add {
+            background: linear-gradient(135deg, #10B981, #34D399);
+            /* Green */
+        }
+
+        .action-buttons button.edit {
+            background: linear-gradient(135deg, #3B82F6, #63B3ED);
+        }
+
+        .action-buttons button.delete {
+            background: linear-gradient(135deg, #EF4444, #F87171);
+        }
+
+        .action-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-controls select,
+        .filter-controls input {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .filter-controls button {
+            padding: 0.5rem 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filter-controls button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Dashboard Overview Styles */
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(93, 92, 222, 0.3);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 92, 222, 0.4);
+        }
+
+        .refresh-icon {
+            animation: rotate 2s linear infinite paused;
+        }
+
+        .refresh-btn:hover .refresh-icon {
+            animation-play-state: running;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .last-updated {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
+        }
+
+        .metric-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-card.primary::before {
+            background: linear-gradient(90deg, #5D5CDE, #8B7BFF);
+        }
+
+        .metric-card.success::before {
+            background: linear-gradient(90deg, #059669, #10b981);
+        }
+
+        .metric-card.warning::before {
+            background: linear-gradient(90deg, #d97706, #f59e0b);
+        }
+
+        .metric-card.info::before {
+            background: linear-gradient(90deg, #0ea5e9, #3b82f6);
+        }
+
+        .metric-icon {
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(93, 92, 222, 0.1);
+            border-radius: 12px;
+        }
+
+        .metric-content {
+            flex: 1;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .metric-change {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .metric-change.positive {
+            color: #059669;
+        }
+
+        .metric-change.negative {
+            color: #dc2626;
+        }
+
+        /* Analytics Grid */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .analytics-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .analytics-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-card .card-header {
+            padding: 1.5rem 1.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .analytics-card .card-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-controls select {
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .view-all-btn {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .chart-container {
+            padding: 1rem 1.5rem 1.5rem;
+            height: 300px;
+            position: relative;
+        }
+
+        /* Activity Feed */
+        .activity-feed .activity-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Engagement Stats */
+        .engagement-stats {
+            padding: 1.5rem;
+        }
+
+        .engagement-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .engagement-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .engagement-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .engagement-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .engagement-bar {
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .engagement-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #8B7BFF);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Climate Impact */
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            padding: 1.5rem;
+        }
+
+        .impact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .impact-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(93, 92, 222, 0.1);
+            border-radius: 10px;
+        }
+
+        .impact-content {
+            flex: 1;
+        }
+
+        .impact-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .impact-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* System Health */
+        .health-indicators {
+            display: flex;
+            justify-content: space-around;
+            padding: 1.5rem;
+        }
+
+        .health-item {
+            text-align: center;
+        }
+
+        .health-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .health-indicator::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, #10b981 0deg 270deg, #e5e7eb 270deg 360deg);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .health-indicator.healthy::before {
+            background: conic-gradient(from 0deg, #10b981 0deg 300deg, #e5e7eb 300deg 360deg);
+        }
+
+        .health-indicator.warning::before {
+            background: conic-gradient(from 0deg, #f59e0b 0deg 200deg, #e5e7eb 200deg 360deg);
+        }
+
+        .health-indicator.error::before {
+            background: conic-gradient(from 0deg, #ef4444 0deg 100deg, #e5e7eb 100deg 360deg);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .health-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .health-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-title p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .section-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            color: white;
+            box-shadow: 0 4px 15px rgba(93, 92, 222, 0.3);
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(93, 92, 222, 0.4);
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--bg-primary);
+            transform: translateY(-1px);
+        }
+
+        .btn-icon {
+            font-size: 1rem;
+        }
+
+        /* Stats Sections */
+        .users-stats,
+        .articles-stats,
+        .initiatives-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(93, 92, 222, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Form Containers */
+        .form-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            overflow: hidden;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-primary);
+        }
+
+        .form-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: var(--error-color);
+            color: white;
+        }
+
+        .modern-form {
+            padding: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(93, 92, 222, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Table Containers */
+        .table-container {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-primary);
+        }
+
+        .table-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .table-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .search-input,
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .search-input {
+            min-width: 200px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .modern-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .modern-table th {
+            background: var(--bg-primary);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modern-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .modern-table tbody tr:hover {
+            background: var(--bg-primary);
+        }
+
+        /* Error Notification */
+        .error-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .error-content {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .error-icon {
+            font-size: 1.2rem;
+        }
+
+        .error-text {
+            color: #991b1b;
+            font-weight: 500;
+        }
+
+        .error-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #991b1b;
+            margin-left: 0.5rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Table Content Styles */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), #8B7BFF);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-id {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .role-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .role-badge.admin {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .role-badge.user {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.status-upcoming {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn-small {
+            padding: 0.375rem 0.75rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn-small.edit {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .action-btn-small.edit:hover {
+            background: #bfdbfe;
+        }
+
+        .action-btn-small.delete {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-btn-small.delete:hover {
+            background: #fecaca;
+        }
+
+        .article-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .article-preview {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .initiative-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .initiative-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 300px;
+        }
+
+        .datetime-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .datetime-info .date {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .datetime-info .time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* Activity and Comment Badges */
+        .activity-type-badge,
+        .comment-category-badge,
+        .visibility-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .activity-type-badge.outdoor {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .activity-type-badge.indoor {
+            background-color: #6366f1;
+            color: white;
+        }
+
+        .activity-type-badge.sports {
+            background-color: #f59e0b;
+            color: white;
+        }
+
+        .activity-type-badge.travel {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        .activity-type-badge.work {
+            background-color: #6b7280;
+            color: white;
+        }
+
+        .comment-category-badge {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .visibility-badge.public {
+            background-color: #10b981;
+            color: white;
+        }
+
+        .visibility-badge.private {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .comment-text-cell {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard-header h2 {
+                font-size: 2rem;
+            }
+
+            .dashboard-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .impact-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .health-indicators {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .admin-container {
+                padding: 1rem;
+            }
+
+            .dashboard-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .dashboard-nav button {
+                padding: 0.75rem;
+                text-align: center;
+            }
+        }
+
+        /* For tablets and larger screens */
+        @media (min-width: 768px) {
+            .admin-container {
+                padding: 2rem;
+            }
+
+            .dashboard-nav {
+                flex-direction: row;
+                justify-content: space-around;
+                align-items: center;
+            }
+
+            .dashboard-nav button {
+                padding: 0.75rem 1.5rem;
+                text-align: center;
+            }
+        }
+
+        /* For larger desktops */
+        @media (min-width: 1200px) {
+            .admin-container {
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Dark Mode Styles */
+        body.dark {
+            --text-primary: #ffffff;
+            --text-secondary: #a1a1aa;
+            --bg-primary: #181818;
+            --bg-secondary: #262626;
+            --border-color: #404040;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <h1>ClimAware Admin</h1>
+            <nav>
+                <button id="theme-toggle">Toggle Theme</button>
+                <button onclick="logout()">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="dashboard-nav">
+                <button class="active" data-target="#dashboard-content">Dashboard</button>
+                <button data-target="#initiatives-content">Initiatives</button>
+                <button data-target="#articles-content">Articles</button>
+                <button data-target="#users-content">Users</button>
+                <button data-target="#activities-content">Activities</button>
+                <button data-target="#comments-content">Comments</button>
+            </div>
+
+            <div class="content-section active" id="dashboard-content">
+                <div class="dashboard-header">
+                    <h2>Dashboard Overview</h2>
+                    <p>Welcome back! Here's what's happening with your climate awareness platform today.</p>
+                    <div class="dashboard-actions">
+                        <button class="refresh-btn" onclick="refreshDashboard()">
+                            <span class="refresh-icon">🔄</span> Refresh Data
+                        </button>
+                        <div class="last-updated">
+                            Last updated: <span id="lastUpdated">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card primary">
+                        <div class="metric-icon">👥</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalUsers">0</div>
+                            <div class="metric-label">Total Users</div>
+                            <div class="metric-change positive" id="userGrowth">+0%</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card success">
+                        <div class="metric-icon">🏃‍♂️</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalActivities">0</div>
+                            <div class="metric-label">Activities Logged</div>
+                            <div class="metric-change positive" id="activityGrowth">+0%</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card warning">
+                        <div class="metric-icon">💬</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="totalComments">0</div>
+                            <div class="metric-label">User Comments</div>
+                            <div class="metric-change positive" id="commentGrowth">+0%</div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card info">
+                        <div class="metric-icon">📊</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="avgClimateScore">0</div>
+                            <div class="metric-label">Avg Climate Score</div>
+                            <div class="metric-change positive" id="scoreGrowth">+0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts and Analytics -->
+                <div class="analytics-grid">
+                    <!-- User Activity Chart -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>User Activity Trends</h3>
+                            <div class="chart-controls">
+                                <select id="activityPeriod" onchange="updateActivityChart()">
+                                    <option value="7">Last 7 days</option>
+                                    <option value="30">Last 30 days</option>
+                                    <option value="90">Last 3 months</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="userActivityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Activity Types Distribution -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>Activity Types Distribution</h3>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityTypesChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Feed -->
+                    <div class="analytics-card activity-feed">
+                        <div class="card-header">
+                            <h3>Recent Platform Activity</h3>
+                            <button class="view-all-btn" onclick="showSection('activities-content')">View All</button>
+                        </div>
+                        <div class="activity-list" id="recentActivityFeed">
+                            <!-- Recent activities will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- User Engagement Stats -->
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h3>User Engagement</h3>
+                        </div>
+                        <div class="engagement-stats">
+                            <div class="engagement-item">
+                                <div class="engagement-label">Daily Active Users</div>
+                                <div class="engagement-value" id="dailyActiveUsers">0</div>
+                                <div class="engagement-bar">
+                                    <div class="engagement-progress" id="dailyActiveProgress"></div>
+                                </div>
+                            </div>
+                            <div class="engagement-item">
+                                <div class="engagement-label">Weekly Active Users</div>
+                                <div class="engagement-value" id="weeklyActiveUsers">0</div>
+                                <div class="engagement-bar">
+                                    <div class="engagement-progress" id="weeklyActiveProgress"></div>
+                                </div>
+                            </div>
+                            <div class="engagement-item">
+                                <div class="engagement-label">Monthly Active Users</div>
+                                <div class="engagement-value" id="monthlyActiveUsers">0</div>
+                                <div class="engagement-bar">
+                                    <div class="engagement-progress" id="monthlyActiveProgress"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Climate Impact Summary -->
+                    <div class="analytics-card climate-impact">
+                        <div class="card-header">
+                            <h3>Climate Impact Summary</h3>
+                        </div>
+                        <div class="impact-grid">
+                            <div class="impact-item">
+                                <div class="impact-icon">🌱</div>
+                                <div class="impact-content">
+                                    <div class="impact-value" id="carbonSaved">0 kg</div>
+                                    <div class="impact-label">CO₂ Saved</div>
+                                </div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-icon">🚶‍♂️</div>
+                                <div class="impact-content">
+                                    <div class="impact-value" id="stepsWalked">0</div>
+                                    <div class="impact-label">Steps Walked</div>
+                                </div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-icon">🚴‍♀️</div>
+                                <div class="impact-content">
+                                    <div class="impact-value" id="distanceCycled">0 km</div>
+                                    <div class="impact-label">Distance Cycled</div>
+                                </div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-icon">🌍</div>
+                                <div class="impact-content">
+                                    <div class="impact-value" id="ecoActivities">0</div>
+                                    <div class="impact-label">Eco Activities</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health -->
+                    <div class="analytics-card system-health">
+                        <div class="card-header">
+                            <h3>System Health</h3>
+                        </div>
+                        <div class="health-indicators">
+                            <div class="health-item">
+                                <div class="health-indicator healthy" id="dbStatus"></div>
+                                <div class="health-label">Database</div>
+                                <div class="health-value">Healthy</div>
+                            </div>
+                            <div class="health-item">
+                                <div class="health-indicator healthy" id="apiStatus"></div>
+                                <div class="health-label">API Response</div>
+                                <div class="health-value" id="apiResponseTime">< 100ms</div>
+                            </div>
+                            <div class="health-item">
+                                <div class="health-indicator healthy" id="serverStatus"></div>
+                                <div class="health-label">Server Load</div>
+                                <div class="health-value">Low</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="initiatives-content">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>🌱 Initiatives Management</h2>
+                        <p>Create and manage climate awareness initiatives and events for your community.</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="action-btn primary" onclick="showAddInitiativeModal()">
+                            <span class="btn-icon">🌟</span> New Initiative
+                        </button>
+                        <button class="action-btn secondary" onclick="toggleInitiativeForm()">
+                            <span class="btn-icon">📅</span> Quick Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="initiatives-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="initiativesTotal">0</div>
+                            <div class="stat-label">Total Initiatives</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="initiativesUpcoming">0</div>
+                            <div class="stat-label">Upcoming</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="initiativesCompleted">0</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="initiativesParticipants">0</div>
+                            <div class="stat-label">Total Participants</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-container" id="add-initiative-form" style="display: none;">
+                    <div class="form-header">
+                        <h3>🌟 Create New Initiative</h3>
+                        <button class="close-btn" onclick="toggleInitiativeForm()">×</button>
+                    </div>
+                    <form class="modern-form" id="initiativeForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title">Initiative Title</label>
+                                <input type="text" id="title" name="title" placeholder="Enter initiative title..." required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date">Event Date</label>
+                                <input type="date" id="date" name="date">
+                            </div>
+                            <div class="form-group">
+                                <label for="time">Event Time</label>
+                                <input type="time" id="time" name="time">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Description</label>
+                            <textarea id="description" name="description" rows="6" placeholder="Describe your initiative..." required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="action-btn secondary" onclick="toggleInitiativeForm()">Cancel</button>
+                            <button type="submit" class="action-btn primary">
+                                <span class="btn-icon">🌟</span> Create Initiative
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Initiatives</h3>
+                        <div class="table-controls">
+                            <input type="text" id="initiativeSearch" placeholder="Search initiatives..." class="search-input">
+                            <select id="initiativeStatusFilter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="upcoming">Upcoming</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="modern-table" id="initiativesTable">
+                            <thead>
+                                <tr>
+                                    <th>Initiative</th>
+                                    <th>Date & Time</th>
+                                    <th>Description</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="articles-content">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>📰 Article Management</h2>
+                        <p>Create, edit, and manage climate awareness articles for your platform.</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="action-btn primary" onclick="showAddArticleModal()">
+                            <span class="btn-icon">✍️</span> Write Article
+                        </button>
+                        <button class="action-btn secondary" onclick="toggleArticleForm()">
+                            <span class="btn-icon">📝</span> Quick Add
+                        </button>
+                    </div>
+                </div>
+
+                <div class="articles-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">📄</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="articlesTotal">0</div>
+                            <div class="stat-label">Total Articles</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">👁️</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="articlesViews">0</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="articlesThisMonth">0</div>
+                            <div class="stat-label">This Month</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">⭐</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="articlesFeatured">0</div>
+                            <div class="stat-label">Featured</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-container" id="add-article-form" style="display: none;">
+                    <div class="form-header">
+                        <h3>✍️ Create New Article</h3>
+                        <button class="close-btn" onclick="toggleArticleForm()">×</button>
+                    </div>
+                    <form class="modern-form" id="articleForm">
+                        <div class="form-group">
+                            <label for="articleTitle">Article Title</label>
+                            <input type="text" id="articleTitle" name="articleTitle" placeholder="Enter an engaging title..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="articleContent">Article Content</label>
+                            <textarea id="articleContent" name="articleContent" rows="12" placeholder="Write your article content here..." required></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="action-btn secondary" onclick="toggleArticleForm()">Cancel</button>
+                            <button type="submit" class="action-btn primary">
+                                <span class="btn-icon">📝</span> Publish Article
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Published Articles</h3>
+                        <div class="table-controls">
+                            <input type="text" id="articleSearch" placeholder="Search articles..." class="search-input">
+                            <select id="articleStatusFilter" class="filter-select">
+                                <option value="">All Status</option>
+                                <option value="published">Published</option>
+                                <option value="draft">Draft</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="modern-table" id="articlesTable">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Content Preview</th>
+                                    <th>Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section" id="users-content">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h2>👥 User Management</h2>
+                        <p>Manage your users, view their activity, and update their roles and permissions.</p>
+                    </div>
+                    <div class="section-actions">
+                        <button class="action-btn primary" onclick="showAddUserModal()">
+                            <span class="btn-icon">➕</span> Add New User
+                        </button>
+                        <button class="action-btn secondary" onclick="exportUsers()">
+                            <span class="btn-icon">📊</span> Export Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="users-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">👤</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="usersTotal">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🔑</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="usersAdmin">0</div>
+                            <div class="stat-label">Admins</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🌟</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="usersActive">0</div>
+                            <div class="stat-label">Active This Week</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="usersNew">0</div>
+                            <div class="stat-label">New This Month</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>All Users</h3>
+                        <div class="table-controls">
+                            <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
+                            <select id="roleFilter" class="filter-select">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="modern-table" id="userTable">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activities Management Section -->
+            <div class="content-section" id="activities-content">
+                <h2>User Activities Management</h2>
+                <p>Monitor and manage user activities across the platform.</p>
+                
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <h3 id="totalActivitiesCount">0</h3>
+                        <p>Total Activities</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="outdoorActivitiesCount">0</h3>
+                        <p>Outdoor Activities</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="indoorActivitiesCount">0</h3>
+                        <p>Indoor Activities</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="avgActivityTemp">--°C</h3>
+                        <p>Avg Temperature</p>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <select id="activityTypeFilter">
+                        <option value="">All Types</option>
+                        <option value="outdoor">Outdoor</option>
+                        <option value="indoor">Indoor</option>
+                        <option value="sports">Sports</option>
+                        <option value="travel">Travel</option>
+                        <option value="work">Work</option>
+                    </select>
+                    <input type="date" id="activityDateFilter" placeholder="Filter by date">
+                    <button onclick="filterActivities()">Filter</button>
+                    <button onclick="clearActivityFilters()">Clear</button>
+                </div>
+
+                <table class="data-table" id="activitiesTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Activity</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Weather</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Comments Management Section -->
+            <div class="content-section" id="comments-content">
+                <h2>User Comments Management</h2>
+                <p>Monitor user comments and climate observations.</p>
+                
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <h3 id="totalCommentsCount">0</h3>
+                        <p>Total Comments</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="publicCommentsCount">0</h3>
+                        <p>Public Comments</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="privateCommentsCount">0</h3>
+                        <p>Private Comments</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3 id="recentCommentsCount">0</h3>
+                        <p>This Week</p>
+                    </div>
+                </div>
+
+                <div class="filter-controls">
+                    <select id="commentCategoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="observation">Observations</option>
+                        <option value="experience">Experiences</option>
+                        <option value="tip">Tips</option>
+                        <option value="question">Questions</option>
+                    </select>
+                    <select id="commentVisibilityFilter">
+                        <option value="">All Visibility</option>
+                        <option value="true">Public</option>
+                        <option value="false">Private</option>
+                    </select>
+                    <button onclick="filterComments()">Filter</button>
+                    <button onclick="clearCommentFilters()">Clear</button>
+                </div>
+
+                <table class="data-table" id="commentsTable">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Comment</th>
+                            <th>Category</th>
+                            <th>Visibility</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 ClimAware. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Theme toggle script
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
+
+        // Logout function
+        function logout() {
+            // Optionally clear local storage or session storage here
+            localStorage.clear(); // Clear all stored data
+            sessionStorage.clear(); // Clear all session data
+
+            // Redirect to login page
+            window.location.href = 'login.html';
+        }
+
+        // Dashboard navigation script
+        const dashboardButtons = document.querySelectorAll('.dashboard-nav button');
+        const contentSections = document.querySelectorAll('.content-section');
+
+        dashboardButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = document.querySelector(button.getAttribute('data-target'));
+
+                // Remove active class from all buttons
+                dashboardButtons.forEach(btn => btn.classList.remove('active'));
+
+                // Add active class to the clicked button
+                button.classList.add('active');
+
+                // Hide all content sections
+                contentSections.forEach(section => section.classList.remove('active'));
+
+                // Show the targeted content section
+                target.classList.add('active');
+
+                // Load data when the section is activated
+                if (target.id === 'initiatives-content') {
+                    loadInitiatives();
+                } else if (target.id === 'articles-content') {
+                    loadArticles();
+                } else if (target.id === 'users-content') {
+                    loadUsers();
+                }
+            });
+        });
+
+        // Function to handle initiative form submission
+        document.getElementById('initiativeForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Handle initiative form submission logic here
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const description = document.getElementById('description').value;
+
+            // Send data to server (example)
+            fetch('/api/initiatives', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    title,
+                    date,
+                    time,
+                    description
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Initiative added successfully!');
+                    // Clear the form
+                    document.getElementById('initiativeForm').reset();
+                    // Reload initiatives
+                    loadInitiatives();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Failed to add initiative.');
+                });
+        });
+
+        // Function to handle article form submission
+        document.getElementById('articleForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            // Handle article form submission logic here
+            const articleTitle = document.getElementById('articleTitle').value;
+            const articleContent = document.getElementById('articleContent').value;
+
+            // Send data to server (example)
+            fetch('/api/articles', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    title: articleTitle,
+                    content: articleContent
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    alert('Article added successfully!');
+                    // Clear the form
+                    document.getElementById('articleForm').reset();
+                    // Reload articles
+                    loadArticles();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Failed to add article.');
+                });
+        });
+
+        // Function to load users from the database
+        async function loadUsers() {
+            try {
+                const response = await fetch('/api/admin/users', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch users: ${response.status}`);
+                }
+
+                const users = await response.json();
+                const userTableBody = document.querySelector('#userTable tbody');
+                userTableBody.innerHTML = ''; // Clear existing table rows
+
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user._id}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>
+                            <button class="edit" onclick="editUser('${user._id}')">Edit</button>
+                            <button class="delete" onclick="deleteUser('${user._id}')">Delete</button>
+                        </td>
+                    `;
+                    userTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading users:', error);
+                alert('Failed to load users.');
+            }
+        }
+
+        // Function to load initiatives from the database
+        async function loadInitiatives() {
+            try {
+                const response = await fetch('/api/initiatives', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch initiatives: ${response.status}`);
+                }
+
+                const initiatives = await response.json();
+                const initiativesTableBody = document.querySelector('#initiativesTable tbody');
+                initiativesTableBody.innerHTML = ''; // Clear existing table rows
+
+                initiatives.forEach(initiative => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${initiative.title}</td>
+                        <td>${initiative.date}</td>
+                        <td>${initiative.time}</td>
+                        <td>${initiative.description}</td>
+                    `;
+                    initiativesTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading initiatives:', error);
+                alert('Failed to load initiatives.');
+            }
+        }
+
+        // Function to load articles from the database
+        async function loadArticles() {
+            try {
+                const response = await fetch('/api/articles', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch articles: ${response.status}`);
+                }
+
+                const articles = await response.json();
+                const articlesTableBody = document.querySelector('#articlesTable tbody');
+                articlesTableBody.innerHTML = ''; // Clear existing table rows
+
+                articles.forEach(article => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${article.title}</td>
+                        <td>${article.content}</td>
+                        <td>
+                            <button class="edit" onclick="editArticle('${article._id}')">Edit</button>
+                            <button class="delete" onclick="deleteArticle('${article._id}')">Delete</button>
+                        </td>
+                    `;
+                    articlesTableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading articles:', error);
+                alert('Failed to load articles.');
+            }
+        }
+
+        // Call loadUsers when the Users section is activated
+        document.querySelector('button[data-target="#users-content"]').addEventListener('click', loadUsers);
+
+        // Call loadInitiatives when the Initiatives section is activated
+        document.querySelector('button[data-target="#initiatives-content"]').addEventListener('click', loadInitiatives);
+
+        // Call loadArticles when the Articles section is activated
+        document.querySelector('button[data-target="#articles-content"]').addEventListener('click', loadArticles);
+
+        // Function to handle user editing
+        function editUser(userId) {
+            // Implement edit user logic here
+            alert(`Edit user with ID: ${userId}`);
+        }
+
+        // Function to handle user deletion
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to delete user: ${response.status}`);
+                }
+
+                console.log('User deleted successfully');
+                loadUsers(); // Reload users after deleting
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('Failed to delete user.');
+            }
+        }
+        // Function to handle article editing
+        function editArticle(articleId) {
+            // Implement edit article logic here
+            alert(`Edit article with ID: ${articleId}`);
+        }
+
+        // Function to handle article deletion
+        async function deleteArticle(articleId) {
+            try {
+                const response = await fetch(`/api/articles/${articleId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to delete article: ${response.status}`);
+                }
+
+                console.log('Article deleted successfully');
+                loadArticles(); // Reload articles after deleting
+            } catch (error) {
+                console.error('Error deleting article:', error);
+                alert('Failed to delete article.');
+            }
+        }
+
+        // Activities Management Functions
+        let allActivities = [];
+        let filteredActivities = [];
+
+        async function loadActivities() {
+            try {
+                const response = await fetch('/api/admin/activities', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch activities: ${response.status}`);
+                }
+
+                allActivities = await response.json();
+                filteredActivities = [...allActivities];
+                displayActivities();
+                updateActivityStats();
+            } catch (error) {
+                console.error('Error loading activities:', error);
+                alert('Failed to load activities.');
+            }
+        }
+
+        function displayActivities() {
+            const activitiesTableBody = document.querySelector('#activitiesTable tbody');
+            activitiesTableBody.innerHTML = '';
+
+            filteredActivities.forEach(activity => {
+                const row = document.createElement('tr');
+                const weatherInfo = activity.weather ? 
+                    `${Math.round(activity.weather.temperature)}°C, ${activity.weather.description}` : 
+                    'No weather data';
+                
+                row.innerHTML = `
+                    <td>${activity.userId?.name || 'Unknown User'}</td>
+                    <td>${activity.name}</td>
+                    <td><span class="activity-type-badge ${activity.type}">${activity.type}</span></td>
+                    <td>${new Date(activity.date).toLocaleDateString()}</td>
+                    <td>${weatherInfo}</td>
+                    <td>${activity.notes || 'No notes'}</td>
+                    <td>
+                        <button class="delete" onclick="deleteActivity('${activity._id}')">Delete</button>
+                    </td>
+                `;
+                activitiesTableBody.appendChild(row);
+            });
+        }
+
+        function updateActivityStats() {
+            document.getElementById('totalActivitiesCount').textContent = allActivities.length;
+            document.getElementById('outdoorActivitiesCount').textContent = 
+                allActivities.filter(a => a.type === 'outdoor').length;
+            document.getElementById('indoorActivitiesCount').textContent = 
+                allActivities.filter(a => a.type === 'indoor').length;
+            
+            const activitiesWithTemp = allActivities.filter(a => a.weather?.temperature);
+            if (activitiesWithTemp.length > 0) {
+                const avgTemp = activitiesWithTemp.reduce((sum, a) => sum + a.weather.temperature, 0) / activitiesWithTemp.length;
+                document.getElementById('avgActivityTemp').textContent = `${Math.round(avgTemp)}°C`;
+            } else {
+                document.getElementById('avgActivityTemp').textContent = '--°C';
+            }
+        }
+
+        function filterActivities() {
+            const typeFilter = document.getElementById('activityTypeFilter').value;
+            const dateFilter = document.getElementById('activityDateFilter').value;
+
+            filteredActivities = allActivities.filter(activity => {
+                const typeMatch = !typeFilter || activity.type === typeFilter;
+                const dateMatch = !dateFilter || new Date(activity.date).toDateString() === new Date(dateFilter).toDateString();
+                return typeMatch && dateMatch;
+            });
+
+            displayActivities();
+        }
+
+        function clearActivityFilters() {
+            document.getElementById('activityTypeFilter').value = '';
+            document.getElementById('activityDateFilter').value = '';
+            filteredActivities = [...allActivities];
+            displayActivities();
+        }
+
+        async function deleteActivity(activityId) {
+            if (!confirm('Are you sure you want to delete this activity?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/activities/${activityId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    allActivities = allActivities.filter(a => a._id !== activityId);
+                    filteredActivities = filteredActivities.filter(a => a._id !== activityId);
+                    displayActivities();
+                    updateActivityStats();
+                } else {
+                    alert('Failed to delete activity');
+                }
+            } catch (error) {
+                console.error('Error deleting activity:', error);
+                alert('Error deleting activity');
+            }
+        }
+
+        // Comments Management Functions
+        let allComments = [];
+        let filteredComments = [];
+
+        async function loadComments() {
+            try {
+                const response = await fetch('/api/admin/comments', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch comments: ${response.status}`);
+                }
+
+                allComments = await response.json();
+                filteredComments = [...allComments];
+                displayComments();
+                updateCommentStats();
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                alert('Failed to load comments.');
+            }
+        }
+
+        function displayComments() {
+            const commentsTableBody = document.querySelector('#commentsTable tbody');
+            commentsTableBody.innerHTML = '';
+
+            filteredComments.forEach(comment => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${comment.userId?.name || 'Unknown User'}</td>
+                    <td class="comment-text-cell">${comment.text}</td>
+                    <td><span class="comment-category-badge ${comment.category || 'general'}">${comment.category || 'General'}</span></td>
+                    <td><span class="visibility-badge ${comment.isPublic ? 'public' : 'private'}">${comment.isPublic ? 'Public' : 'Private'}</span></td>
+                    <td>${new Date(comment.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <button class="delete" onclick="deleteComment('${comment._id}')">Delete</button>
+                        <button class="edit" onclick="toggleCommentVisibility('${comment._id}', ${comment.isPublic})">${comment.isPublic ? 'Make Private' : 'Make Public'}</button>
+                    </td>
+                `;
+                commentsTableBody.appendChild(row);
+            });
+        }
+
+        function updateCommentStats() {
+            document.getElementById('totalCommentsCount').textContent = allComments.length;
+            document.getElementById('publicCommentsCount').textContent = 
+                allComments.filter(c => c.isPublic).length;
+            document.getElementById('privateCommentsCount').textContent = 
+                allComments.filter(c => !c.isPublic).length;
+            
+            const oneWeekAgo = new Date();
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+            document.getElementById('recentCommentsCount').textContent = 
+                allComments.filter(c => new Date(c.createdAt) > oneWeekAgo).length;
+        }
+
+        function filterComments() {
+            const categoryFilter = document.getElementById('commentCategoryFilter').value;
+            const visibilityFilter = document.getElementById('commentVisibilityFilter').value;
+
+            filteredComments = allComments.filter(comment => {
+                const categoryMatch = !categoryFilter || comment.category === categoryFilter;
+                const visibilityMatch = !visibilityFilter || comment.isPublic.toString() === visibilityFilter;
+                return categoryMatch && visibilityMatch;
+            });
+
+            displayComments();
+        }
+
+        function clearCommentFilters() {
+            document.getElementById('commentCategoryFilter').value = '';
+            document.getElementById('commentVisibilityFilter').value = '';
+            filteredComments = [...allComments];
+            displayComments();
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Are you sure you want to delete this comment?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/comments/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (response.ok) {
+                    allComments = allComments.filter(c => c._id !== commentId);
+                    filteredComments = filteredComments.filter(c => c._id !== commentId);
+                    displayComments();
+                    updateCommentStats();
+                } else {
+                    alert('Failed to delete comment');
+                }
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                alert('Error deleting comment');
+            }
+        }
+
+        async function toggleCommentVisibility(commentId, currentVisibility) {
+            try {
+                const response = await fetch(`/api/admin/comments/${commentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ isPublic: !currentVisibility })
+                });
+
+                if (response.ok) {
+                    const commentIndex = allComments.findIndex(c => c._id === commentId);
+                    if (commentIndex !== -1) {
+                        allComments[commentIndex].isPublic = !currentVisibility;
+                        filteredComments = filteredComments.map(c => 
+                            c._id === commentId ? { ...c, isPublic: !currentVisibility } : c
+                        );
+                        displayComments();
+                        updateCommentStats();
+                    }
+                } else {
+                    alert('Failed to update comment visibility');
+                }
+            } catch (error) {
+                console.error('Error updating comment visibility:', error);
+                alert('Error updating comment visibility');
+            }
+        }
+
+        // Dashboard Overview Functions
+        let dashboardData = {};
+
+        async function loadDashboardData() {
+            try {
+                const token = localStorage.getItem('token');
+                
+                // Load dashboard statistics
+                const response = await fetch('/api/admin/dashboard-stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch dashboard stats: ${response.status}`);
+                }
+
+                dashboardData = await response.json();
+                
+                updateDashboardMetrics();
+                updateDashboardCharts();
+                updateActivityFeed();
+                updateEngagementStats();
+                updateClimateImpact();
+                updateLastUpdated();
+                
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+                // Show error message to user
+                showErrorMessage('Failed to load dashboard data. Please try refreshing.');
+            }
+        }
+
+        function updateDashboardMetrics() {
+            const { metrics } = dashboardData;
+            
+            if (!metrics) return;
+            
+            // Update metric values
+            document.getElementById('totalUsers').textContent = metrics.totalUsers;
+            document.getElementById('totalActivities').textContent = metrics.totalActivities;
+            document.getElementById('totalComments').textContent = metrics.totalComments;
+            document.getElementById('avgClimateScore').textContent = metrics.averageClimateScore;
+            
+            // Update growth percentages
+            document.getElementById('userGrowth').textContent = `+${metrics.userGrowth}%`;
+            document.getElementById('activityGrowth').textContent = `+${metrics.activityGrowth}%`;
+            document.getElementById('commentGrowth').textContent = `+${metrics.commentGrowth}%`;
+            document.getElementById('scoreGrowth').textContent = `+${metrics.scoreGrowth}%`;
+        }
+
+        function updateDashboardCharts() {
+            createUserActivityChart();
+            createActivityTypesChart();
+        }
+
+        function createUserActivityChart() {
+            const ctx = document.getElementById('userActivityChart').getContext('2d');
+            const { charts } = dashboardData;
+            
+            if (!charts || !charts.dailyActivities) return;
+            
+            // Prepare data for the last 7 days
+            const labels = [];
+            const data = [];
+            
+            // Create array for last 7 days
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                labels.push(date.toLocaleDateString('en-US', { weekday: 'short' }));
+                
+                // Find data for this date
+                const dayData = charts.dailyActivities.find(d => d.date === dateStr);
+                data.push(dayData ? dayData.count : 0);
+            }
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Activities',
+                        data: data,
+                        borderColor: '#5D5CDE',
+                        backgroundColor: 'rgba(93, 92, 222, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#5D5CDE',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createActivityTypesChart() {
+            const ctx = document.getElementById('activityTypesChart').getContext('2d');
+            const { charts } = dashboardData;
+            
+            if (!charts || !charts.activityTypes) return;
+            
+            const colors = ['#5D5CDE', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+            const labels = charts.activityTypes.map(type => type.label || 'Unknown');
+            const data = charts.activityTypes.map(type => type.count);
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateActivityFeed() {
+            const { recentActivities } = dashboardData;
+            const feedElement = document.getElementById('recentActivityFeed');
+            
+            if (!recentActivities) return;
+            
+            feedElement.innerHTML = recentActivities.map(activity => {
+                const timeAgo = getTimeAgo(new Date(activity.date));
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-avatar">${activity.user.name.charAt(0).toUpperCase()}</div>
+                        <div class="activity-details">
+                            <div class="activity-text">
+                                <strong>${activity.user.name}</strong> logged a <strong>${activity.type}</strong> activity: ${activity.name}
+                            </div>
+                            <div class="activity-time">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateEngagementStats() {
+            const { engagement } = dashboardData;
+            
+            if (!engagement) return;
+            
+            document.getElementById('dailyActiveUsers').textContent = engagement.dailyActiveUsers;
+            document.getElementById('weeklyActiveUsers').textContent = engagement.weeklyActiveUsers;
+            document.getElementById('monthlyActiveUsers').textContent = engagement.monthlyActiveUsers;
+            
+            // Update progress bars
+            const totalUsers = engagement.totalUsers || 1;
+            document.getElementById('dailyActiveProgress').style.width = `${(engagement.dailyActiveUsers / totalUsers) * 100}%`;
+            document.getElementById('weeklyActiveProgress').style.width = `${(engagement.weeklyActiveUsers / totalUsers) * 100}%`;
+            document.getElementById('monthlyActiveProgress').style.width = `${(engagement.monthlyActiveUsers / totalUsers) * 100}%`;
+        }
+
+        function updateClimateImpact() {
+            const { climateImpact } = dashboardData;
+            
+            if (!climateImpact) return;
+            
+            document.getElementById('carbonSaved').textContent = `${climateImpact.carbonSaved} kg`;
+            document.getElementById('stepsWalked').textContent = climateImpact.stepsWalked.toLocaleString();
+            document.getElementById('distanceCycled').textContent = `${climateImpact.distanceCycled} km`;
+            document.getElementById('ecoActivities').textContent = climateImpact.ecoActivities;
+        }
+
+        function updateLastUpdated() {
+            const now = new Date();
+            document.getElementById('lastUpdated').textContent = now.toLocaleTimeString();
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        }
+
+        function showErrorMessage(message) {
+            // Create error notification
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-notification';
+            errorDiv.innerHTML = `
+                <div class="error-content">
+                    <span class="error-icon">⚠️</span>
+                    <span class="error-text">${message}</span>
+                    <button class="error-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            document.body.appendChild(errorDiv);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (errorDiv.parentElement) {
+                    errorDiv.remove();
+                }
+            }, 5000);
+        }
+
+        function refreshDashboard() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="refresh-icon">🔄</span> Refreshing...';
+            
+            loadDashboardData().then(() => {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = '<span class="refresh-icon">🔄</span> Refresh Data';
+            });
+        }
+
+        function updateActivityChart() {
+            // This function can be expanded to update the chart based on selected period
+            createUserActivityChart();
+        }
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.dashboard-nav button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-target="#${sectionId}"]`).classList.add('active');
+            
+            // Load data for the section
+            if (sectionId === 'activities-content') {
+                loadActivities();
+            } else if (sectionId === 'comments-content') {
+                loadComments();
+            }
+        }
+
+        // Load dashboard data when dashboard section is shown
+        document.querySelector('button[data-target="#dashboard-content"]').addEventListener('click', loadDashboardData);
+
+        // Add event listeners for new navigation items
+        document.querySelector('button[data-target="#activities-content"]').addEventListener('click', loadActivities);
+        document.querySelector('button[data-target="#comments-content"]').addEventListener('click', loadComments);
+
+        // UI Helper Functions
+        function toggleArticleForm() {
+            const form = document.getElementById('add-article-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function toggleInitiativeForm() {
+            const form = document.getElementById('add-initiative-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function showAddUserModal() {
+            alert('Add User Modal - To be implemented');
+        }
+
+        function showAddArticleModal() {
+            alert('Add Article Modal - To be implemented');
+        }
+
+        function showAddInitiativeModal() {
+            alert('Add Initiative Modal - To be implemented');
+        }
+
+        function exportUsers() {
+            alert('Export Users - To be implemented');
+        }
+
+        // Update user table display
+        function updateUserTable() {
+            const users = allUsers || [];
+            const userTableBody = document.querySelector('#userTable tbody');
+            
+            // Update stats
+            document.getElementById('usersTotal').textContent = users.length;
+            document.getElementById('usersAdmin').textContent = users.filter(u => u.role === 'admin').length;
+            document.getElementById('usersActive').textContent = Math.floor(users.length * 0.7);
+            document.getElementById('usersNew').textContent = Math.floor(users.length * 0.2);
+            
+            // Update table
+            userTableBody.innerHTML = users.map(user => {
+                const joinDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+                const status = Math.random() > 0.3 ? 'Active' : 'Inactive';
+                const statusClass = status === 'Active' ? 'status-active' : 'status-inactive';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="user-info">
+                                <div class="user-avatar">${user.name.charAt(0).toUpperCase()}</div>
+                                <div class="user-details">
+                                    <div class="user-name">${user.name}</div>
+                                    <div class="user-id">#${user._id.slice(-6)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td><span class="role-badge ${user.role}">${user.role}</span></td>
+                        <td>${joinDate}</td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn-small edit" onclick="editUser('${user._id}')">Edit</button>
+                                <button class="action-btn-small delete" onclick="deleteUser('${user._id}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Update articles table display
+        function updateArticleTable() {
+            const articles = allArticles || [];
+            const articleTableBody = document.querySelector('#articlesTable tbody');
+            
+            // Update stats
+            document.getElementById('articlesTotal').textContent = articles.length;
+            document.getElementById('articlesViews').textContent = Math.floor(articles.length * 150);
+            document.getElementById('articlesThisMonth').textContent = Math.floor(articles.length * 0.3);
+            document.getElementById('articlesFeatured').textContent = Math.floor(articles.length * 0.1);
+            
+            // Update table
+            articleTableBody.innerHTML = articles.map(article => {
+                const createdDate = article.createdAt ? new Date(article.createdAt).toLocaleDateString() : 'N/A';
+                const preview = article.content ? article.content.substring(0, 100) + '...' : 'No content';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="article-title">${article.title}</div>
+                        </td>
+                        <td>
+                            <div class="article-preview">${preview}</div>
+                        </td>
+                        <td>${createdDate}</td>
+                        <td><span class="status-badge status-active">Published</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn-small edit" onclick="editArticle('${article._id}')">Edit</button>
+                                <button class="action-btn-small delete" onclick="deleteArticle('${article._id}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Update initiatives table display
+        function updateInitiativeTable() {
+            const initiatives = allInitiatives || [];
+            const initiativeTableBody = document.querySelector('#initiativesTable tbody');
+            
+            // Update stats
+            const now = new Date();
+            const upcoming = initiatives.filter(i => new Date(i.date) > now).length;
+            const completed = initiatives.filter(i => new Date(i.date) < now).length;
+            
+            document.getElementById('initiativesTotal').textContent = initiatives.length;
+            document.getElementById('initiativesUpcoming').textContent = upcoming;
+            document.getElementById('initiativesCompleted').textContent = completed;
+            document.getElementById('initiativesParticipants').textContent = Math.floor(initiatives.length * 25);
+            
+            // Update table
+            initiativeTableBody.innerHTML = initiatives.map(initiative => {
+                const eventDate = initiative.date ? new Date(initiative.date).toLocaleDateString() : 'TBD';
+                const eventTime = initiative.time || 'TBD';
+                const isUpcoming = new Date(initiative.date) > now;
+                const status = isUpcoming ? 'Upcoming' : 'Completed';
+                const statusClass = isUpcoming ? 'status-upcoming' : 'status-completed';
+                
+                return `
+                    <tr>
+                        <td>
+                            <div class="initiative-title">${initiative.title}</div>
+                        </td>
+                        <td>
+                            <div class="datetime-info">
+                                <div class="date">${eventDate}</div>
+                                <div class="time">${eventTime}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="initiative-description">${initiative.description}</div>
+                        </td>
+                        <td><span class="status-badge ${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="action-btn-small edit" onclick="editInitiative('${initiative._id}')">Edit</button>
+                                <button class="action-btn-small delete" onclick="deleteInitiative('${initiative._id}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Store data globally for table updates
+        let allUsers = [];
+        let allArticles = [];
+        let allInitiatives = [];
+
+        // Override existing load functions to update tables
+        const originalLoadUsers = loadUsers;
+        loadUsers = async function() {
+            await originalLoadUsers();
+            allUsers = Array.from(document.querySelectorAll('#userTable tbody tr')).map(row => {
+                const cells = row.querySelectorAll('td');
+                return {
+                    _id: cells[0].textContent,
+                    name: cells[1].textContent,
+                    email: cells[2].textContent,
+                    role: cells[3].textContent,
+                    createdAt: new Date()
+                };
+            });
+            updateUserTable();
+        };
+
+        // Load dashboard data on page load
+        document.addEventListener('DOMContentLoaded', loadDashboardData);
+    </script>
+</body>
+
+</html>

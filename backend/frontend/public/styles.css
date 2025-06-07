@@ -1,0 +1,68 @@
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+header {
+    background-color: #71e4ec;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px; /* Adjust as needed */
+    padding-left: 15px; /* Adds spacing from the left */
+}
+
+nav {
+    display: flex;
+    gap: 15px;
+    padding-right: 15px; /* Adds spacing from the right */
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 24px; /* Match font size with header text */
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    padding: 20px;
+    align-items: center;
+}
+h2{
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#initiatives-list {
+    background: #f4f4f4;
+    padding: 1px;
+    text-align: center;
+    font-size: larger;    
+}
+footer {
+    background-color: #71e4ec;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+#button{
+    font-family: Arial, sans-serif;
+    background-color: #71e4ec;
+    padding: 10px;
+    border: 1px solid white;
+    border-radius: 20px;
+}

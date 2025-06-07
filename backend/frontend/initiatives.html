@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Initiatives - ClimAware Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Light theme colors */
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --secondary-color: #3b82f6;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --bg-overlay: rgba(255, 255, 255, 0.95);
+            
+            --border-color: #e5e7eb;
+            --border-light: #f3f4f6;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            --gradient-primary: linear-gradient(135deg, #10b981, #059669);
+            --gradient-secondary: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --gradient-hero: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+        }
+
+        [data-theme="dark"] {
+            /* Dark theme colors */
+            --primary-color: #34d399;
+            --primary-hover: #10b981;
+            --secondary-color: #60a5fa;
+            --accent-color: #fbbf24;
+            
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-tertiary: #374151;
+            --bg-overlay: rgba(17, 24, 39, 0.95);
+            
+            --border-color: #374151;
+            --border-light: #4b5563;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            
+            --gradient-primary: linear-gradient(135deg, #34d399, #10b981);
+            --gradient-secondary: linear-gradient(135deg, #60a5fa, #3b82f6);
+            --gradient-hero: linear-gradient(135deg, #34d399 0%, #60a5fa 50%, #a78bfa 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            transition: all 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+            transform: translateY(-1px);
+        }
+
+        nav a.active {
+            color: var(--primary-color);
+            background: var(--bg-secondary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            width: 50px;
+            height: 28px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .theme-toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+            left: 2px;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        .login-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .mobile-nav {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .mobile-nav.active {
+            display: block;
+        }
+
+        .mobile-nav nav {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mobile-nav nav a {
+            padding: 1rem;
+            text-align: center;
+            border-radius: 12px;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: var(--gradient-hero);
+            padding: 8rem 0 4rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .page-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        main {
+            padding: 4rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Filters Section */
+        .filters-section {
+            background: var(--bg-secondary);
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+            border-radius: 20px;
+        }
+
+        .filters-container {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .search-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        /* Initiatives Grid */
+        .initiatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .initiative-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .initiative-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .initiative-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-color);
+        }
+
+        .initiative-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .initiative-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .initiative-info {
+            flex: 1;
+        }
+
+        .initiative-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .initiative-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .meta-item i {
+            color: var(--primary-color);
+        }
+
+        .initiative-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .initiative-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .initiative-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .join-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .join-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .learn-more-btn {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .learn-more-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 0;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-description {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--text-primary);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+            text-align: center;
+        }
+
+        .footer-bottom p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .header-container {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .initiatives-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+
+            .page-stats {
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .initiatives-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .initiative-actions {
+                flex-direction: column;
+            }
+
+            .page-stats {
+                gap: 1rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                padding: 0.75rem 1rem;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .initiative-card {
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                padding: 6rem 0 3rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .animate-fade-in:nth-child(1) { animation-delay: 0.1s; }
+        .animate-fade-in:nth-child(2) { animation-delay: 0.2s; }
+        .animate-fade-in:nth-child(3) { animation-delay: 0.3s; }
+        .animate-fade-in:nth-child(4) { animation-delay: 0.4s; }
+        .animate-fade-in:nth-child(5) { animation-delay: 0.5s; }
+        .animate-fade-in:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <a href="public/index.html" class="logo">
+                <div class="logo-icon">🌍</div>
+                <div class="logo-text">ClimAware</div>
+            </a>
+            
+            <div class="nav-container">
+                <nav>
+                    <a href="public/index.html">Home</a>
+                    <a href="initiatives.html" class="active">Initiatives</a>
+                    <a href="articles.html">Articles</a>
+                    <a href="weather.html">Weather</a>
+                </nav>
+                
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="theme-toggle-slider">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    <a href="login.html" class="login-btn" id="loginBtn">
+                        <i class="fas fa-user"></i>
+                        Login
+                    </a>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mobile-nav" id="mobileNav">
+            <nav>
+                <a href="public/index.html">Home</a>
+                <a href="initiatives.html" class="active">Initiatives</a>
+                <a href="articles.html">Articles</a>
+                <a href="weather.html">Weather</a>
+                <a href="login.html">Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="page-header-content">
+            <h1 class="page-title">Community Initiatives</h1>
+            <p class="page-subtitle">
+                Join hands with climate champions worldwide. Discover local environmental projects, 
+                participate in community action, and make a real difference for our planet.
+            </p>
+            <div class="page-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalInitiatives">0</span>
+                    <span class="stat-label">Active Initiatives</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalParticipants">0</span>
+                    <span class="stat-label">Participants</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="impactMade">0</span>
+                    <span class="stat-label">Projects Completed</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="categoryFilter">Category:</label>
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">All Categories</option>
+                            <option value="reforestation">Reforestation</option>
+                            <option value="cleanup">Cleanup</option>
+                            <option value="education">Education</option>
+                            <option value="renewable">Renewable Energy</option>
+                            <option value="conservation">Conservation</option>
+                            <option value="recycling">Recycling</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="statusFilter">Status:</label>
+                        <select id="statusFilter" class="filter-select">
+                            <option value="">All Status</option>
+                            <option value="upcoming">Upcoming</option>
+                            <option value="ongoing">Ongoing</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <input type="text" id="searchBox" class="search-box" placeholder="Search initiatives...">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Initiatives Grid -->
+            <section class="initiatives-section">
+                <div id="initiatives-list" class="initiatives-grid">
+                    <!-- Loading state -->
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>ClimAware Portal</h4>
+                    <p>Empowering individuals and communities to take meaningful climate action through education, collaboration, and innovation.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="initiatives.html">Initiatives</a>
+                        <a href="articles.html">Articles</a>
+                        <a href="weather.html">Weather</a>
+                        <a href="dashboard.html">Dashboard</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Get Involved</h4>
+                    <div class="footer-links">
+                        <a href="#">Start Initiative</a>
+                        <a href="#">Volunteer</a>
+                        <a href="#">Donate</a>
+                        <a href="#">Partner With Us</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="footer-links">
+                        <a href="#">Newsletter</a>
+                        <a href="#">Social Media</a>
+                        <a href="#">Contact Us</a>
+                        <a href="#">Community Forum</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 ClimAware Portal. All rights reserved. Building a sustainable future together.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let allInitiatives = [];
+        let filteredInitiatives = [];
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.querySelector('.theme-toggle-slider i');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-moon';
+            } else {
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn i');
+            
+            mobileNav.classList.toggle('active');
+            
+            if (mobileNav.classList.contains('active')) {
+                menuBtn.className = 'fas fa-times';
+            } else {
+                menuBtn.className = 'fas fa-bars';
+            }
+        }
+
+        // Check Authentication Status
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (token) {
+                loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> Account';
+                loginBtn.href = 'dashboard.html';
+            } else {
+                loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
+                loginBtn.href = 'login.html';
+            }
+        }
+
+        // Load Initiatives
+        async function loadInitiatives() {
+            try {
+                const response = await fetch('/api/initiatives');
+                const initiatives = await response.json();
+                
+                allInitiatives = Array.isArray(initiatives) ? initiatives : [];
+                filteredInitiatives = [...allInitiatives];
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Render initiatives
+                renderInitiatives();
+                
+                console.log('✅ Initiatives loaded successfully:', allInitiatives.length);
+                
+            } catch (error) {
+                console.error('Error fetching initiatives:', error);
+                showErrorState();
+            }
+        }
+
+        // Update Statistics
+        function updateStatistics() {
+            const totalInitiatives = allInitiatives.length;
+            const totalParticipants = allInitiatives.reduce((sum, init) => sum + (init.participants || 0), 0);
+            const completedProjects = allInitiatives.filter(init => init.status === 'completed').length;
+            
+            animateCounter('totalInitiatives', totalInitiatives);
+            animateCounter('totalParticipants', totalParticipants || totalInitiatives * 15); // Fallback calculation
+            animateCounter('impactMade', completedProjects || Math.floor(totalInitiatives * 0.3));
+        }
+
+        // Animate Counter
+        function animateCounter(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            const startValue = 0;
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function updateCounter(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                const currentValue = Math.floor(startValue + (targetValue - startValue) * easeOutQuart);
+                
+                element.textContent = currentValue.toLocaleString();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(updateCounter);
+                }
+            }
+            
+            requestAnimationFrame(updateCounter);
+        }
+
+        // Render Initiatives
+        function renderInitiatives() {
+            const container = document.getElementById('initiatives-list');
+            
+            if (filteredInitiatives.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            container.innerHTML = '';
+            
+            filteredInitiatives.forEach((initiative, index) => {
+                const initiativeCard = createInitiativeCard(initiative);
+                initiativeCard.classList.add('animate-fade-in');
+                initiativeCard.style.animationDelay = `${index * 0.1}s`;
+                container.appendChild(initiativeCard);
+            });
+        }
+
+        // Create Initiative Card
+        function createInitiativeCard(initiative) {
+            const card = document.createElement('div');
+            card.className = 'initiative-card';
+            
+            // Determine initiative icon based on category
+            const iconMap = {
+                'reforestation': 'fa-tree',
+                'cleanup': 'fa-broom',
+                'education': 'fa-graduation-cap',
+                'renewable': 'fa-solar-panel',
+                'conservation': 'fa-leaf',
+                'recycling': 'fa-recycle'
+            };
+            
+            const icon = iconMap[initiative.category] || 'fa-seedling';
+            const status = initiative.status || 'upcoming';
+            const participantCount = initiative.participantCount || initiative.participants?.length || 0;
+            const maxParticipants = initiative.maxParticipants || 100;
+            const category = initiative.category || 'environmental';
+            
+            // Format date
+            const date = new Date(initiative.date);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Check if user has joined (you'd need to implement this check)
+            const token = localStorage.getItem('token');
+            const userHasJoined = false; // This would be determined by checking user's joined initiatives
+            
+            // Determine button state
+            let joinButtonHtml;
+            if (status === 'completed') {
+                joinButtonHtml = `
+                    <a href="#" class="join-btn" style="background: var(--text-muted); cursor: not-allowed;">
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </a>
+                `;
+            } else if (participantCount >= maxParticipants) {
+                joinButtonHtml = `
+                    <a href="#" class="join-btn" style="background: var(--error-color); cursor: not-allowed;">
+                        <i class="fas fa-users"></i>
+                        Full
+                    </a>
+                `;
+            } else if (userHasJoined) {
+                joinButtonHtml = `
+                    <a href="#" class="join-btn" onclick="leaveInitiative('${initiative._id || initiative.id}')" style="background: var(--success-color);">
+                        <i class="fas fa-check"></i>
+                        Joined
+                    </a>
+                `;
+            } else {
+                joinButtonHtml = `
+                    <a href="#" class="join-btn" onclick="joinInitiative('${initiative._id || initiative.id}')">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        Join Initiative
+                    </a>
+                `;
+            }
+            
+            // Location display
+            const locationText = initiative.location?.city ? 
+                `${initiative.location.city}, ${initiative.location.state || initiative.location.country}` : 
+                'Location TBD';
+            
+            card.innerHTML = `
+                <div class="initiative-header">
+                    <div class="initiative-icon">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="initiative-info">
+                        <h3 class="initiative-title">${initiative.title}</h3>
+                        <div class="initiative-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>${initiative.time || '10:00 AM'}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>${participantCount}/${maxParticipants} participants</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${locationText}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="initiative-description">${initiative.description}</p>
+                
+                <div class="initiative-tags">
+                    <span class="tag">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                    <span class="tag">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                    ${initiative.featured ? '<span class="tag" style="background: var(--accent-color); color: white;">Featured</span>' : ''}
+                </div>
+                
+                <div class="initiative-actions">
+                    ${joinButtonHtml}
+                    <a href="#" class="learn-more-btn" onclick="showInitiativeDetails('${initiative._id || initiative.id}')">
+                        <i class="fas fa-info-circle"></i>
+                        Learn More
+                    </a>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Filter Initiatives
+        function filterInitiatives() {
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            
+            filteredInitiatives = allInitiatives.filter(initiative => {
+                const matchesCategory = !categoryFilter || initiative.category === categoryFilter;
+                const matchesStatus = !statusFilter || initiative.status === statusFilter;
+                const matchesSearch = !searchTerm || 
+                    initiative.title.toLowerCase().includes(searchTerm) ||
+                    initiative.description.toLowerCase().includes(searchTerm);
+                
+                return matchesCategory && matchesStatus && matchesSearch;
+            });
+            
+            renderInitiatives();
+        }
+
+        // Join Initiative
+        async function joinInitiative(initiativeId) {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showNotification('Please login to join initiatives', 'info');
+                setTimeout(() => {
+                    localStorage.setItem('redirectAfterLogin', 'initiatives.html');
+                    window.location.href = 'login.html';
+                }, 2000);
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/initiatives/${initiativeId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Successfully joined the initiative!', 'success');
+                    
+                    // Update the button to show joined status
+                    const joinBtn = document.querySelector(`[onclick="joinInitiative('${initiativeId}')"]`);
+                    if (joinBtn) {
+                        joinBtn.innerHTML = '<i class="fas fa-check"></i> Joined';
+                        joinBtn.style.background = 'var(--success-color)';
+                        joinBtn.onclick = () => leaveInitiative(initiativeId);
+                        joinBtn.setAttribute('onclick', `leaveInitiative('${initiativeId}')`);
+                    }
+                    
+                    // Reload initiatives to show updated participant count
+                    setTimeout(() => {
+                        loadInitiatives();
+                    }, 1000);
+                } else {
+                    showNotification(data.error || 'Failed to join initiative', 'error');
+                }
+            } catch (error) {
+                console.error('Error joining initiative:', error);
+                showNotification('Failed to join initiative. Please try again.', 'error');
+            }
+        }
+
+        // Leave Initiative
+        async function leaveInitiative(initiativeId) {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/initiatives/${initiativeId}/leave`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Successfully left the initiative', 'success');
+                    
+                    // Update the button to show join status
+                    const leaveBtn = document.querySelector(`[onclick="leaveInitiative('${initiativeId}')"]`);
+                    if (leaveBtn) {
+                        leaveBtn.innerHTML = '<i class="fas fa-hand-holding-heart"></i> Join Initiative';
+                        leaveBtn.style.background = 'var(--gradient-primary)';
+                        leaveBtn.onclick = () => joinInitiative(initiativeId);
+                        leaveBtn.setAttribute('onclick', `joinInitiative('${initiativeId}')`);
+                    }
+                    
+                    // Reload initiatives to show updated participant count
+                    setTimeout(() => {
+                        loadInitiatives();
+                    }, 1000);
+                } else {
+                    showNotification(data.error || 'Failed to leave initiative', 'error');
+                }
+            } catch (error) {
+                console.error('Error leaving initiative:', error);
+                showNotification('Failed to leave initiative. Please try again.', 'error');
+            }
+        }
+
+        // Show Initiative Details
+        function showInitiativeDetails(initiativeId) {
+            const initiative = allInitiatives.find(init => (init._id || init.id) === initiativeId);
+            if (initiative) {
+                // Here you could open a modal or navigate to a details page
+                showNotification(`More details about "${initiative.title}" coming soon!`, 'info');
+            }
+        }
+
+        // Show Empty State
+        function showEmptyState() {
+            const container = document.getElementById('initiatives-list');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🌱</div>
+                    <h3 class="empty-title">No Initiatives Found</h3>
+                    <p class="empty-description">
+                        No initiatives match your current filters. Try adjusting your search criteria or check back later for new opportunities.
+                    </p>
+                    <button class="join-btn" onclick="clearFilters()">
+                        <i class="fas fa-refresh"></i>
+                        Clear Filters
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show Error State
+        function showErrorState() {
+            const container = document.getElementById('initiatives-list');
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <h3 class="empty-title">Unable to Load Initiatives</h3>
+                    <p class="empty-description">
+                        We're having trouble loading the initiatives. Please check your connection and try again.
+                    </p>
+                    <button class="join-btn" onclick="loadInitiatives()">
+                        <i class="fas fa-refresh"></i>
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Clear Filters
+        function clearFilters() {
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('searchBox').value = '';
+            filterInitiatives();
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 1000;
+                background: var(--bg-primary);
+                border: 1px solid var(--border-color);
+                border-radius: 12px;
+                padding: 1rem;
+                box-shadow: var(--shadow-lg);
+                animation: slideInRight 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            checkAuthStatus();
+            loadInitiatives();
+            
+            // Filter event listeners
+            document.getElementById('categoryFilter').addEventListener('change', filterInitiatives);
+            document.getElementById('statusFilter').addEventListener('change', filterInitiatives);
+            document.getElementById('searchBox').addEventListener('input', filterInitiatives);
+        });
+
+        // Handle theme preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+                updateThemeIcon();
+            }
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (!mobileNav.contains(e.target) && !menuBtn.contains(e.target)) {
+                mobileNav.classList.remove('active');
+                document.querySelector('.mobile-menu-btn i').className = 'fas fa-bars';
+            }
+        });
+
+        // Add notification styles
+        const notificationStyles = document.createElement('style');
+        notificationStyles.textContent = `
+            @keyframes slideInRight {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                color: var(--text-primary);
+            }
+            
+            .notification-content button {
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 1.2rem;
+                margin-left: auto;
+            }
+        `;
+        document.head.appendChild(notificationStyles);
+    </script>
+</body>
+</html>

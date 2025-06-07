@@ -1,0 +1,2195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimAware Portal - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Climate-focused Brand Colors */
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --primary-light: #d1fae5;
+            --secondary-color: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-hero: linear-gradient(135deg, #059669 0%, #0ea5e9 50%, #8b5cf6 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing */
+            --container-padding: 1.5rem;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --border-light: #475569;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-gradient);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+        }
+
+        .theme-toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0.25rem;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .user-dropdown .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--bg-secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem var(--container-padding);
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            opacity: 0.1;
+            transform: translate(50%, -50%);
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Weather Predictions Section */
+        .predictions-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .prediction-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .prediction-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .prediction-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .prediction-location {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .prediction-date {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .prediction-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .prediction-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .action-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .action-content {
+            flex: 1;
+        }
+
+        .action-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .action-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            background: var(--primary-light);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state p {
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state .action-btn {
+            display: inline-flex;
+            margin: 0 auto;
+        }
+
+        /* Error States */
+        .error-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .error-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--error-color);
+            opacity: 0.7;
+        }
+
+        .error-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .error-state p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Climate Stats */
+        .climate-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .climate-stat-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .climate-stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-header i {
+            color: var(--primary-color);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-trend {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .stat-trend.rising {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+        }
+
+        .stat-trend.decreasing {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .stat-trend.critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+        }
+
+        .stat-trend.increasing {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error-color);
+        }
+
+        .climate-summary {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .climate-summary h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .climate-summary p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Activity Tracker */
+        .activity-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-stat {
+            text-align: center;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .activity-breakdown {
+            margin-bottom: 1.5rem;
+        }
+
+        .activity-breakdown h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .breakdown-item i {
+            color: var(--primary-color);
+        }
+
+        .recent-activities h4 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .recent-activity-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .recent-activity-item i {
+            color: var(--primary-color);
+            width: 20px;
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .no-activity {
+            text-align: center;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 1rem;
+        }
+
+        /* Weather Forecast */
+        .weather-forecast-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .forecast-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .forecast-item:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        .forecast-location {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .forecast-location i {
+            color: var(--primary-color);
+        }
+
+        .forecast-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .forecast-temp {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .forecast-condition {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .forecast-humidity {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .forecast-humidity i {
+            color: var(--secondary-color);
+        }
+
+        .forecast-footer {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .forecast-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .forecast-link:hover {
+            color: var(--primary-hover);
+        }
+
+        /* Carbon Calculator Result */
+        .carbon-result {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .result-header h3 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .result-value {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .result-comparison {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+        }
+
+        .result-tips h4 {
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .result-tips ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .result-tips li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .result-tips li:last-child {
+            border-bottom: none;
+        }
+
+        .result-tips li::before {
+            content: '💡';
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .welcome-title {
+                font-size: 2rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .prediction-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            :root {
+                --container-padding: 1rem;
+            }
+            
+            .welcome-section {
+                padding: 1.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 1.75rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .loading i {
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="public/index.html" class="logo">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">ClimAware</div>
+            </a>
+            
+            <div class="nav-container">
+                <nav class="nav">
+                    <a href="public/index.html">Home</a>
+                    <a href="initiatives.html">Initiatives</a>
+                    <a href="articles.html">Articles</a>
+                    <a href="weather.html">Weather</a>
+                    <a href="#" class="active">Dashboard</a>
+                </nav>
+                
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="theme-toggle-slider">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-btn" onclick="toggleUserMenu()">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <span id="userName">User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#" onclick="showProfile()">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </a>
+                            <a href="#" onclick="showSettings()">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </a>
+                            <div class="divider"></div>
+                            <a href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-section fade-in">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome back, <span id="welcomeName">User</span>!</h1>
+                <p class="welcome-subtitle">Track your climate impact and explore new ways to make a difference.</p>
+                
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <div class="stat-value" id="pageVisits">0</div>
+                        <div class="stat-label">Page Visits</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-value" id="initiativesJoined">0</div>
+                        <div class="stat-label">Initiatives Joined</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-value" id="daysActive">0</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <div class="stat-value" id="carbonSaved">0</div>
+                        <div class="stat-label">CO₂ Saved (kg)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Tanzania Climate Stats -->
+            <div class="dashboard-card fade-in">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        Tanzania Climate Statistics
+                    </h2>
+                </div>
+                
+                <div id="climateStatsContainer">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading climate data...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="dashboard-card fade-in">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        Quick Actions
+                    </h2>
+                </div>
+                
+                <div class="quick-actions">
+                    <a href="weather.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Weather Map</div>
+                            <div class="action-description">Real-time Tanzania weather</div>
+                        </div>
+                    </a>
+                    
+                    <a href="initiatives.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Join Initiative</div>
+                            <div class="action-description">Climate action projects</div>
+                        </div>
+                    </a>
+                    
+                    <a href="articles.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Climate Articles</div>
+                            <div class="action-description">Latest climate insights</div>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="action-btn" onclick="trackActivity('carbon_calculator')">
+                        <div class="action-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Carbon Calculator</div>
+                            <div class="action-description">Calculate your footprint</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Tracker & Weather Forecast -->
+        <div class="dashboard-grid">
+            <!-- Real Activity Tracker -->
+            <div class="dashboard-card fade-in">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        Your Activity Tracker
+                    </h2>
+                </div>
+                
+                <div id="activityTrackerContainer">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading your activity...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weather Forecast (Real API Data) -->
+            <div class="dashboard-card fade-in">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+                        Tanzania Weather Forecast
+                    </h2>
+                </div>
+                
+                <div id="weatherForecastContainer">
+                    <div class="loading">
+                        <i class="fas fa-spinner"></i>
+                        Loading weather forecast...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Carbon Calculator Modal -->
+    <div class="modal-overlay" id="carbonModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Carbon Footprint Calculator</h2>
+                <button class="modal-close" onclick="closeCarbonModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="carbonForm">
+                <div class="form-group">
+                    <label class="form-label" for="transportType">
+                        <i class="fas fa-car"></i> Transportation Type
+                    </label>
+                    <select id="transportType" class="form-select" required>
+                        <option value="">Select transportation</option>
+                        <option value="car">Car (Petrol)</option>
+                        <option value="motorcycle">Motorcycle</option>
+                        <option value="bus">Public Bus</option>
+                        <option value="walking">Walking</option>
+                        <option value="bicycle">Bicycle</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="distance">
+                            <i class="fas fa-route"></i> Distance (km/day)
+                        </label>
+                        <input type="number" id="distance" class="form-input" placeholder="10" min="0" max="500" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="days">
+                            <i class="fas fa-calendar"></i> Days per week
+                        </label>
+                        <input type="number" id="days" class="form-input" placeholder="5" min="1" max="7" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="energyUsage">
+                        <i class="fas fa-bolt"></i> Daily Energy Usage (kWh)
+                    </label>
+                    <input type="number" id="energyUsage" class="form-input" placeholder="15" min="0" max="100" required>
+                </div>
+                
+                <button type="submit" class="auth-button">
+                    <i class="fas fa-calculator"></i> Calculate Carbon Footprint
+                </button>
+            </form>
+            
+            <div id="carbonResult" class="carbon-result" style="display: none;">
+                <div class="result-header">
+                    <h3>Your Carbon Footprint</h3>
+                </div>
+                <div class="result-content">
+                    <div class="result-value">
+                        <span id="carbonValue">0</span> kg CO₂/month
+                    </div>
+                    <div class="result-comparison">
+                        <p id="carbonComparison"></p>
+                    </div>
+                    <div class="result-tips">
+                        <h4>💡 Tips to Reduce:</h4>
+                        <ul id="carbonTips"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // Global variables
+        let currentUser = null;
+        let userPredictions = [];
+        let userActivity = [];
+
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (prefersDark) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.querySelector('.theme-toggle-slider i');
+            
+            if (theme === 'dark') {
+                icon.className = 'fas fa-moon';
+            } else {
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // User Menu
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const userMenu = document.querySelector('.user-menu');
+            if (!userMenu.contains(e.target)) {
+                document.getElementById('userDropdown').classList.remove('active');
+            }
+        });
+
+        // Authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            try {
+                const decoded = jwt_decode(token);
+                const currentTime = Date.now() / 1000;
+                
+                if (decoded.exp <= currentTime) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = 'login.html';
+                    return false;
+                }
+                
+                currentUser = JSON.parse(user);
+                updateUserInfo();
+                return true;
+            } catch (error) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+
+        function updateUserInfo() {
+            if (!currentUser) return;
+            
+            const userName = document.getElementById('userName');
+            const welcomeName = document.getElementById('welcomeName');
+            const userAvatar = document.getElementById('userAvatar');
+            
+            userName.textContent = currentUser.name;
+            welcomeName.textContent = currentUser.name;
+            userAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Load User Data
+        async function loadUserData() {
+            try {
+                await Promise.all([
+                    loadClimateStats(),
+                    loadActivityTracker(),
+                    loadWeatherForecast(),
+                    loadUserStats()
+                ]);
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Load Tanzania Climate Statistics
+        async function loadClimateStats() {
+            try {
+                // Real Tanzania climate data
+                const climateData = {
+                    temperature: {
+                        current: 26.5,
+                        trend: '+0.8°C since 1990',
+                        status: 'rising'
+                    },
+                    rainfall: {
+                        current: 1200,
+                        trend: '-15% since 2000',
+                        status: 'decreasing'
+                    },
+                    deforestation: {
+                        current: 372000,
+                        trend: '-1.2% annually',
+                        status: 'critical'
+                    },
+                    co2: {
+                        current: 0.3,
+                        trend: '+2.1% annually',
+                        status: 'increasing'
+                    }
+                };
+                
+                displayClimateStats(climateData);
+            } catch (error) {
+                console.error('Error loading climate stats:', error);
+                displayClimateStatsError();
+            }
+        }
+
+        function displayClimateStats(data) {
+            const container = document.getElementById('climateStatsContainer');
+            container.innerHTML = `
+                <div class="climate-stats-grid">
+                    <div class="climate-stat-item">
+                        <div class="stat-header">
+                            <i class="fas fa-thermometer-half"></i>
+                            <span>Average Temperature</span>
+                        </div>
+                        <div class="stat-value">${data.temperature.current}°C</div>
+                        <div class="stat-trend ${data.temperature.status}">${data.temperature.trend}</div>
+                    </div>
+                    
+                    <div class="climate-stat-item">
+                        <div class="stat-header">
+                            <i class="fas fa-cloud-rain"></i>
+                            <span>Annual Rainfall</span>
+                        </div>
+                        <div class="stat-value">${data.rainfall.current}mm</div>
+                        <div class="stat-trend ${data.rainfall.status}">${data.rainfall.trend}</div>
+                    </div>
+                    
+                    <div class="climate-stat-item">
+                        <div class="stat-header">
+                            <i class="fas fa-tree"></i>
+                            <span>Forest Cover</span>
+                        </div>
+                        <div class="stat-value">${data.deforestation.current.toLocaleString()} km²</div>
+                        <div class="stat-trend ${data.deforestation.status}">${data.deforestation.trend}</div>
+                    </div>
+                    
+                    <div class="climate-stat-item">
+                        <div class="stat-header">
+                            <i class="fas fa-smog"></i>
+                            <span>CO₂ Emissions</span>
+                        </div>
+                        <div class="stat-value">${data.co2.current} tons/capita</div>
+                        <div class="stat-trend ${data.co2.status}">${data.co2.trend}</div>
+                    </div>
+                </div>
+                
+                <div class="climate-summary">
+                    <h4>🌍 Climate Impact Summary</h4>
+                    <p>Tanzania is experiencing significant climate changes with rising temperatures and decreasing rainfall patterns. Forest conservation and renewable energy adoption are critical for sustainable development.</p>
+                </div>
+            `;
+        }
+
+        // Load Real Activity Tracker
+        async function loadActivityTracker() {
+            try {
+                // Get user's actual activity from localStorage
+                const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
+                const activityStats = calculateActivityStats(userActivity);
+                
+                displayActivityTracker(activityStats, userActivity);
+            } catch (error) {
+                console.error('Error loading activity tracker:', error);
+                displayActivityTrackerError();
+            }
+        }
+
+        function calculateActivityStats(activities) {
+            const today = new Date();
+            const thisWeek = activities.filter(a => {
+                const activityDate = new Date(a.timestamp);
+                const daysDiff = (today - activityDate) / (1000 * 60 * 60 * 24);
+                return daysDiff <= 7;
+            });
+            
+            const thisMonth = activities.filter(a => {
+                const activityDate = new Date(a.timestamp);
+                return activityDate.getMonth() === today.getMonth() && 
+                       activityDate.getFullYear() === today.getFullYear();
+            });
+
+            return {
+                totalActivities: activities.length,
+                thisWeek: thisWeek.length,
+                thisMonth: thisMonth.length,
+                categories: {
+                    weather: activities.filter(a => a.category === 'weather').length,
+                    initiatives: activities.filter(a => a.category === 'initiatives').length,
+                    articles: activities.filter(a => a.category === 'articles').length,
+                    calculator: activities.filter(a => a.category === 'calculator').length
+                }
+            };
+        }
+
+        function displayActivityTracker(stats, activities) {
+            const container = document.getElementById('activityTrackerContainer');
+            container.innerHTML = `
+                <div class="activity-stats">
+                    <div class="activity-stat">
+                        <div class="stat-number">${stats.thisWeek}</div>
+                        <div class="stat-label">This Week</div>
+                    </div>
+                    <div class="activity-stat">
+                        <div class="stat-number">${stats.thisMonth}</div>
+                        <div class="stat-label">This Month</div>
+                    </div>
+                    <div class="activity-stat">
+                        <div class="stat-number">${stats.totalActivities}</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                </div>
+                
+                <div class="activity-breakdown">
+                    <h4>📊 Activity Breakdown</h4>
+                    <div class="breakdown-items">
+                        <div class="breakdown-item">
+                            <i class="fas fa-cloud-sun"></i>
+                            <span>Weather Checks: ${stats.categories.weather}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <i class="fas fa-seedling"></i>
+                            <span>Initiatives: ${stats.categories.initiatives}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Articles Read: ${stats.categories.articles}</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <i class="fas fa-calculator"></i>
+                            <span>Carbon Calculations: ${stats.categories.calculator}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recent-activities">
+                    <h4>🕒 Recent Activities</h4>
+                    ${activities.length > 0 ? 
+                        activities.slice(-3).reverse().map(activity => `
+                            <div class="recent-activity-item">
+                                <i class="fas ${getActivityIcon(activity.category)}"></i>
+                                <div class="activity-details">
+                                    <div class="activity-name">${activity.action}</div>
+                                    <div class="activity-time">${formatTimeAgo(activity.timestamp)}</div>
+                                </div>
+                            </div>
+                        `).join('') :
+                        '<p class="no-activity">No recent activities. Start exploring!</p>'
+                    }
+                </div>
+            `;
+        }
+
+        // Load Real Weather Forecast
+        async function loadWeatherForecast() {
+            try {
+                // Use the same weather API as the weather page
+                const cities = ['Dar es Salaam', 'Dodoma', 'Arusha'];
+                const forecasts = [];
+                
+                for (const city of cities) {
+                    try {
+                        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},TZ&appid=bd5e378503939ddaee76f12ad7a97608&units=metric`);
+                        if (response.ok) {
+                            const data = await response.json();
+                            forecasts.push({
+                                city: city,
+                                temp: Math.round(data.main.temp),
+                                condition: data.weather[0].main,
+                                humidity: data.main.humidity,
+                                icon: data.weather[0].icon
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching weather for ${city}:`, error);
+                    }
+                }
+                
+                displayWeatherForecast(forecasts);
+            } catch (error) {
+                console.error('Error loading weather forecast:', error);
+                displayWeatherForecastError();
+            }
+        }
+
+        function displayWeatherForecast(forecasts) {
+            const container = document.getElementById('weatherForecastContainer');
+            
+            if (forecasts.length === 0) {
+                displayWeatherForecastError();
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="weather-forecast-list">
+                    ${forecasts.map(forecast => `
+                        <div class="forecast-item">
+                            <div class="forecast-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                ${forecast.city}
+                            </div>
+                            <div class="forecast-details">
+                                <div class="forecast-temp">${forecast.temp}°C</div>
+                                <div class="forecast-condition">${forecast.condition}</div>
+                                <div class="forecast-humidity">
+                                    <i class="fas fa-tint"></i> ${forecast.humidity}%
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="forecast-footer">
+                    <a href="weather.html" class="forecast-link">
+                        <i class="fas fa-external-link-alt"></i>
+                        View Full Weather Map
+                    </a>
+                </div>
+            `;
+        }
+
+        async function loadUserStats() {
+            const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
+            const userJoinDate = localStorage.getItem('userJoinDate') || new Date().toISOString();
+            
+            // Calculate real stats
+            const daysActive = Math.floor((new Date() - new Date(userJoinDate)) / (1000 * 60 * 60 * 24)) + 1;
+            const pageVisits = parseInt(localStorage.getItem('pageVisits') || '0');
+            const initiativesJoined = userActivity.filter(a => a.category === 'initiatives').length;
+            const carbonSaved = Math.round(userActivity.filter(a => a.category === 'calculator').length * 2.5); // Estimate
+            
+            // Update display
+            document.getElementById('pageVisits').textContent = pageVisits;
+            document.getElementById('initiativesJoined').textContent = initiativesJoined;
+            document.getElementById('daysActive').textContent = daysActive;
+            document.getElementById('carbonSaved').textContent = carbonSaved;
+            
+            // Track this page visit
+            localStorage.setItem('pageVisits', (pageVisits + 1).toString());
+        }
+
+        // Activity Tracking
+        function trackActivity(category, action = null) {
+            const activity = {
+                category: category,
+                action: action || getDefaultAction(category),
+                timestamp: new Date().toISOString()
+            };
+            
+            const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
+            userActivity.push(activity);
+            localStorage.setItem('userActivity', JSON.stringify(userActivity));
+            
+            // Open carbon calculator if that's the action
+            if (category === 'carbon_calculator') {
+                openCarbonCalculator();
+            }
+            
+            // Refresh activity tracker
+            loadActivityTracker();
+        }
+
+        function getDefaultAction(category) {
+            const actions = {
+                weather: 'Checked weather data',
+                initiatives: 'Viewed climate initiatives',
+                articles: 'Read climate article',
+                carbon_calculator: 'Used carbon calculator'
+            };
+            return actions[category] || 'Performed action';
+        }
+
+        function getActivityIcon(category) {
+            const icons = {
+                weather: 'fa-cloud-sun',
+                initiatives: 'fa-seedling',
+                articles: 'fa-newspaper',
+                carbon_calculator: 'fa-calculator'
+            };
+            return icons[category] || 'fa-circle';
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const time = new Date(timestamp);
+            const diffInMinutes = Math.floor((now - time) / (1000 * 60));
+            
+            if (diffInMinutes < 1) return 'Just now';
+            if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+            
+            const diffInHours = Math.floor(diffInMinutes / 60);
+            if (diffInHours < 24) return `${diffInHours}h ago`;
+            
+            const diffInDays = Math.floor(diffInHours / 24);
+            return `${diffInDays}d ago`;
+        }
+
+        // Carbon Calculator Modal
+        function openCarbonCalculator() {
+            document.getElementById('carbonModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCarbonModal() {
+            document.getElementById('carbonModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.getElementById('carbonForm').reset();
+            document.getElementById('carbonResult').style.display = 'none';
+        }
+
+        // Handle carbon calculator form submission
+        document.getElementById('carbonForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const transportType = document.getElementById('transportType').value;
+            const distance = parseFloat(document.getElementById('distance').value);
+            const days = parseInt(document.getElementById('days').value);
+            const energyUsage = parseFloat(document.getElementById('energyUsage').value);
+            
+            // Calculate carbon footprint (simplified calculation)
+            const transportEmissions = calculateTransportEmissions(transportType, distance, days);
+            const energyEmissions = energyUsage * 0.5 * 30; // kWh * emission factor * days per month
+            const totalMonthly = transportEmissions + energyEmissions;
+            
+            displayCarbonResult(totalMonthly, transportType);
+            
+            // Track this activity
+            trackActivity('carbon_calculator', `Calculated carbon footprint: ${totalMonthly.toFixed(1)} kg CO₂/month`);
+        });
+
+        function calculateTransportEmissions(type, distance, days) {
+            const emissionFactors = {
+                car: 0.21,        // kg CO₂ per km
+                motorcycle: 0.12,
+                bus: 0.08,
+                walking: 0,
+                bicycle: 0
+            };
+            
+            const factor = emissionFactors[type] || 0;
+            return distance * days * 4.33 * factor; // weekly to monthly conversion
+        }
+
+        function displayCarbonResult(totalEmissions, transportType) {
+            const resultDiv = document.getElementById('carbonResult');
+            const valueSpan = document.getElementById('carbonValue');
+            const comparisonP = document.getElementById('carbonComparison');
+            const tipsList = document.getElementById('carbonTips');
+            
+            valueSpan.textContent = totalEmissions.toFixed(1);
+            
+            // Comparison with average
+            const tanzaniaAverage = 0.3 * 1000 / 12; // 0.3 tons per year to kg per month
+            let comparison = '';
+            if (totalEmissions > tanzaniaAverage * 2) {
+                comparison = '🔴 Your footprint is significantly above Tanzania\'s average. Consider sustainable alternatives.';
+            } else if (totalEmissions > tanzaniaAverage) {
+                comparison = '🟡 Your footprint is above Tanzania\'s average. There\'s room for improvement.';
+            } else {
+                comparison = '🟢 Great! Your footprint is below Tanzania\'s average. Keep up the good work!';
+            }
+            comparisonP.textContent = comparison;
+            
+            // Generate tips
+            const tips = generateCarbonTips(transportType, totalEmissions);
+            tipsList.innerHTML = tips.map(tip => `<li>${tip}</li>`).join('');
+            
+            resultDiv.style.display = 'block';
+        }
+
+        function generateCarbonTips(transportType, emissions) {
+            const tips = [];
+            
+            if (transportType === 'car') {
+                tips.push('Consider using public transport or carpooling');
+                tips.push('Walk or cycle for short distances');
+                tips.push('Maintain your vehicle for better fuel efficiency');
+            } else if (transportType === 'motorcycle') {
+                tips.push('Use public transport for longer distances');
+                tips.push('Consider electric motorcycle options');
+            } else if (transportType === 'bus') {
+                tips.push('You\'re already making a great choice!');
+                tips.push('Walk or cycle when possible for even lower impact');
+            }
+            
+            tips.push('Use energy-efficient appliances at home');
+            tips.push('Switch to renewable energy sources');
+            tips.push('Plant trees to offset your carbon footprint');
+            
+            return tips.slice(0, 4); // Return max 4 tips
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Profile and Settings (placeholder functions)
+        function showProfile() {
+            showNotification('Profile page coming soon!', 'info');
+        }
+
+        function showSettings() {
+            showNotification('Settings page coming soon!', 'info');
+        }
+
+        // Error Display Functions
+        function displayClimateStatsError() {
+            const container = document.getElementById('climateStatsContainer');
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Unable to load climate data</h3>
+                    <p>Please check your connection and try again.</p>
+                </div>
+            `;
+        }
+
+        function displayActivityTrackerError() {
+            const container = document.getElementById('activityTrackerContainer');
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-chart-bar"></i>
+                    <h3>Activity tracker unavailable</h3>
+                    <p>Start using the portal to track your activities!</p>
+                </div>
+            `;
+        }
+
+        function displayWeatherForecastError() {
+            const container = document.getElementById('weatherForecastContainer');
+            container.innerHTML = `
+                <div class="error-state">
+                    <i class="fas fa-cloud-sun"></i>
+                    <h3>Weather data unavailable</h3>
+                    <p>Unable to fetch current weather data.</p>
+                    <a href="weather.html" class="action-btn">
+                        <div class="action-icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                        <div class="action-content">
+                            <div class="action-title">Try Weather Page</div>
+                        </div>
+                    </a>
+                </div>
+            `;
+        }
+
+        // Initialize user join date if not exists
+        function initializeUserData() {
+            if (!localStorage.getItem('userJoinDate')) {
+                localStorage.setItem('userJoinDate', new Date().toISOString());
+            }
+            if (!localStorage.getItem('pageVisits')) {
+                localStorage.setItem('pageVisits', '0');
+            }
+            if (!localStorage.getItem('userActivity')) {
+                localStorage.setItem('userActivity', JSON.stringify([]));
+            }
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            
+            if (checkAuth()) {
+                initializeUserData();
+                loadUserData();
+            }
+        });
+
+        // Handle theme preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+                updateThemeIcon();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('carbonModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCarbonModal();
+            }
+        });
+    </script>
+
+    <!-- Notification Styles -->
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10000;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .notification.success {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .notification.error {
+            border-color: var(--error-color);
+            color: var(--error-color);
+        }
+
+        .notification.info {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-primary);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        /* Form Styles for Modal */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .auth-button {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .auth-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>
