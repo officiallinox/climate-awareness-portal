@@ -62,12 +62,50 @@ app.get('/login.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'login.html'));
 });
 
+app.get('/login_new.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'login_new.html'));
+});
+
 app.get('/user.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'user.html'));
 });
 
 app.get('/admin.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'admin.html'));
+});
+
+app.get('/admin_new.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'admin_new.html'));
+});
+
+app.get('/dashboard.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
+});
+
+app.get('/weather-test.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'weather-test.html'));
+});
+
+app.get('/test_login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'test_login.html'));
+});
+
+// Test endpoint to check database connection
+app.get('/api/test', async (req, res) => {
+    try {
+        const User = require('./models/User');
+        const userCount = await User.countDocuments();
+        res.json({ 
+            message: 'Database connected', 
+            userCount,
+            timestamp: new Date().toISOString()
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            message: 'Database error', 
+            error: error.message 
+        });
+    }
 });
 
 // MongoDB connection

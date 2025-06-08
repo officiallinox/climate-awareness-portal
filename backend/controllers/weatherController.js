@@ -1,73 +1,143 @@
-const WeatherPrediction = require('../models/WeatherPrediction');
-const json2csv = require('json2csv').parse; // npm install json2csv
+// Weather controller for Tanzania climate data
 const Article = require('../models/Article');
 
-exports.getPredictions = async (req, res) => {
+// Get weather-related articles
+exports.getWeatherArticles = async (req, res) => {
   try {
-    const predictions = await WeatherPrediction.find();
-    res.json(predictions);
+    const weatherArticles = await Article.find({ 
+      category: { $in: ['climate-science', 'renewable-energy'] } 
+    }).sort({ createdAt: -1 }).limit(10);
+    res.json(weatherArticles);
   } catch (error) {
-    console.error('Error fetching weather predictions:', error);
-    res.status(500).json({ message: 'Failed to fetch weather predictions', error: error.message });
+    console.error('Error fetching weather articles:', error);
+    res.status(500).json({ message: 'Failed to fetch weather articles', error: error.message });
   }
 };
 
-exports.getPredictionById = async (req, res) => {
-  const prediction = await WeatherPrediction.findById(req.params.id);
-  if (!prediction) return res.status(404).json({ error: 'Not found' });
-  res.json(prediction);
-};
-
-exports.createPrediction = async (req, res) => {
-    try {
-        // Log the received body to check the data
-        console.log('Received data:', req.body);
-
-        // Basic validation
-        if (!req.body.location || !req.body.temperature || !req.body.humidity || !req.body.conditions) {
-            return res.status(400).json({ message: 'Missing required fields' });
+// Get Tanzania climate statistics
+exports.getTanzaniaClimateStats = async (req, res) => {
+  try {
+    const stats = {
+      country: 'Tanzania',
+      averageTemperature: 25.2,
+      annualRainfallMm: 1200,
+      solarHoursPerYear: 3200,
+      climateZones: ['Tropical', 'Semi-arid', 'Highland'],
+      regions: [
+        { 
+          name: 'Dar es Salaam', 
+          temp: 27.5, 
+          rainfall: 1100, 
+          climate: 'Tropical coastal',
+          population: 6700000
+        },
+        { 
+          name: 'Dodoma', 
+          temp: 23.8, 
+          rainfall: 600, 
+          climate: 'Semi-arid',
+          population: 2300000
+        },
+        { 
+          name: 'Arusha', 
+          temp: 21.2, 
+          rainfall: 800, 
+          climate: 'Highland',
+          population: 1700000
+        },
+        { 
+          name: 'Mwanza', 
+          temp: 24.1, 
+          rainfall: 1400, 
+          climate: 'Lake Victoria basin',
+          population: 1200000
         }
-
-        const newPrediction = new WeatherPrediction(req.body);
-        const savedPrediction = await newPrediction.save();
-
-        res.status(201).json(savedPrediction);
-    } catch (error) {
-        console.error('Error creating weather prediction:', error);
-        console.error('Error details:', error); // Log the entire error object
-        console.error('Data causing the error:', req.body); // Log the data
-
-        res.status(500).json({ message: 'Failed to save weather prediction', error: error.message });
-    }
+      ],
+      climateThreats: [
+        'Rising sea levels affecting coastal areas',
+        'Irregular rainfall patterns',
+        'Increased drought frequency',
+        'Temperature rise affecting agriculture'
+      ],
+      renewableEnergyPotential: {
+        solar: 'Excellent (2,800-3,500 hours annually)',
+        wind: 'Good (coastal and highland areas)',
+        hydro: 'Moderate (seasonal rivers)',
+        geothermal: 'Limited (Rift Valley areas)'
+      }
+    };
+    res.json(stats);
+  } catch (error) {
+    console.error('Error fetching climate stats:', error);
+    res.status(500).json({ message: 'Failed to fetch climate stats', error: error.message });
+  }
 };
 
-exports.updatePrediction = async (req, res) => {
-  const updated = await WeatherPrediction.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
+// Get climate adaptation strategies for Tanzania
+exports.getAdaptationStrategies = async (req, res) => {
+  try {
+    const strategies = {
+      agriculture: [
+        'Drought-resistant crop varieties (sorghum, millet)',
+        'Improved irrigation systems',
+        'Crop diversification',
+        'Climate-smart agriculture practices'
+      ],
+      water: [
+        'Rainwater harvesting systems',
+        'Groundwater management',
+        'Water-efficient technologies',
+        'Community water projects'
+      ],
+      energy: [
+        'Solar mini-grids for rural areas',
+        'Wind power development',
+        'Energy-efficient cookstoves',
+        'Grid modernization'
+      ],
+      coastal: [
+        'Mangrove restoration',
+        'Coastal protection infrastructure',
+        'Sustainable fishing practices',
+        'Tourism adaptation measures'
+      ]
+    };
+    res.json(strategies);
+  } catch (error) {
+    console.error('Error fetching adaptation strategies:', error);
+    res.status(500).json({ message: 'Failed to fetch adaptation strategies', error: error.message });
+  }
 };
 
-exports.deletePrediction = async (req, res) => {
-  await WeatherPrediction.findByIdAndDelete(req.params.id);
-  res.json({ message: 'Deleted' });
+// Export climate data as CSV (for admin use)
+exports.exportClimateData = async (req, res) => {
+  try {
+    const data = [
+      { region: 'Dar es Salaam', avgTemp: 27.5, rainfall: 1100, solarHours: 3100 },
+      { region: 'Dodoma', avgTemp: 23.8, rainfall: 600, solarHours: 3400 },
+      { region: 'Arusha', avgTemp: 21.2, rainfall: 800, solarHours: 3200 },
+      { region: 'Mwanza', avgTemp: 24.1, rainfall: 1400, solarHours: 2900 }
+    ];
+
+    // Simple CSV conversion
+    const csvHeader = 'Region,Average Temperature (°C),Annual Rainfall (mm),Solar Hours\n';
+    const csvData = data.map(row => 
+      `${row.region},${row.avgTemp},${row.rainfall},${row.solarHours}`
+    ).join('\n');
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=tanzania-climate-data.csv');
+    res.send(csvHeader + csvData);
+  } catch (error) {
+    console.error('Error exporting climate data:', error);
+    res.status(500).json({ message: 'Failed to export climate data', error: error.message });
+  }
 };
 
-exports.exportPredictions = async (req, res) => {
-    try {
-        const predictions = await WeatherPrediction.find();
-        const csv = json2csv(predictions);
-
-        res.header('Content-Type', 'text/csv');
-        res.header('Content-Disposition', 'attachment; filename="weather_predictions.csv"');
-        res.send(csv);
-    } catch (error) {
-        console.error('Error exporting weather predictions:', error);
-        res.status(500).json({ message: 'Failed to export weather predictions', error: error.message });
-    }
-};
-
+// Article management functions (moved from articleController for consolidation)
 exports.getAllArticles = async (req, res) => {
     try {
-        const articles = await Article.find().sort({ date: -1 }); // Sort by date descending
+        const articles = await Article.find().sort({ createdAt: -1 });
         res.json(articles);
     } catch (error) {
         console.error('Error fetching articles:', error);
@@ -85,42 +155,5 @@ exports.getArticleById = async (req, res) => {
     } catch (error) {
         console.error('Error fetching article:', error);
         res.status(500).json({ message: 'Failed to fetch article', error: error.message });
-    }
-};
-
-exports.createArticle = async (req, res) => {
-    try {
-        const newArticle = new Article(req.body);
-        const savedArticle = await newArticle.save();
-        res.status(201).json(savedArticle);
-    } catch (error) {
-        console.error('Error creating article:', error);
-        res.status(400).json({ message: 'Failed to create article', error: error.message });
-    }
-};
-
-exports.updateArticle = async (req, res) => {
-    try {
-        const updatedArticle = await Article.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        if (!updatedArticle) {
-            return res.status(404).json({ message: 'Article not found' });
-        }
-        res.json(updatedArticle);
-    } catch (error) {
-        console.error('Error updating article:', error);
-        res.status(400).json({ message: 'Failed to update article', error: error.message });
-    }
-};
-
-exports.deleteArticle = async (req, res) => {
-    try {
-        const deletedArticle = await Article.findByIdAndDelete(req.params.id);
-        if (!deletedArticle) {
-            return res.status(404).json({ message: 'Article not found' });
-        }
-        res.json({ message: 'Article deleted' });
-    } catch (error) {
-        console.error('Error deleting article:', error);
-        res.status(500).json({ message: 'Failed to delete article', error: error.message });
     }
 };

@@ -377,22 +377,92 @@
         }
 
         /* Responsive */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .header-container {
                 flex-direction: column;
                 gap: 1rem;
+                padding: 1rem;
             }
 
             .dashboard-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
             }
 
             .activity-form {
                 flex-direction: column;
+                gap: 0.75rem;
             }
 
             .form-input, .form-select {
                 min-width: auto;
+                width: 100%;
+            }
+
+            .dashboard-card {
+                padding: 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+            }
+
+            .activity-stats {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .activity-item {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header-container {
+                padding: 0.75rem;
+            }
+
+            .dashboard-card {
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+            }
+
+            .activity-form {
+                gap: 0.5rem;
+            }
+
+            .form-input, .form-select, .add-btn {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .activity-item {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .dark-mode-toggle {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -411,6 +481,161 @@
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+
+        /* Enhanced Activity Tracker Styles */
+        .activity-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 0.5rem;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        /* Weekly Weather Forecast */
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .forecast-day {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .forecast-day-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .forecast-icon {
+            font-size: 1.5rem;
+            margin: 0.25rem 0;
+        }
+
+        .forecast-temp {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .forecast-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Enhanced Activity Items */
+        .activity-item {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .activity-notes {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* Comment Styles */
+        .comment-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 0.75rem;
+        }
+
+        .comment-item {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comment-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -435,43 +660,51 @@
         </div>
 
         <div class="dashboard-grid">
-            <!-- Weather Forecast Card -->
+            <!-- Weekly Weather Forecast Card -->
             <div class="dashboard-card weather-forecast">
                 <div class="card-header">
                     <div class="card-icon">🌤️</div>
-                    <div class="card-title">Personalized Weather Forecast</div>
+                    <div class="card-title">7-Day Weather Forecast</div>
+                    <button onclick="refreshWeather()" class="refresh-btn">🔄</button>
                 </div>
                 <div id="weatherForecast">
                     <div class="forecast-grid" id="forecastGrid">
-                        <!-- Forecast items will be populated here -->
+                        <!-- Weekly forecast items will be populated here -->
                     </div>
                 </div>
                 <div class="activity-suggestion" id="activitySuggestion">
-                    <div class="suggestion-title">Activity Recommendations</div>
-                    <div id="suggestionText">Loading recommendations...</div>
+                    <div class="suggestion-title">Climate-Smart Activity Recommendations</div>
+                    <div id="suggestionText">Loading personalized recommendations...</div>
                 </div>
             </div>
 
-            <!-- Activity Tracker -->
+            <!-- Enhanced Activity Tracker -->
             <div class="dashboard-card">
                 <div class="card-header">
                     <div class="card-icon">🏃‍♂️</div>
-                    <div class="card-title">Activity Tracker</div>
+                    <div class="card-title">My Activity Tracker</div>
+                    <div class="activity-stats">
+                        <span id="todayActivities">0 today</span>
+                        <span id="weekActivities">0 this week</span>
+                    </div>
                 </div>
                 <div class="activity-form">
-                    <input type="text" id="activityName" placeholder="Activity name" class="form-input">
-                    <select id="activityType" class="form-select">
-                        <option value="outdoor">Outdoor</option>
-                        <option value="indoor">Indoor</option>
-                        <option value="sports">Sports</option>
-                        <option value="travel">Travel</option>
-                        <option value="work">Work</option>
+                    <input type="text" id="activityName" placeholder="What did you do?" class="form-input">
+                    <select id="activityType" class="form-select" aria-label="Activity type">
+                        <option value="outdoor">🌳 Outdoor</option>
+                        <option value="indoor">🏠 Indoor</option>
+                        <option value="sports">⚽ Sports</option>
+                        <option value="travel">🚗 Travel</option>
+                        <option value="work">💼 Work</option>
+                        <option value="eco">♻️ Eco-Friendly</option>
                     </select>
+                    <input type="text" id="activityLocation" placeholder="Location (optional)" class="form-input">
                     <input type="datetime-local" id="activityDate" class="form-input">
-                    <button onclick="addActivity()" class="add-btn">Add</button>
+                    <textarea id="activityNotes" placeholder="Notes (optional)" class="form-textarea"></textarea>
+                    <button onclick="addActivity()" class="add-btn">📝 Add Activity</button>
                 </div>
                 <div class="activity-list" id="activityList">
-                    <!-- Activities will be populated here -->
+                    <!-- User's activities will be populated here -->
                 </div>
             </div>
 
@@ -522,14 +755,39 @@
     </main>
 
     <script>
-        // Global variables
+        // Global variables - Reset on each page load
         let currentUser = null;
         let activities = [];
         let comments = [];
         let weatherData = null;
 
+        // Clear all user data
+        function clearUserData() {
+            currentUser = null;
+            activities = [];
+            comments = [];
+            weatherData = null;
+            
+            // Clear any cached DOM elements
+            const elements = ['activityList', 'commentList', 'forecastGrid', 'suggestionText'];
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.innerHTML = '';
+            });
+            
+            // Reset stats
+            const statElements = ['totalActivities', 'outdoorActivities', 'avgTemp', 'climateScore'];
+            statElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) element.textContent = '0';
+            });
+        }
+
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
+            // Clear any previous user data first
+            clearUserData();
+            
             checkAuthentication();
             loadUserData();
             loadWeatherForecast();
@@ -577,34 +835,43 @@
             }
         }
 
-        // Weather forecast
+        // Enhanced 7-day Weather forecast
         async function loadWeatherForecast() {
             try {
-                const response = await fetch('/api/weather/forecast?city=Dar es Salaam&country=TZ');
+                console.log('Loading 7-day weather forecast...');
+                const response = await fetch('/api/weather/forecast?city=Dar es Salaam&country=TZ&days=7');
                 if (response.ok) {
                     weatherData = await response.json();
-                    displayPersonalizedForecast();
-                    generateActivitySuggestions();
+                    displayWeeklyWeatherForecast();
+                    generateClimateSmartSuggestions();
+                } else {
+                    throw new Error('Failed to fetch weather data');
                 }
             } catch (error) {
                 console.error('Error loading weather forecast:', error);
-                document.getElementById('suggestionText').textContent = 'Unable to load weather data';
+                document.getElementById('forecastGrid').innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Unable to load weather forecast. Please try again later.</p>';
+                document.getElementById('suggestionText').textContent = 'Weather data unavailable for recommendations.';
             }
         }
 
-        function displayPersonalizedForecast() {
+        async function refreshWeather() {
+            document.getElementById('forecastGrid').innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Refreshing weather data...</p>';
+            await loadWeatherForecast();
+        }
+
+        function displayWeeklyWeatherForecast() {
             if (!weatherData || !weatherData.list) return;
 
             const forecastGrid = document.getElementById('forecastGrid');
             const today = new Date();
-            const next5Days = [];
+            const next7Days = [];
 
-            // Get next 5 days forecast
-            for (let i = 0; i < 5; i++) {
+            // Get next 7 days forecast
+            for (let i = 0; i < 7; i++) {
                 const date = new Date(today);
                 date.setDate(today.getDate() + i);
                 
-                // Find forecast for this day (around noon)
+                // Find forecast for this day (around noon for better accuracy)
                 const dayForecast = weatherData.list.find(item => {
                     const forecastDate = new Date(item.dt * 1000);
                     return forecastDate.getDate() === date.getDate() && 
@@ -613,38 +880,46 @@
                 });
 
                 if (dayForecast) {
-                    next5Days.push({
+                    next7Days.push({
                         date: date,
                         forecast: dayForecast
                     });
                 }
             }
 
-            forecastGrid.innerHTML = next5Days.map(day => {
-                const dayName = day.date.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+            forecastGrid.innerHTML = next7Days.map(day => {
+                const dayName = day.date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
                 const temp = Math.round(day.forecast.main.temp);
                 const icon = getWeatherIcon(day.forecast.weather[0].main);
                 const description = day.forecast.weather[0].description;
+                const humidity = day.forecast.main.humidity;
+                const windSpeed = day.forecast.wind ? Math.round(day.forecast.wind.speed) : 0;
 
                 return `
-                    <div class="forecast-item">
-                        <div class="forecast-date">${dayName}</div>
-                        <div style="font-size: 2rem; margin: 0.5rem 0;">${icon}</div>
+                    <div class="forecast-day">
+                        <div class="forecast-day-name">${dayName}</div>
+                        <div class="forecast-icon">${icon}</div>
                         <div class="forecast-temp">${temp}°C</div>
-                        <div style="font-size: 0.8rem; color: var(--text-secondary);">${description}</div>
+                        <div class="forecast-desc">${description}</div>
+                        <div class="forecast-desc">💧 ${humidity}% | 💨 ${windSpeed}km/h</div>
                     </div>
                 `;
             }).join('');
         }
 
-        function generateActivitySuggestions() {
+        function generateClimateSmartSuggestions() {
             if (!weatherData || !weatherData.list) return;
 
             const suggestions = [];
-            const userActivities = activities.filter(a => a.type === 'outdoor');
+            const userOutdoorActivities = activities.filter(a => a.type === 'outdoor').length;
+            const userEcoActivities = activities.filter(a => a.type === 'eco').length;
             
-            // Analyze next 3 days
-            for (let i = 0; i < 3; i++) {
+            // Analyze next 7 days for climate-smart recommendations
+            for (let i = 0; i < 7; i++) {
                 const date = new Date();
                 date.setDate(date.getDate() + i);
                 
@@ -657,9 +932,11 @@
                 if (dayForecast) {
                     const weather = dayForecast.weather[0].main.toLowerCase();
                     const temp = dayForecast.main.temp;
+                    const humidity = dayForecast.main.humidity;
                     const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
 
-                    if (weather.includes('clear') && temp > 20 && temp < 35) {
+                    // Climate-smart activity suggestions based on weather
+                    if (weather.includes('clear') && temp > 18 && temp < 32) {
                         suggestions.push(`${dayName}: Perfect for outdoor activities! Consider hiking, cycling, or outdoor sports.`);
                     } else if (weather.includes('rain')) {
                         suggestions.push(`${dayName}: Rainy day - great for indoor activities, reading, or visiting museums.`);
@@ -690,14 +967,16 @@
             return icons[weather] || '🌤️';
         }
 
-        // Activity management
+        // Enhanced Activity management
         async function addActivity() {
             const name = document.getElementById('activityName').value.trim();
             const type = document.getElementById('activityType').value;
             const date = document.getElementById('activityDate').value;
+            const location = document.getElementById('activityLocation').value.trim();
+            const notes = document.getElementById('activityNotes').value.trim();
 
             if (!name || !date) {
-                alert('Please fill in all fields');
+                alert('Please fill in activity name and date');
                 return;
             }
 
@@ -705,7 +984,8 @@
                 name,
                 type,
                 date: new Date(date),
-                weather: await getCurrentWeatherForDate(new Date(date))
+                location: location || 'Dar es Salaam',
+                notes
             };
 
             try {
@@ -751,7 +1031,10 @@
 
         function clearActivityForm() {
             document.getElementById('activityName').value = '';
+            document.getElementById('activityType').value = 'outdoor';
             document.getElementById('activityDate').value = '';
+            document.getElementById('activityLocation').value = '';
+            document.getElementById('activityNotes').value = '';
         }
 
         async function loadActivities() {
@@ -785,11 +1068,14 @@
                     <div class="activity-info">
                         <div class="activity-name">${activity.name}</div>
                         <div class="activity-details">
-                            ${activity.type} • ${new Date(activity.date).toLocaleDateString()}
-                            ${activity.weather ? ` • ${Math.round(activity.weather.temperature)}°C` : ''}
+                            <span>📍 ${activity.type}</span>
+                            <span>📅 ${new Date(activity.date).toLocaleDateString()}</span>
+                            ${activity.location ? `<span>🌍 ${activity.location}</span>` : ''}
+                            ${activity.weather ? `<span>🌡️ ${Math.round(activity.weather.temperature)}°C</span>` : ''}
                         </div>
+                        ${activity.notes ? `<div class="activity-notes">"${activity.notes}"</div>` : ''}
                     </div>
-                    <button onclick="deleteActivity('${activity._id}', ${index})" class="delete-btn">Delete</button>
+                    <button onclick="deleteActivity('${activity._id}', ${index})" class="delete-btn">🗑️</button>
                 </div>
             `).join('');
         }
@@ -954,6 +1240,9 @@
                     document.getElementById('avgTemp').textContent = stats.avgTemperature ? `${stats.avgTemperature}°C` : '--°C';
                     document.getElementById('climateScore').textContent = stats.climateScore || 0;
                     
+                    // Update activity tracker stats
+                    updateActivityTrackerStats();
+                    
                     console.log('Stats loaded:', stats);
                 } else {
                     console.error('Failed to load stats:', response.statusText);
@@ -969,12 +1258,36 @@
             updateActivityChart();
         }
 
+        // Update activity tracker stats
+        function updateActivityTrackerStats() {
+            const today = new Date();
+            const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay()); // Start of current week
+            
+            const todayActivities = activities.filter(activity => {
+                const activityDate = new Date(activity.date);
+                return activityDate >= startOfToday;
+            }).length;
+            
+            const weekActivities = activities.filter(activity => {
+                const activityDate = new Date(activity.date);
+                return activityDate >= startOfWeek;
+            }).length;
+            
+            document.getElementById('todayActivities').textContent = `${todayActivities} today`;
+            document.getElementById('weekActivities').textContent = `${weekActivities} this week`;
+        }
+
         // Fallback function for local stats calculation
         function updateStatsLocally() {
             document.getElementById('totalActivities').textContent = activities.length;
             
             const outdoorCount = activities.filter(a => a.type === 'outdoor').length;
             document.getElementById('outdoorActivities').textContent = outdoorCount;
+            
+            // Update activity tracker stats
+            updateActivityTrackerStats();
 
             // Calculate average temperature from activities with weather data
             const activitiesWithWeather = activities.filter(a => a.weather && a.weather.temperature);
@@ -1034,8 +1347,17 @@
         }
 
         function logout() {
-            localStorage.removeItem('token');
-            localStorage.removeItem('darkMode');
+            // Clear all user-specific data
+            clearUserData();
+            
+            // Clear localStorage except for theme preference
+            const darkMode = localStorage.getItem('darkMode');
+            localStorage.clear();
+            if (darkMode) {
+                localStorage.setItem('darkMode', darkMode);
+            }
+            
+            // Redirect to login
             window.location.href = 'login.html';
         }
 

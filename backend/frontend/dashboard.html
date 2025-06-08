@@ -749,8 +749,294 @@
             line-height: 1.5;
         }
 
-        /* Activity Tracker */
+        /* Enhanced Activity Tracker */
         .activity-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+        }
+
+        .activity-form {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .add-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .refresh-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Activity List */
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .activity-notes {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .delete-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: background-color 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Weather Forecast */
+        .forecast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .forecast-day {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .forecast-day:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .forecast-day-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .forecast-icon {
+            font-size: 1.5rem;
+            margin: 0.25rem 0;
+        }
+
+        .forecast-temp {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .forecast-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .activity-suggestion {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .activity-suggestion:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+
+        .suggestion-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .suggestion-title::before {
+            content: '🧠';
+            font-size: 1.2rem;
+        }
+
+        #suggestionText {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Comments Section */
+        .comment-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 0.75rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .comment-item {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .comment-item:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comment-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .comment-text {
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        /* Original Activity Stats Grid */
+        .activity-stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
@@ -1245,39 +1531,95 @@
 
         <!-- Activity Tracker & Weather Forecast -->
         <div class="dashboard-grid">
-            <!-- Real Activity Tracker -->
+            <!-- Enhanced Activity Tracker -->
             <div class="dashboard-card fade-in">
                 <div class="card-header">
                     <h2 class="card-title">
                         <div class="card-icon">
-                            <i class="fas fa-chart-bar"></i>
+                            <i class="fas fa-running"></i>
                         </div>
-                        Your Activity Tracker
+                        My Activity Tracker
                     </h2>
+                    <div class="activity-stats">
+                        <span id="todayActivities">0 today</span>
+                        <span id="weekActivities">0 this week</span>
+                    </div>
                 </div>
                 
-                <div id="activityTrackerContainer">
-                    <div class="loading">
-                        <i class="fas fa-spinner"></i>
-                        Loading your activity...
-                    </div>
+                <div class="activity-form">
+                    <input type="text" id="activityName" placeholder="What did you do?" class="form-input">
+                    <select id="activityType" class="form-select" aria-label="Activity type">
+                        <option value="outdoor">🌳 Outdoor</option>
+                        <option value="indoor">🏠 Indoor</option>
+                        <option value="sports">⚽ Sports</option>
+                        <option value="travel">🚗 Travel</option>
+                        <option value="work">💼 Work</option>
+                        <option value="eco">♻️ Eco-Friendly</option>
+                    </select>
+                    <input type="text" id="activityLocation" placeholder="Location (optional)" class="form-input">
+                    <input type="datetime-local" id="activityDate" class="form-input">
+                    <textarea id="activityNotes" placeholder="Notes (optional)" class="form-textarea"></textarea>
+                    <button onclick="addActivity()" class="add-btn">📝 Add Activity</button>
+                </div>
+                
+                <div class="activity-list" id="activityList">
+                    <!-- User's activities will be populated here -->
                 </div>
             </div>
 
-            <!-- Weather Forecast (Real API Data) -->
+            <!-- 7-Day Weather Forecast -->
             <div class="dashboard-card fade-in">
                 <div class="card-header">
                     <h2 class="card-title">
                         <div class="card-icon">
                             <i class="fas fa-cloud-sun"></i>
                         </div>
-                        Tanzania Weather Forecast
+                        7-Day Weather Forecast
                     </h2>
+               <button onclick="refreshWeather()" class="refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="testWeatherFunction()" class="refresh-btn" style="margin-left: 10px;">
+                        <i class="fas fa-bug"></i> Test
+                    </button>
                 </div>
                 
-                <div id="weatherForecastContainer">
-                    <div class="loading">
-                        <i class="fas fa-spinner"></i>
+                <div id="weatherForecast">
+                    <div class="forecast-grid" id="forecastGrid">
+                        <!-- Weekly forecast items will be populated here -->
+                    </div>
+                </div>
+                <div class="activity-suggestion" id="activitySuggestion">
+                    <div class="suggestion-title">Climate-Smart Activity Recommendations</div>
+                    <div id="suggestionText">Loading personalized recommendations...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comments & Climate Notes Section -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card fade-in">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <div class="card-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        Climate Notes & Comments
+                    </h2>
+                </div>
+                <div class="comment-form">
+                    <textarea id="commentText" placeholder="Share your climate observations, thoughts, or experiences..." class="comment-textarea"></textarea>
+                    <button onclick="addComment()" class="add-btn">Add Note</button>
+                </div>
+                <div class="comment-list" id="commentList">
+                    <!-- Comments will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <div id="weatherForecastContainer" style="display: none;">
+            <div class="loading">
+                     <i class="fas fa-spinner"></i>
                         Loading weather forecast...
                     </div>
                 </div>
@@ -1361,10 +1703,675 @@
 
     <!-- Scripts -->
     <script>
-        // Global variables
+        // Global variables for enhanced user dashboard
         let currentUser = null;
         let userPredictions = [];
         let userActivity = [];
+        let activities = [];
+        let comments = [];
+        let weatherData = null;
+
+        // Enhanced Activity Management
+        async function addActivity() {
+            const name = document.getElementById('activityName').value.trim();
+            const type = document.getElementById('activityType').value;
+            const date = document.getElementById('activityDate').value;
+            const location = document.getElementById('activityLocation').value.trim();
+            const notes = document.getElementById('activityNotes').value.trim();
+
+            if (!name || !date) {
+                alert('Please fill in activity name and date');
+                return;
+            }
+
+            const activity = {
+                name,
+                type,
+                date: new Date(date),
+                location: location || 'Dar es Salaam',
+                notes
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/users/activities', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(activity)
+                });
+
+                if (response.ok) {
+                    const newActivity = await response.json();
+                    activities.unshift(newActivity);
+                    displayActivities();
+                    updateActivityStats();
+                    clearActivityForm();
+                    alert('Activity added successfully!');
+                } else {
+                    alert('Failed to add activity');
+                }
+            } catch (error) {
+                console.error('Error adding activity:', error);
+                alert('Error adding activity');
+            }
+        }
+
+        function clearActivityForm() {
+            document.getElementById('activityName').value = '';
+            document.getElementById('activityType').value = 'outdoor';
+            document.getElementById('activityDate').value = '';
+            document.getElementById('activityLocation').value = '';
+            document.getElementById('activityNotes').value = '';
+        }
+
+        async function loadActivities() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/users/activities', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    activities = await response.json();
+                    displayActivities();
+                    updateActivityStats();
+                }
+            } catch (error) {
+                console.error('Error loading activities:', error);
+            }
+        }
+
+        function displayActivities() {
+            const activityList = document.getElementById('activityList');
+            
+            if (activities.length === 0) {
+                activityList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 1rem;">No activities recorded yet. Add your first activity!</p>';
+                return;
+            }
+
+            activityList.innerHTML = activities.map((activity, index) => `
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div class="activity-name">${activity.name}</div>
+                        <div class="activity-details">
+                            <span>📍 ${activity.type}</span>
+                            <span>📅 ${new Date(activity.date).toLocaleDateString()}</span>
+                            ${activity.location ? `<span>🌍 ${activity.location}</span>` : ''}
+                            ${activity.weather ? `<span>🌡️ ${Math.round(activity.weather.temperature)}°C</span>` : ''}
+                        </div>
+                        ${activity.notes ? `<div class="activity-notes">"${activity.notes}"</div>` : ''}
+                    </div>
+                    <button onclick="deleteActivity('${activity._id}', ${index})" class="delete-btn">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        async function deleteActivity(activityId, index) {
+            if (!confirm('Are you sure you want to delete this activity?')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/users/activities/${activityId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    activities.splice(index, 1);
+                    displayActivities();
+                    updateActivityStats();
+                } else {
+                    alert('Failed to delete activity');
+                }
+            } catch (error) {
+                console.error('Error deleting activity:', error);
+                alert('Error deleting activity');
+            }
+        }
+
+        function updateActivityStats() {
+            const today = new Date();
+            const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+            
+            const todayActivities = activities.filter(activity => {
+                const activityDate = new Date(activity.date);
+                return activityDate >= startOfToday;
+            }).length;
+            
+            const weekActivities = activities.filter(activity => {
+                const activityDate = new Date(activity.date);
+                return activityDate >= startOfWeek;
+            }).length;
+            
+            document.getElementById('todayActivities').textContent = `${todayActivities} today`;
+            document.getElementById('weekActivities').textContent = `${weekActivities} this week`;
+        }
+
+        // Enhanced Weather Functions
+        async function loadWeatherForecast() {
+            console.log('🌤️ Starting weather forecast loading...');
+            console.log('🔍 DOM ready state:', document.readyState);
+            
+            const forecastGrid = document.getElementById('forecastGrid');
+            const suggestionText = document.getElementById('suggestionText');
+            
+            console.log('🎯 Elements found:', {
+                forecastGrid: !!forecastGrid,
+                suggestionText: !!suggestionText,
+                forecastGridElement: forecastGrid,
+                suggestionTextElement: suggestionText
+            });
+            
+            if (!forecastGrid) {
+                console.error('❌ Forecast grid element not found!');
+                console.log('🔍 Available elements with "forecast":', 
+                    Array.from(document.querySelectorAll('[id*="forecast"]')).map(el => el.id));
+                return;
+            }
+            
+            if (!suggestionText) {
+                console.error('❌ Suggestion text element not found!');
+                console.log('🔍 Available elements with "suggestion":', 
+                    Array.from(document.querySelectorAll('[id*="suggestion"]')).map(el => el.id));
+                return;
+            }
+            
+            // Show loading state
+            forecastGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">🔄 Loading weather forecast...</p>';
+            suggestionText.textContent = 'Loading recommendations...';
+            
+            try {
+                console.log('📡 Fetching weather data from API...');
+                
+                // Try the forecast endpoint first
+                let response = await fetch('/api/weather/forecast?city=Dar es Salaam&country=TZ&days=7');
+                console.log('📊 API Response status:', response.status);
+                
+                if (!response.ok) {
+                    console.log('⚠️ Forecast endpoint not available, trying current weather...');
+                    // Fallback to current weather endpoint
+                    response = await fetch('/api/weather/current?city=Dar es Salaam&country=TZ');
+                    console.log('📊 Fallback API Response status:', response.status);
+                }
+                
+                if (response.ok) {
+                    weatherData = await response.json();
+                    console.log('✅ Weather data received successfully!');
+                    console.log('📋 Data structure:', {
+                        hasForecasts: !!weatherData.forecasts,
+                        hasList: !!weatherData.list,
+                        forecastCount: weatherData.forecasts ? weatherData.forecasts.length : 0,
+                        listCount: weatherData.list ? weatherData.list.length : 0
+                    });
+                    
+                    if (weatherData.forecasts && weatherData.forecasts.length > 0) {
+                        console.log('🎯 Using forecasts format');
+                        displayWeeklyWeatherForecast();
+                    } else if (weatherData.list && weatherData.list.length > 0) {
+                        console.log('🎯 Using list format');
+                        displayWeeklyWeatherForecast();
+                    } else {
+                        console.log('🎯 Creating mock forecast from current weather');
+                        createMockForecast(weatherData);
+                    }
+                    generateClimateSmartSuggestions();
+                } else {
+                    throw new Error(`API returned status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('❌ Error loading weather forecast:', error);
+                forecastGrid.innerHTML = '<p style="text-align: center; color: var(--error-color); padding: 2rem;">❌ Unable to load weather forecast. Please try again later.</p>';
+                suggestionText.textContent = 'Weather data unavailable for recommendations.';
+            }
+        }
+
+        function createMockForecast(currentWeather) {
+            // Create a mock 7-day forecast based on current weather
+            const mockForecast = {
+                list: []
+            };
+
+            for (let i = 0; i < 7; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+                date.setHours(12, 0, 0, 0);
+
+                // Vary temperature slightly for each day
+                const tempVariation = (Math.random() - 0.5) * 6; // ±3°C variation
+                const baseTemp = currentWeather.temperature || currentWeather.main?.temp || 25;
+
+                mockForecast.list.push({
+                    dt: date.getTime() / 1000,
+                    main: {
+                        temp: baseTemp + tempVariation,
+                        humidity: (currentWeather.humidity || 70) + (Math.random() - 0.5) * 20
+                    },
+                    weather: [{
+                        main: currentWeather.condition || currentWeather.weather?.[0]?.main || 'Clear',
+                        description: currentWeather.description || currentWeather.weather?.[0]?.description || 'clear sky'
+                    }],
+                    wind: {
+                        speed: (currentWeather.windSpeed || 5) + (Math.random() - 0.5) * 3
+                    }
+                });
+            }
+
+            weatherData = mockForecast;
+            displayWeeklyWeatherForecast();
+        }
+
+        async function refreshWeather() {
+            document.getElementById('forecastGrid').innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Refreshing weather data...</p>';
+            await loadWeatherForecast();
+        }
+
+        function displayWeeklyWeatherForecast() {
+            console.log('🎨 Starting weather display function...');
+            
+            const forecastGrid = document.getElementById('forecastGrid');
+            if (!forecastGrid) {
+                console.error('❌ Forecast grid element not found in display function');
+                return;
+            }
+
+            if (!weatherData) {
+                console.error('❌ No weather data available for display');
+                forecastGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No weather data available</p>';
+                return;
+            }
+
+            console.log('📊 Weather data structure:', Object.keys(weatherData));
+
+            let forecastList = [];
+            
+            // Handle different data formats
+            if (weatherData.forecasts) {
+                console.log('✅ Using forecasts format with', weatherData.forecasts.length, 'entries');
+                forecastList = weatherData.forecasts;
+            } else if (weatherData.list) {
+                console.log('✅ Using list format with', weatherData.list.length, 'entries');
+                forecastList = weatherData.list;
+            } else {
+                console.error('❌ Unknown weather data format:', weatherData);
+                forecastGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">Weather data format not supported</p>';
+                return;
+            }
+
+            console.log('🔄 Processing forecast list with', forecastList.length, 'entries');
+
+            // Group by day and take one forecast per day (preferably midday)
+            const dailyForecasts = [];
+            const processedDates = new Set();
+
+            for (let i = 0; i < forecastList.length && dailyForecasts.length < 7; i++) {
+                const item = forecastList[i];
+                let date, temp, description, humidity, windSpeed, weatherMain;
+                
+                try {
+                    if (weatherData.forecasts) {
+                        // Our API format
+                        date = new Date(item.datetime);
+                        temp = item.temperature;
+                        description = item.description;
+                        humidity = item.humidity;
+                        windSpeed = item.windSpeed;
+                        weatherMain = item.description.includes('clear') ? 'Clear' : 
+                                     item.description.includes('cloud') ? 'Clouds' :
+                                     item.description.includes('rain') ? 'Rain' : 'Clear';
+                    } else {
+                        // OpenWeatherMap format
+                        date = new Date(item.dt * 1000);
+                        temp = Math.round(item.main.temp);
+                        description = item.weather[0].description;
+                        humidity = item.main.humidity;
+                        windSpeed = item.wind ? Math.round(item.wind.speed) : 0;
+                        weatherMain = item.weather[0].main;
+                    }
+
+                    const dateKey = date.toDateString();
+                    
+                    if (!processedDates.has(dateKey)) {
+                        processedDates.add(dateKey);
+                        dailyForecasts.push({
+                            date: date,
+                            temp: temp,
+                            description: description,
+                            humidity: humidity,
+                            windSpeed: windSpeed,
+                            weatherMain: weatherMain
+                        });
+                        console.log(`📅 Added forecast for ${dateKey}: ${temp}°C, ${description}`);
+                    }
+                } catch (error) {
+                    console.error('❌ Error processing forecast item:', error, item);
+                }
+            }
+
+            console.log('✅ Processed', dailyForecasts.length, 'daily forecasts');
+
+            if (dailyForecasts.length === 0) {
+                console.error('❌ No daily forecasts generated');
+                forecastGrid.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">No forecast data available</p>';
+                return;
+            }
+
+            const forecastHTML = dailyForecasts.map((day, index) => {
+                const dayName = day.date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+                const icon = getWeatherIcon(day.weatherMain);
+
+                console.log(`🎯 Creating card ${index + 1}: ${dayName}, ${day.temp}°C, ${icon}`);
+
+                return `
+                    <div class="forecast-day">
+                        <div class="forecast-day-name">${dayName}</div>
+                        <div class="forecast-icon">${icon}</div>
+                        <div class="forecast-temp">${day.temp}°C</div>
+                        <div class="forecast-desc">${day.description}</div>
+                        <div class="forecast-desc">💧 ${day.humidity}% | 💨 ${day.windSpeed}km/h</div>
+                    </div>
+                `;
+            }).join('');
+
+            console.log('🎨 Setting forecast HTML...');
+            forecastGrid.innerHTML = forecastHTML;
+            console.log('✅ Weather forecast display completed!');
+        }
+
+        function generateClimateSmartSuggestions() {
+            console.log('🧠 Generating climate-smart recommendations...');
+            
+            if (!weatherData) {
+                console.log('❌ No weather data for recommendations');
+                return;
+            }
+
+            const suggestionElement = document.getElementById('suggestionText');
+            if (!suggestionElement) {
+                console.log('❌ Suggestion element not found');
+                return;
+            }
+
+            let forecastList = [];
+            
+            // Handle different data formats
+            if (weatherData.forecasts) {
+                forecastList = weatherData.forecasts;
+            } else if (weatherData.list) {
+                forecastList = weatherData.list;
+            } else {
+                suggestionElement.textContent = 'Weather data unavailable for recommendations.';
+                return;
+            }
+
+            console.log('📊 Processing', forecastList.length, 'forecast entries for recommendations');
+
+            // Group by day to avoid duplicates (same logic as weather display)
+            const dailyRecommendations = [];
+            const processedDates = new Set();
+
+            for (const item of forecastList) {
+                if (dailyRecommendations.length >= 7) break; // Limit to 7 days
+
+                let date, temp, weather;
+                
+                if (weatherData.forecasts) {
+                    // Our API format
+                    date = new Date(item.datetime);
+                    temp = item.temperature;
+                    weather = item.description.toLowerCase();
+                } else {
+                    // OpenWeatherMap format
+                    date = new Date(item.dt * 1000);
+                    temp = item.main.temp;
+                    weather = item.weather[0].main.toLowerCase();
+                }
+
+                const dateKey = date.toDateString();
+                
+                if (!processedDates.has(dateKey)) {
+                    processedDates.add(dateKey);
+                    
+                    const dayName = date.toLocaleDateString('en-US', { 
+                        weekday: 'long',
+                        month: 'short',
+                        day: 'numeric'
+                    });
+
+                    let recommendation = '';
+                    let icon = '';
+
+                    if (weather.includes('clear') && temp > 18 && temp < 32) {
+                        icon = '🌞';
+                        recommendation = `Perfect for outdoor activities! Consider hiking, cycling, or tree planting.`;
+                    } else if (weather.includes('rain')) {
+                        icon = '🌧️';
+                        recommendation = `Rainy day - great for indoor eco-activities, reading climate articles, or planning green initiatives.`;
+                    } else if (temp > 35) {
+                        icon = '🔥';
+                        recommendation = `Very hot - plan indoor activities or early morning/evening outdoor activities. Stay hydrated!`;
+                    } else if (weather.includes('cloud')) {
+                        icon = '☁️';
+                        recommendation = `Cloudy but pleasant - good for most outdoor activities and community gardening.`;
+                    } else if (temp < 15) {
+                        icon = '🧥';
+                        recommendation = `Cool weather - perfect for brisk walks, indoor workshops, or cozy eco-planning sessions.`;
+                    } else {
+                        icon = '🌤️';
+                        recommendation = `Pleasant weather - great for any outdoor or indoor climate activities. Temperature: ${Math.round(temp)}°C`;
+                    }
+
+                    dailyRecommendations.push({
+                        day: dayName,
+                        icon: icon,
+                        recommendation: recommendation,
+                        temp: Math.round(temp)
+                    });
+                }
+            }
+
+            console.log('✅ Generated', dailyRecommendations.length, 'daily recommendations');
+
+            if (dailyRecommendations.length === 0) {
+                suggestionElement.innerHTML = 'No specific recommendations available.';
+                return;
+            }
+
+            // Create formatted recommendations
+            const formattedSuggestions = dailyRecommendations.map(day => 
+                `<div style="margin-bottom: 1rem; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--primary-color);">
+                    <strong>${day.icon} ${day.day}:</strong><br>
+                    <span style="color: var(--text-secondary); margin-left: 1.5rem;">${day.recommendation}</span>
+                </div>`
+            ).join('');
+
+            suggestionElement.innerHTML = formattedSuggestions;
+            console.log('✅ Climate recommendations displayed successfully!');
+        }
+
+        function getWeatherIcon(weather) {
+            const icons = {
+                'Clear': '☀️',
+                'Clouds': '☁️',
+                'Rain': '🌧️',
+                'Drizzle': '🌦️',
+                'Thunderstorm': '⛈️',
+                'Snow': '❄️',
+                'Mist': '🌫️',
+                'Fog': '🌫️'
+            };
+            return icons[weather] || '🌤️';
+        }
+
+        // Manual test functions for debugging (accessible from browser console)
+        window.testWeatherForecast = async function() {
+            console.log('🧪 Manual weather forecast test started...');
+            await loadWeatherForecast();
+        }
+
+        function testWeatherFunction() {
+            console.log('🧪 Test button clicked!');
+            testWeatherForecast();
+        }
+
+        window.checkWeatherElements = function() {
+            const forecastGrid = document.getElementById('forecastGrid');
+            const suggestionText = document.getElementById('suggestionText');
+            
+            console.log('🔍 Element check:');
+            console.log('- forecastGrid exists:', !!forecastGrid);
+            console.log('- suggestionText exists:', !!suggestionText);
+            
+            if (forecastGrid) {
+                console.log('- forecastGrid innerHTML length:', forecastGrid.innerHTML.length);
+                console.log('- forecastGrid preview:', forecastGrid.innerHTML.substring(0, 100) + '...');
+            }
+            
+            return {
+                forecastGrid: !!forecastGrid,
+                suggestionText: !!suggestionText,
+                weatherData: !!weatherData
+            };
+        }
+
+        window.debugWeatherData = function() {
+            console.log('🔍 Weather data debug:');
+            console.log('- weatherData exists:', !!weatherData);
+            if (weatherData) {
+                console.log('- Location:', weatherData.location);
+                console.log('- Forecasts count:', weatherData.forecasts ? weatherData.forecasts.length : 0);
+                console.log('- First forecast:', weatherData.forecasts ? weatherData.forecasts[0] : null);
+            }
+            return weatherData;
+        }
+
+        // Comments Management
+        async function addComment() {
+            const text = document.getElementById('commentText').value.trim();
+            
+            if (!text) {
+                alert('Please enter a comment');
+                return;
+            }
+
+            const comment = {
+                text,
+                category: 'climate',
+                isPublic: false
+            };
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/users/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(comment)
+                });
+
+                if (response.ok) {
+                    const newComment = await response.json();
+                    comments.unshift(newComment);
+                    displayComments();
+                    document.getElementById('commentText').value = '';
+                    alert('Note added successfully!');
+                } else {
+                    alert('Failed to add note');
+                }
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Error adding note');
+            }
+        }
+
+        async function loadComments() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/api/users/comments', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    comments = await response.json();
+                    displayComments();
+                }
+            } catch (error) {
+                console.error('Error loading comments:', error);
+            }
+        }
+
+        function displayComments() {
+            const commentList = document.getElementById('commentList');
+            
+            if (comments.length === 0) {
+                commentList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 1rem;">No notes yet. Share your climate observations!</p>';
+                return;
+            }
+
+            commentList.innerHTML = comments.map(comment => {
+                const commentDate = comment.createdAt || comment.date || new Date().toISOString();
+                const formattedDate = new Date(commentDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+                
+                return `
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author">${comment.author || 'You'}</div>
+                            <div class="comment-date">${formattedDate}</div>
+                        </div>
+                        <div class="comment-text">${comment.text}</div>
+                        <button onclick="deleteComment('${comment._id}')" class="delete-btn" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Are you sure you want to delete this note?')) {
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/users/comments/${commentId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    comments = comments.filter(c => c._id !== commentId);
+                    displayComments();
+                } else {
+                    alert('Failed to delete note');
+                }
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                alert('Error deleting note');
+            }
+        }
 
         // Theme Management
         function initTheme() {
@@ -1659,73 +2666,7 @@
             `;
         }
 
-        // Load Real Weather Forecast
-        async function loadWeatherForecast() {
-            try {
-                // Use the same weather API as the weather page
-                const cities = ['Dar es Salaam', 'Dodoma', 'Arusha'];
-                const forecasts = [];
-                
-                for (const city of cities) {
-                    try {
-                        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city},TZ&appid=bd5e378503939ddaee76f12ad7a97608&units=metric`);
-                        if (response.ok) {
-                            const data = await response.json();
-                            forecasts.push({
-                                city: city,
-                                temp: Math.round(data.main.temp),
-                                condition: data.weather[0].main,
-                                humidity: data.main.humidity,
-                                icon: data.weather[0].icon
-                            });
-                        }
-                    } catch (error) {
-                        console.error(`Error fetching weather for ${city}:`, error);
-                    }
-                }
-                
-                displayWeatherForecast(forecasts);
-            } catch (error) {
-                console.error('Error loading weather forecast:', error);
-                displayWeatherForecastError();
-            }
-        }
-
-        function displayWeatherForecast(forecasts) {
-            const container = document.getElementById('weatherForecastContainer');
-            
-            if (forecasts.length === 0) {
-                displayWeatherForecastError();
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="weather-forecast-list">
-                    ${forecasts.map(forecast => `
-                        <div class="forecast-item">
-                            <div class="forecast-location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                ${forecast.city}
-                            </div>
-                            <div class="forecast-details">
-                                <div class="forecast-temp">${forecast.temp}°C</div>
-                                <div class="forecast-condition">${forecast.condition}</div>
-                                <div class="forecast-humidity">
-                                    <i class="fas fa-tint"></i> ${forecast.humidity}%
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div class="forecast-footer">
-                    <a href="weather.html" class="forecast-link">
-                        <i class="fas fa-external-link-alt"></i>
-                        View Full Weather Map
-                    </a>
-                </div>
-            `;
-        }
+        // Old weather functions removed - using enhanced weather forecast instead
 
         async function loadUserStats() {
             const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
@@ -1953,24 +2894,7 @@
             `;
         }
 
-        function displayWeatherForecastError() {
-            const container = document.getElementById('weatherForecastContainer');
-            container.innerHTML = `
-                <div class="error-state">
-                    <i class="fas fa-cloud-sun"></i>
-                    <h3>Weather data unavailable</h3>
-                    <p>Unable to fetch current weather data.</p>
-                    <a href="weather.html" class="action-btn">
-                        <div class="action-icon">
-                            <i class="fas fa-external-link-alt"></i>
-                        </div>
-                        <div class="action-content">
-                            <div class="action-title">Try Weather Page</div>
-                        </div>
-                    </a>
-                </div>
-            `;
-        }
+        // Old weather error function removed - using enhanced weather forecast instead
 
         // Initialize user join date if not exists
         function initializeUserData() {
@@ -1992,6 +2916,11 @@
             if (checkAuth()) {
                 initializeUserData();
                 loadUserData();
+                
+                // Load enhanced features
+                loadActivities();
+                loadComments();
+                loadWeatherForecast();
             }
         });
 

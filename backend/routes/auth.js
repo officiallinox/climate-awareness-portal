@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { authMiddleware } = require('../middleware/auth');
 
 router.post('/register', async (req, res) => {
   try {
@@ -107,6 +108,27 @@ router.post('/login', async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Login failed' });
+    }
+});
+
+// Verify token endpoint
+router.get('/verify', authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        res.json({
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            isAdmin: user.role === 'admin'
+        });
+    } catch (error) {
+        console.error('Token verification error:', error);
+        res.status(500).json({ message: 'Token verification failed' });
     }
 });
 

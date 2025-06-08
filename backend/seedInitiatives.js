@@ -10,44 +10,45 @@ mongoose.connect('mongodb://localhost:27017/climaware', {
 
 const sampleInitiatives = [
     {
-        title: "Community Tree Planting Drive",
-        description: "Join us for a massive tree planting event in Central Park. We'll be planting native species to help restore the local ecosystem and combat climate change. All materials and tools will be provided. Bring your enthusiasm and help us make our city greener!",
+        title: "Kilimanjaro Forest Restoration Project",
+        description: "Join us in restoring the indigenous forests around Mount Kilimanjaro. We'll be planting native species like African olive and camphor trees to help restore the ecosystem and support local communities. All tools and seedlings provided. Help us preserve Tanzania's natural heritage!",
         category: "reforestation",
         status: "upcoming",
         date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
-        time: "09:00 AM",
+        time: "07:00 AM",
         location: {
-            address: "Central Park, Great Lawn",
-            city: "New York",
-            state: "NY",
-            country: "USA",
-            coordinates: { lat: 40.7829, lng: -73.9654 }
+            address: "Kilimanjaro National Park, Machame Gate",
+            city: "Moshi",
+            region: "Kilimanjaro",
+            country: "Tanzania",
+            coordinates: { lat: -3.0674, lng: 37.3556 }
         },
-        maxParticipants: 150,
-        requirements: ["Comfortable outdoor clothing", "Water bottle", "Sun protection"],
-        materials: ["Shovels", "Saplings", "Mulch", "Watering cans"],
+        maxParticipants: 100,
+        requirements: ["Hiking boots", "Water bottle", "Hat and sunscreen", "Long pants"],
+        materials: ["Shovels", "Native tree seedlings", "Organic fertilizer", "Watering equipment"],
         impact: {
-            expectedTreesPlanted: 200,
-            expectedCO2Reduction: 500
+            expectedTreesPlanted: 500,
+            expectedCO2Reduction: 1250,
+            localBenefits: "Watershed protection, soil conservation"
         },
         contactInfo: {
-            email: "trees@climaware.org",
-            phone: "+1-555-0123"
+            email: "kilimanjaro@climaware.tz",
+            phone: "+255-27-275-0123"
         },
         featured: true
     },
     {
-        title: "Beach Cleanup Marathon",
-        description: "Help us clean up Sunset Beach and protect marine life. We'll provide all cleanup supplies and refreshments. This is a great opportunity to make a direct impact on ocean health while enjoying a day at the beach with fellow environmental enthusiasts.",
-        category: "cleanup",
+        title: "Dar es Salaam Mangrove Restoration",
+        description: "Help us restore the vital mangrove ecosystems along Dar es Salaam's coastline. We'll be planting mangrove seedlings and cleaning up plastic waste that threatens marine life. This project directly protects our coast from rising sea levels while supporting local fishing communities.",
+        category: "coastal-restoration",
         status: "upcoming",
         date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks from now
-        time: "08:00 AM",
+        time: "06:30 AM",
         location: {
-            address: "Sunset Beach, Pier 1",
-            city: "Los Angeles",
-            state: "CA",
-            country: "USA",
+            address: "Msimbazi Creek, Mangrove Boardwalk",
+            city: "Dar es Salaam",
+            region: "Dar es Salaam",
+            country: "Tanzania",
             coordinates: { lat: 34.0522, lng: -118.2437 }
         },
         maxParticipants: 100,

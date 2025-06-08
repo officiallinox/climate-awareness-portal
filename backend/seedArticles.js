@@ -10,44 +10,61 @@ mongoose.connect('mongodb://localhost:27017/climaware', {
 
 const sampleArticles = [
     {
-        title: "Understanding Climate Change: The Science Behind Global Warming",
-        content: `Climate change refers to long-term shifts in global or regional climate patterns. Since the mid-20th century, scientists have observed unprecedented changes in Earth's climate system, primarily attributed to increased levels of greenhouse gases produced by human activities.
+        title: "Climate Change in Tanzania: Local Impacts and Community Responses",
+        content: `Tanzania is experiencing significant climate change impacts that affect millions of lives across the country. From the coastal regions of Dar es Salaam to the highlands of Kilimanjaro, communities are adapting to new climate realities.
 
-**The Greenhouse Effect**
+**Tanzania's Climate Challenges**
 
-The greenhouse effect is a natural process that warms Earth's surface. When the Sun's energy reaches Earth's atmosphere, some of it is reflected back to space and the rest is absorbed and re-radiated by greenhouse gases. These gases include water vapor, carbon dioxide (CO2), methane (CH4), nitrous oxide (N2O), and fluorinated gases.
+Tanzania faces unique climate challenges due to its diverse geography:
+- **Coastal Areas**: Rising sea levels threaten Dar es Salaam and Zanzibar, with increased flooding during high tides
+- **Mount Kilimanjaro**: Glacial retreat has accelerated, with ice coverage reduced by 85% since 1912
+- **Agricultural Regions**: Changing rainfall patterns affect maize, rice, and coffee production in Arusha and Mbeya
+- **Lake Victoria Basin**: Water levels fluctuate more dramatically, affecting fishing communities in Mwanza
 
-**Human Impact**
+**Local Impacts**
 
-Since the Industrial Revolution, human activities have significantly increased the concentration of greenhouse gases in the atmosphere. The burning of fossil fuels, deforestation, and industrial processes have led to a 47% increase in atmospheric CO2 since 1850.
+Recent studies show Tanzania is warming at 0.2°C per decade, faster than the global average:
+- Increased frequency of droughts in central regions (Dodoma, Singida)
+- More intense rainfall events causing floods in Dar es Salaam
+- Shifting growing seasons affecting smallholder farmers
+- Coral bleaching events along the coast affecting tourism and fishing
 
-**Observable Effects**
+**Community Adaptation**
 
-Current evidence of climate change includes:
-- Rising global temperatures (1.1°C above pre-industrial levels)
-- Melting ice sheets and glaciers
-- Rising sea levels
-- Changes in precipitation patterns
-- More frequent extreme weather events
+Tanzanian communities are developing innovative solutions:
+- **Drought-resistant crops**: Farmers in Dodoma are adopting sorghum and millet varieties
+- **Water harvesting**: Rainwater collection systems in schools and health centers
+- **Mangrove restoration**: Coastal communities protecting shorelines naturally
+- **Solar energy**: Rural electrification through solar mini-grids
 
-**Future Projections**
+**Government Initiatives**
 
-Climate models predict that without significant action to reduce greenhouse gas emissions, global temperatures could rise by 3-5°C by 2100, leading to severe consequences for ecosystems, human health, and economic systems.
+The Tanzania government has launched several climate programs:
+- National Climate Change Strategy (2021-2026)
+- Green Climate Fund projects worth $200 million
+- Renewable energy targets: 50% by 2025
 
-Understanding the science behind climate change is crucial for developing effective mitigation and adaptation strategies.`,
+Understanding local climate impacts helps communities prepare for a changing future while preserving Tanzania's natural heritage.`,
         category: "climate-science",
-        excerpt: "Explore the fundamental science behind climate change, from the greenhouse effect to human impacts and future projections.",
-        views: 1247,
-        readTime: 8
+        excerpt: "Discover how climate change affects Tanzania's diverse regions and how communities are adapting with innovative local solutions.",
+        views: 2156,
+        readTime: 7
     },
     {
-        title: "Renewable Energy Revolution: Solar and Wind Power Leading the Way",
-        content: `The renewable energy sector has experienced unprecedented growth in recent years, with solar and wind power leading the transformation of the global energy landscape.
+        title: "Solar Energy in Tanzania: Powering Rural Communities and Urban Growth",
+        content: `Tanzania is emerging as a leader in solar energy adoption across East Africa, with innovative projects bringing clean electricity to both rural villages and growing urban centers.
 
-**Solar Power Breakthrough**
+**Tanzania's Solar Potential**
 
-Solar photovoltaic (PV) technology has seen dramatic cost reductions, with prices falling by 90% since 2010. Key developments include:
-- Improved efficiency of solar panels (now exceeding 26% for commercial panels)
+Tanzania receives abundant solar radiation year-round, with 2,800-3,500 hours of sunshine annually:
+- **Northern regions** (Arusha, Kilimanjaro): 5.5-6.0 kWh/m²/day
+- **Central plateau** (Dodoma, Singida): 5.8-6.2 kWh/m²/day  
+- **Coastal areas** (Dar es Salaam, Mtwara): 5.0-5.5 kWh/m²/day
+- **Lake regions** (Mwanza, Bukoba): 5.2-5.8 kWh/m²/day
+
+**Rural Electrification Success**
+
+Solar mini-grids are transforming rural Tanzania:
 - Advanced energy storage solutions
 - Floating solar farms for water conservation
 - Building-integrated photovoltaics (BIPV)

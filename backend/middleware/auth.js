@@ -12,7 +12,15 @@ const authMiddleware = (req, res, next) => {
 
         const actualToken = token.replace('Bearer ', '');
         const decoded = jwt.verify(actualToken, process.env.JWT_SECRET);
-        req.user = decoded;
+        
+        // Normalize the user object to ensure consistent access
+        req.user = {
+            id: decoded.userId || decoded.id,
+            userId: decoded.userId || decoded.id,
+            role: decoded.role,
+            email: decoded.email,
+            isAdmin: decoded.isAdmin
+        };
         next();
     } catch (err) {
         console.error('Auth middleware error:', err);
