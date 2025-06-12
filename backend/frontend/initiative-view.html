@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Initiative Details - ClimAware Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Climate-focused Brand Colors */
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --primary-light: #d1fae5;
+            --secondary-color: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* Status Colors */
+            --status-upcoming: #3b82f6;
+            --status-ongoing: #10b981;
+            --status-completed: #6b7280;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing */
+            --container-padding: 1.5rem;
+            --section-spacing: 4rem;
+        }
+        
+        /* Dark Theme Colors */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --border-light: #1e293b;
+        }
+        
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--primary-hover);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem var(--container-padding);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .logo i {
+            margin-right: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: color 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Initiative Content */
+        .initiative-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--bg-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .initiative-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .initiative-icon {
+            width: 80px;
+            height: 80px;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        
+        .initiative-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+        
+        .initiative-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .meta-item i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .initiative-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .tag.status-upcoming {
+            background-color: var(--status-upcoming);
+            color: white;
+        }
+        
+        .tag.status-ongoing {
+            background-color: var(--status-ongoing);
+            color: white;
+        }
+        
+        .tag.status-completed {
+            background-color: var(--status-completed);
+            color: white;
+        }
+        
+        .tag.featured {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .initiative-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+        
+        .initiative-section {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .requirements-list, .materials-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .requirements-list li, .materials-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background-color: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        .requirements-list li i, .materials-list li i {
+            color: var(--primary-color);
+        }
+        
+        .impact-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .impact-stat {
+            background-color: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .impact-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .impact-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .participants-section {
+            margin-bottom: 2rem;
+        }
+        
+        .participants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 1rem;
+        }
+        
+        .participant {
+            text-align: center;
+        }
+        
+        .participant-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 0.5rem;
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            margin: 0 auto 0.5rem;
+        }
+        
+        .participant-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .organizer-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .organizer-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+        
+        .organizer-info {
+            flex: 1;
+        }
+        
+        .organizer-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .organizer-contact {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .initiative-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .join-btn, .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .join-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .join-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        .join-btn.disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+        }
+        
+        .join-btn.joined {
+            background-color: var(--success-color);
+        }
+        
+        .back-btn {
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        .back-btn:hover {
+            background-color: var(--border-color);
+        }
+        
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        
+        .share-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Map Section */
+        .map-section {
+            margin-bottom: 2rem;
+        }
+        
+        .map-container {
+            height: 300px;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .map-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+        
+        .map-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+        
+        /* Similar Initiatives */
+        .similar-initiatives {
+            margin-top: 3rem;
+        }
+        
+        .similar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .similar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .similar-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .similar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .similar-icon {
+            width: 100%;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            font-size: 3rem;
+        }
+        
+        .similar-content {
+            padding: 1rem;
+        }
+        
+        .similar-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .similar-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-tertiary);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error State */
+        .error-container {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error-color);
+            margin-bottom: 1rem;
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .retry-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .retry-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .initiative-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .initiative-meta {
+                grid-template-columns: 1fr;
+            }
+            
+            .impact-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .initiative-actions {
+                flex-direction: column;
+            }
+            
+            .join-btn, .back-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .participants-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+            
+            .similar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> ClimAware
+            </a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/articles.html">Articles</a>
+                <a href="/initiatives.html" class="active">Initiatives</a>
+                <a href="/dashboard.html">Dashboard</a>
+            </nav>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div id="initiativeContainer" class="initiative-container">
+            <!-- Loading state shown initially -->
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading initiative details...</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>ClimAware Portal</h3>
+                    <p>Your trusted source for climate awareness and environmental education.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/articles.html">Articles</a></li>
+                        <li><a href="/initiatives.html">Initiatives</a></li>
+                        <li><a href="/dashboard.html">Dashboard</a></li>
+                        <li><a href="/about.html">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="/initiatives.html?category=reforestation">Reforestation</a></li>
+                        <li><a href="/initiatives.html?category=cleanup">Cleanup</a></li>
+                        <li><a href="/initiatives.html?category=education">Education</a></li>
+                        <li><a href="/initiatives.html?category=renewable">Renewable Energy</a></li>
+                        <li><a href="/initiatives.html?category=conservation">Conservation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> info@climaware.org</li>
+                        <li><i class="fas fa-phone"></i> +255 123 456 789</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Dar es Salaam, Tanzania</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ClimAware Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Global variables
+        let initiative = null;
+        
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcon(newTheme);
+        }
+        
+        function updateThemeToggleIcon(theme) {
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.innerHTML = theme === 'dark' 
+                    ? '<i class="fas fa-sun"></i>' 
+                    : '<i class="fas fa-moon"></i>';
+            }
+        }
+        
+        // Get initiative ID from URL
+        function getInitiativeIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        // Load Initiative
+        async function loadInitiative() {
+            const initiativeId = getInitiativeIdFromUrl();
+            
+            if (!initiativeId) {
+                showErrorState('No initiative ID provided');
+                return;
+            }
+            
+            // First, try to get the initiative from localStorage
+            const storedInitiative = localStorage.getItem('currentInitiative');
+            if (storedInitiative) {
+                try {
+                    initiative = JSON.parse(storedInitiative);
+                    console.log('Initiative loaded from localStorage:', initiative.title);
+                    renderInitiative();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing stored initiative:', e);
+                    // Continue to API fetch if localStorage parsing fails
+                }
+            }
+            
+            // If not in localStorage, try to fetch from API
+            try {
+                const response = await fetch(`/api/initiatives/${initiativeId}`);
+                
+                if (!response.ok) {
+                    // If API fails, create a fallback initiative
+                    createFallbackInitiative(initiativeId);
+                    return;
+                }
+                
+                initiative = await response.json();
+                renderInitiative();
+                
+            } catch (error) {
+                console.error('Error loading initiative:', error);
+                // Create a fallback initiative if all else fails
+                createFallbackInitiative(initiativeId);
+            }
+        }
+        
+        // Create a fallback initiative when API fails
+        function createFallbackInitiative(initiativeId) {
+            const categories = ['reforestation', 'cleanup', 'education', 'renewable', 'conservation', 'recycling'];
+            const cities = ['Dar es Salaam', 'Dodoma', 'Arusha', 'Mwanza', 'Zanzibar', 'Mbeya'];
+            const statuses = ['upcoming', 'ongoing', 'completed'];
+            
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+            
+            // Generate a date in the future for upcoming, past for completed
+            const date = new Date();
+            if (status === 'upcoming') {
+                date.setDate(date.getDate() + Math.floor(Math.random() * 30) + 1);
+            } else if (status === 'completed') {
+                date.setDate(date.getDate() - Math.floor(Math.random() * 30) - 1);
+            }
+            
+            initiative = {
+                _id: initiativeId,
+                title: `${category.charAt(0).toUpperCase() + category.slice(1)} Initiative in ${city}`,
+                description: `This is a sample ${category} initiative in ${city}. Join us to make a difference in our community and environment.`,
+                category: category,
+                status: status,
+                date: date,
+                time: `${Math.floor(Math.random() * 12) + 1}:00 ${Math.random() > 0.5 ? 'AM' : 'PM'}`,
+                location: {
+                    city: city,
+                    country: 'Tanzania'
+                },
+                organizer: {
+                    _id: 'fallback-organizer',
+                    name: 'ClimAware Organization',
+                    email: 'contact@climaware.org'
+                },
+                participants: Array.from({ length: Math.floor(Math.random() * 20) + 5 }, (_, j) => ({
+                    user: {
+                        _id: `participant-${j}`,
+                        name: `Participant ${j + 1}`
+                    },
+                    joinedAt: new Date(date.getTime() - Math.random() * 1000000000),
+                    status: 'joined'
+                })),
+                maxParticipants: 50,
+                requirements: ['Bring water', 'Wear comfortable clothes', 'Positive attitude'],
+                materials: ['Will be provided at the venue'],
+                impact: {
+                    expectedCO2Reduction: Math.floor(Math.random() * 1000),
+                    expectedTreesPlanted: Math.floor(Math.random() * 100),
+                    expectedWasteCollected: Math.floor(Math.random() * 500)
+                },
+                isActive: true,
+                featured: Math.random() > 0.7,
+                fallback: true
+            };
+            
+            renderInitiative();
+        }
+        
+        // Render Initiative
+        function renderInitiative() {
+            const container = document.getElementById('initiativeContainer');
+            
+            if (!initiative) {
+                showErrorState('Initiative data is missing');
+                return;
+            }
+            
+            // Determine initiative icon based on category
+            const iconMap = {
+                'reforestation': 'fa-tree',
+                'cleanup': 'fa-broom',
+                'education': 'fa-graduation-cap',
+                'renewable': 'fa-solar-panel',
+                'conservation': 'fa-leaf',
+                'recycling': 'fa-recycle'
+            };
+            
+            const icon = iconMap[initiative.category] || 'fa-seedling';
+            const status = initiative.status || 'upcoming';
+            const participantCount = initiative.participants?.length || 0;
+            const maxParticipants = initiative.maxParticipants || 100;
+            const category = initiative.category || 'environmental';
+            
+            // Format date
+            const date = new Date(initiative.date);
+            const formattedDate = date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Check if user has joined
+            const token = localStorage.getItem('token');
+            const userHasJoined = false; // This would be determined by checking user's joined initiatives
+            
+            // Determine button state
+            let joinButtonHtml;
+            if (status === 'completed') {
+                joinButtonHtml = `
+                    <button class="join-btn disabled">
+                        <i class="fas fa-check"></i>
+                        Completed
+                    </button>
+                `;
+            } else if (participantCount >= maxParticipants) {
+                joinButtonHtml = `
+                    <button class="join-btn disabled">
+                        <i class="fas fa-users"></i>
+                        Full
+                    </button>
+                `;
+            } else if (userHasJoined) {
+                joinButtonHtml = `
+                    <button class="join-btn joined" onclick="leaveInitiative('${initiative._id}')">
+                        <i class="fas fa-check"></i>
+                        Joined
+                    </button>
+                `;
+            } else {
+                joinButtonHtml = `
+                    <button class="join-btn" onclick="joinInitiative('${initiative._id}')">
+                        <i class="fas fa-hand-holding-heart"></i>
+                        Join Initiative
+                    </button>
+                `;
+            }
+            
+            // Location display
+            const locationText = initiative.location?.city ? 
+                `${initiative.location.city}, ${initiative.location.state || initiative.location.country || 'Tanzania'}` : 
+                'Location TBD';
+            
+            // Build HTML
+            const initiativeHTML = `
+                <div class="initiative-header">
+                    <div class="initiative-icon">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div>
+                        <div class="initiative-tags">
+                            <span class="tag">${category.charAt(0).toUpperCase() + category.slice(1)}</span>
+                            <span class="tag status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                            ${initiative.featured ? '<span class="tag featured">Featured</span>' : ''}
+                        </div>
+                        <h1 class="initiative-title">${initiative.title}</h1>
+                    </div>
+                </div>
+                
+                <div class="initiative-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>${initiative.time || '10:00 AM'}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>${locationText}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>${participantCount}/${maxParticipants} participants</span>
+                    </div>
+                </div>
+                
+                <p class="initiative-description">${initiative.description}</p>
+                
+                <div class="map-section">
+                    <h2 class="section-title"><i class="fas fa-map-marked-alt"></i> Location</h2>
+                    <div class="map-container">
+                        <div class="map-placeholder">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <p>${locationText}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="initiative-section">
+                    <h2 class="section-title"><i class="fas fa-clipboard-list"></i> Requirements</h2>
+                    <ul class="requirements-list">
+                        ${initiative.requirements ? 
+                            initiative.requirements.map(req => `
+                                <li><i class="fas fa-check-circle"></i> ${req}</li>
+                            `).join('') : 
+                            `<li><i class="fas fa-check-circle"></i> No specific requirements</li>`
+                        }
+                    </ul>
+                </div>
+                
+                <div class="initiative-section">
+                    <h2 class="section-title"><i class="fas fa-box-open"></i> Materials</h2>
+                    <ul class="materials-list">
+                        ${initiative.materials ? 
+                            initiative.materials.map(material => `
+                                <li><i class="fas fa-box"></i> ${material}</li>
+                            `).join('') : 
+                            `<li><i class="fas fa-box"></i> Materials will be provided</li>`
+                        }
+                    </ul>
+                </div>
+                
+                ${initiative.impact ? `
+                <div class="initiative-section">
+                    <h2 class="section-title"><i class="fas fa-chart-line"></i> Expected Impact</h2>
+                    <div class="impact-stats">
+                        ${initiative.impact.expectedCO2Reduction ? `
+                        <div class="impact-stat">
+                            <div class="impact-value">${initiative.impact.expectedCO2Reduction}</div>
+                            <div class="impact-label">kg CO₂ Reduction</div>
+                        </div>
+                        ` : ''}
+                        
+                        ${initiative.impact.expectedTreesPlanted ? `
+                        <div class="impact-stat">
+                            <div class="impact-value">${initiative.impact.expectedTreesPlanted}</div>
+                            <div class="impact-label">Trees Planted</div>
+                        </div>
+                        ` : ''}
+                        
+                        ${initiative.impact.expectedWasteCollected ? `
+                        <div class="impact-stat">
+                            <div class="impact-value">${initiative.impact.expectedWasteCollected}</div>
+                            <div class="impact-label">kg Waste Collected</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="organizer-section">
+                    <div class="organizer-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="organizer-info">
+                        <div class="organizer-name">Organized by: ${initiative.organizer?.name || 'ClimAware Organization'}</div>
+                        <div class="organizer-contact">${initiative.organizer?.email || 'contact@climaware.org'}</div>
+                    </div>
+                </div>
+                
+                ${initiative.participants && initiative.participants.length > 0 ? `
+                <div class="participants-section">
+                    <h2 class="section-title"><i class="fas fa-users"></i> Participants (${initiative.participants.length})</h2>
+                    <div class="participants-grid">
+                        ${initiative.participants.slice(0, 12).map(participant => `
+                            <div class="participant">
+                                <div class="participant-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="participant-name">${participant.user?.name || 'Participant'}</div>
+                            </div>
+                        `).join('')}
+                        ${initiative.participants.length > 12 ? `
+                            <div class="participant">
+                                <div class="participant-avatar">
+                                    <i class="fas fa-ellipsis-h"></i>
+                                </div>
+                                <div class="participant-name">+${initiative.participants.length - 12} more</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="initiative-actions">
+                    ${joinButtonHtml}
+                    <a href="/initiatives.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Initiatives
+                    </a>
+                    <div style="flex: 1;"></div>
+                    <a href="#" class="share-btn" title="Share on Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="share-btn" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="share-btn" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            `;
+            
+            container.innerHTML = initiativeHTML;
+        }
+        
+        // Join Initiative
+        async function joinInitiative(initiativeId) {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert('Please login to join initiatives');
+                localStorage.setItem('redirectAfterLogin', `initiative-view.html?id=${initiativeId}`);
+                window.location.href = 'login_new.html';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/initiatives/${initiativeId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('Successfully joined the initiative!');
+                    
+                    // Reload initiative to show updated participant count
+                    loadInitiative();
+                } else {
+                    // Check if it's a profile completion error
+                    if (data.error && data.error.includes('complete your profile')) {
+                        if (confirm(data.error + '\n\n' + (data.details || '') + '\n\nWould you like to update your profile now?')) {
+                            // Redirect to profile page
+                            window.location.href = '/profile.html';
+                        }
+                    } else {
+                        alert(data.error || 'Failed to join initiative');
+                    }
+                }
+            } catch (error) {
+                console.error('Error joining initiative:', error);
+                alert('Failed to join initiative. Please try again.');
+            }
+        }
+        
+        // Leave Initiative
+        async function leaveInitiative(initiativeId) {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                alert('Please login to manage your initiatives');
+                return;
+            }
+            
+            if (!confirm('Are you sure you want to leave this initiative?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/initiatives/${initiativeId}/leave`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    alert('You have left the initiative');
+                    
+                    // Reload initiative to show updated participant count
+                    loadInitiative();
+                } else {
+                    alert(data.error || 'Failed to leave initiative');
+                }
+            } catch (error) {
+                console.error('Error leaving initiative:', error);
+                alert('Failed to leave initiative. Please try again.');
+            }
+        }
+        
+        // Show Error State
+        function showErrorState(message = 'Failed to load initiative') {
+            const container = document.getElementById('initiativeContainer');
+            
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <h2 class="error-title">Initiative Not Found</h2>
+                    <p class="error-message">${message}</p>
+                    <a href="/initiatives.html" class="retry-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Initiatives
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            
+            // Set up theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+            
+            // Load initiative data
+            loadInitiative();
+        });
+    </script>
+</body>
+</html>

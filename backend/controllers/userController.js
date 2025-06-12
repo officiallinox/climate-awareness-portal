@@ -111,6 +111,56 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    try {
+        console.log('Password change request received');
+        const { currentPassword, newPassword } = req.body;
+        
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            console.log('Missing required fields');
+            return res.status(400).json({ message: 'Current password and new password are required' });
+        }
+        
+        // Find the user
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            console.log('User not found');
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
+        console.log('User found, verifying password');
+        
+        // Verify current password
+        const isMatch = await user.comparePassword(currentPassword);
+        if (!isMatch) {
+            console.log('Current password is incorrect');
+            return res.status(401).json({ message: 'Current password is incorrect' });
+        }
+        
+        // Validate new password
+        if (newPassword.length < 6) {
+            console.log('New password too short');
+            return res.status(400).json({ message: 'New password must be at least 6 characters long' });
+        }
+        
+        console.log('Updating password');
+        
+        // Update password - the pre-save hook in the User model will hash it
+        user.password = newPassword;
+        await user.save();
+        
+        console.log('Password updated successfully');
+        res.json({ message: 'Password changed successfully' });
+    } catch (err) {
+        console.error('Error changing password:', err);
+        res.status(500).json({ 
+            message: 'Server error during password change',
+            error: err.message 
+        });
+    }
+};
+
 // Activity functions
 const getUserActivities = async (req, res) => {
     try {
@@ -390,22 +440,32 @@ const getDashboardStats = async (req, res) => {
         const lastMonth = new Date(today);
         lastMonth.setMonth(lastMonth.getMonth() - 1);
 
+        // Import required models
+        const Initiative = require('../models/Initiative');
+        const Article = require('../models/Article');
+
         // Get total counts
         const totalUsers = await User.countDocuments();
         const totalActivities = await Activity.countDocuments();
         const totalComments = await Comment.countDocuments();
+        const totalInitiatives = await Initiative.countDocuments();
+        const totalArticles = await Article.countDocuments();
         
-        console.log('Basic counts:', { totalUsers, totalActivities, totalComments });
+        console.log('Basic counts:', { totalUsers, totalActivities, totalComments, totalInitiatives, totalArticles });
 
         // Get growth statistics
         const usersLastWeek = await User.countDocuments({ createdAt: { $gte: lastWeek } });
         const activitiesLastWeek = await Activity.countDocuments({ date: { $gte: lastWeek } });
         const commentsLastWeek = await Comment.countDocuments({ createdAt: { $gte: lastWeek } });
+        const initiativesLastWeek = await Initiative.countDocuments({ createdAt: { $gte: lastWeek } });
+        const articlesLastWeek = await Article.countDocuments({ createdAt: { $gte: lastWeek } });
 
         // Calculate growth percentages
         const userGrowth = totalUsers > 0 ? Math.round((usersLastWeek / totalUsers) * 100) : 0;
         const activityGrowth = totalActivities > 0 ? Math.round((activitiesLastWeek / totalActivities) * 100) : 0;
         const commentGrowth = totalComments > 0 ? Math.round((commentsLastWeek / totalComments) * 100) : 0;
+        const initiativeGrowth = totalInitiatives > 0 ? Math.round((initiativesLastWeek / totalInitiatives) * 100) : 0;
+        const articleGrowth = totalArticles > 0 ? Math.round((articlesLastWeek / totalArticles) * 100) : 0;
 
         // Get activity type distribution
         const activityTypes = await Activity.aggregate([
@@ -415,11 +475,14 @@ const getDashboardStats = async (req, res) => {
             return [];
         });
 
-        // Get daily activity data for the last 7 days
+        // Get daily activity data for the last 30 days
+        const thirtyDaysAgo = new Date(today);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
         const dailyActivities = await Activity.aggregate([
             {
                 $match: {
-                    date: { $gte: lastWeek }
+                    date: { $gte: thirtyDaysAgo }
                 }
             },
             {
@@ -436,15 +499,40 @@ const getDashboardStats = async (req, res) => {
             return [];
         });
 
+        // Fill in missing days with 0 count
+        const filledDailyActivities = [];
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const dateStr = date.toISOString().split('T')[0];
+            
+            const existingData = dailyActivities.find(item => item._id === dateStr);
+            filledDailyActivities.push({
+                date: dateStr,
+                count: existingData ? existingData.count : 0
+            });
+        }
+
         // Get user engagement stats
         const dailyActiveUsers = await Activity.distinct('userId', { date: { $gte: today } }).then(users => users.length).catch(() => 0);
         const weeklyActiveUsers = await Activity.distinct('userId', { date: { $gte: lastWeek } }).then(users => users.length).catch(() => 0);
         const monthlyActiveUsers = await Activity.distinct('userId', { date: { $gte: lastMonth } }).then(users => users.length).catch(() => 0);
 
+        // Calculate total article reads (views) - using a simpler approach
+        console.log('Calculating total article reads...');
+        
+        // Get all articles
+        const allArticles = await Article.find();
+        
+        // Calculate total views directly
+        const articleReads = allArticles.reduce((sum, article) => sum + (article.viewCount || 0), 0);
+        
+        console.log('Total article reads (calculated directly):', articleReads);
+        
         // Calculate climate impact
         const outdoorActivities = await Activity.countDocuments({ type: 'outdoor' }).catch(() => 0);
         const walkingActivities = await Activity.countDocuments({ 
-            name: { $regex: /walk/i } 
+            name: { $regex: /walk|hike/i } 
         }).catch(() => 0);
         const cyclingActivities = await Activity.countDocuments({ 
             name: { $regex: /cycle|bike/i } 
@@ -452,7 +540,7 @@ const getDashboardStats = async (req, res) => {
         const ecoActivities = await Activity.countDocuments({
             $or: [
                 { type: 'outdoor' },
-                { name: { $regex: /eco|green|environment/i } }
+                { name: { $regex: /eco|green|environment|plant|recycle/i } }
             ]
         }).catch(() => 0);
 
@@ -469,28 +557,75 @@ const getDashboardStats = async (req, res) => {
                 return [];
             });
 
+        // Get hourly activity distribution for today
+        const hourlyActivities = await Activity.aggregate([
+            {
+                $match: {
+                    date: { $gte: today }
+                }
+            },
+            {
+                $group: {
+                    _id: { $hour: "$date" },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]).catch(err => {
+            console.error('Error in hourlyActivities aggregation:', err);
+            return [];
+        });
+
+        // Get user activity distribution
+        const userActivityCounts = await Activity.aggregate([
+            {
+                $group: {
+                    _id: "$userId",
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { count: -1 } },
+            { $limit: 10 }
+        ]).catch(err => {
+            console.error('Error in userActivityCounts aggregation:', err);
+            return [];
+        });
+
+        // Get most active user details
+        let mostActiveUser = { name: 'No Data', count: 0 };
+        if (userActivityCounts.length > 0) {
+            const topUserId = userActivityCounts[0]._id;
+            const topUser = await User.findById(topUserId).catch(() => null);
+            if (topUser) {
+                mostActiveUser = {
+                    name: topUser.name,
+                    count: userActivityCounts[0].count
+                };
+            }
+        }
+
         res.json({
             stats: {
                 totalUsers,
                 totalActivities,
                 totalComments,
-                totalInitiatives: 0, // Will be updated when initiatives are implemented
-                totalArticles: 0, // Will be updated when articles are implemented
+                totalInitiatives,
+                totalArticles,
+                totalReads: articleReads, // Add total article reads
                 averageClimateScore: averageScore,
                 userGrowth,
                 activityGrowth,
                 commentGrowth,
+                initiativeGrowth,
+                articleGrowth,
                 scoreGrowth: Math.round(Math.random() * 10) // Mock for now
             },
             charts: {
                 activityTypes: activityTypes.map(type => ({
-                    label: type._id,
+                    label: type._id || 'Unknown',
                     count: type.count
                 })),
-                dailyActivities: dailyActivities.map(day => ({
-                    date: day._id,
-                    count: day.count
-                }))
+                dailyActivities: filledDailyActivities
             },
             engagement: {
                 dailyActiveUsers,
@@ -499,9 +634,17 @@ const getDashboardStats = async (req, res) => {
                 totalUsers
             },
             climateImpact: {
-                carbonSaved: (outdoorActivities * 2.5).toFixed(1),
-                stepsWalked: walkingActivities * 5000,
-                distanceCycled: cyclingActivities * 10,
+                // Calculate more realistic carbon savings:
+                // - Each outdoor activity saves about 0.5kg CO2 (conservative estimate)
+                // - Each walking activity saves about 1.2kg CO2 (vs driving)
+                // - Each cycling activity saves about 2.5kg CO2 (vs driving)
+                carbonSaved: (
+                    (outdoorActivities * 0.5) + 
+                    (walkingActivities * 1.2) + 
+                    (cyclingActivities * 2.5)
+                ).toFixed(1),
+                stepsWalked: walkingActivities * 3500, // More realistic step count per activity
+                distanceCycled: cyclingActivities * 5, // More realistic distance in km
                 ecoActivities
             },
             recentActivities: recentActivities.map(activity => ({
@@ -513,7 +656,20 @@ const getDashboardStats = async (req, res) => {
                     name: activity.userId.name,
                     email: activity.userId.email
                 } : { name: 'Unknown User', email: '' }
-            }))
+            })),
+            analytics: {
+                hourlyActivities: hourlyActivities.map(hour => ({
+                    hour: hour._id,
+                    count: hour.count
+                })),
+                mostActiveUser,
+                peakHour: hourlyActivities.length > 0 ? 
+                    hourlyActivities.reduce((max, current) => 
+                        current.count > max.count ? current : max
+                    )._id : 14,
+                userRetention: Math.min(95, (weeklyActiveUsers / totalUsers * 100)),
+                avgSessionDuration: Math.floor(Math.random() * 20) + 25 // Mock for now
+            }
         });
     } catch (err) {
         console.error('Error fetching dashboard stats:', err.message);
@@ -538,6 +694,7 @@ module.exports = {
     // User dashboard functions
     getUserProfile,
     updateUserProfile,
+    changePassword,
     getUserActivities,
     addUserActivity,
     deleteUserActivity,

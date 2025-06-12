@@ -2,11 +2,8 @@ const mongoose = require('mongoose');
 const Article = require('./models/Article');
 const User = require('./models/User');
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/climaware', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+// This function will be called by seed-all-data.js
+// We don't connect to MongoDB here anymore
 
 const sampleArticles = [
     {
@@ -46,7 +43,7 @@ The Tanzania government has launched several climate programs:
 
 Understanding local climate impacts helps communities prepare for a changing future while preserving Tanzania's natural heritage.`,
         category: "climate-science",
-        excerpt: "Discover how climate change affects Tanzania's diverse regions and how communities are adapting with innovative local solutions.",
+        summary: "Discover how climate change affects Tanzania's diverse regions and how communities are adapting with innovative local solutions.",
         views: 2156,
         readTime: 7
     },
@@ -97,7 +94,7 @@ While renewable energy growth is promising, challenges remain:
 
 Experts predict that renewable energy could provide 90% of the CO2 reductions needed in the energy sector to limit global warming to 1.5°C. Continued innovation and investment will be crucial for achieving this goal.`,
         category: "renewable-energy",
-        excerpt: "Discover how solar and wind power are revolutionizing the energy sector with dramatic cost reductions and technological breakthroughs.",
+        summary: "Discover how solar and wind power are revolutionizing the energy sector with dramatic cost reductions and technological breakthroughs.",
         views: 892,
         readTime: 6
     },
@@ -192,7 +189,7 @@ When adopted widely, these simple changes can have significant environmental ben
 
 Remember, sustainability is a journey, not a destination. Start with changes that feel manageable and gradually incorporate more sustainable practices into your daily routine.`,
         category: "sustainability",
-        excerpt: "Learn 10 practical and achievable ways to reduce your environmental impact and live more sustainably.",
+        summary: "Learn 10 practical and achievable ways to reduce your environmental impact and live more sustainably.",
         views: 1456,
         readTime: 10
     },
@@ -270,7 +267,7 @@ Several conservation efforts have shown promising results:
 
 Protecting our oceans requires global cooperation and immediate action. By supporting conservation efforts and making sustainable choices, we can help ensure healthy oceans for future generations.`,
         category: "conservation",
-        excerpt: "Explore the critical threats facing our oceans and discover how conservation efforts are working to protect marine ecosystems.",
+        summary: "Explore the critical threats facing our oceans and discover how conservation efforts are working to protect marine ecosystems.",
         views: 734,
         readTime: 7
     },
@@ -369,7 +366,7 @@ Annual Conference of the Parties (COP) meetings provide opportunities to:
 
 The Paris Agreement provides a framework for global climate action, but its success requires continued commitment and enhanced efforts from all countries and stakeholders.`,
         category: "policy",
-        excerpt: "Understand the Paris Agreement's role in global climate action and how international cooperation is addressing climate challenges.",
+        summary: "Understand the Paris Agreement's role in global climate action and how international cooperation is addressing climate challenges.",
         views: 623,
         readTime: 9
     },
@@ -506,47 +503,49 @@ Individuals and organizations can support green technology by:
 - Advocating for sustainable technology policies
 
 The convergence of AI, IoT, and environmental science offers unprecedented opportunities to address climate challenges and build a more sustainable future.`,
-        category: "technology",
-        excerpt: "Discover how AI and IoT technologies are creating innovative solutions for environmental monitoring and sustainability.",
+        category: "sustainability",
+        summary: "Discover how AI and IoT technologies are creating innovative solutions for environmental monitoring and sustainability.",
         views: 567,
         readTime: 8
     }
 ];
 
-async function seedArticles() {
+async function seedArticles(adminId) {
     try {
         console.log('📚 Starting article seeding...');
         
-        // Find an admin user to be the author
-        let adminUser = await User.findOne({ role: 'admin' });
-        
-        // If no admin exists, create one
-        if (!adminUser) {
-            console.log('📝 Creating admin user for articles...');
-            adminUser = new User({
-                name: 'ClimAware Editorial Team',
-                email: 'editorial@climaware.org',
-                password: 'admin123',
-                phone: '+1-555-0200',
-                gender: 'male',
-                dob: new Date('1980-01-01'),
-                role: 'admin'
-            });
-            await adminUser.save();
-            console.log('✅ Admin user created');
+        // Use the provided admin ID or find an admin user
+        let adminUserId = adminId;
+        if (!adminUserId) {
+            const adminUser = await User.findOne({ role: 'admin' });
+            if (adminUser) {
+                adminUserId = adminUser._id;
+            } else {
+                throw new Error('No admin user found and no admin ID provided');
+            }
         }
         
         // Clear existing articles
         await Article.deleteMany({});
         console.log('🗑️ Cleared existing articles');
         
-        // Add author to each article
-        const articlesWithAuthor = sampleArticles.map(article => ({
-            ...article,
-            author: adminUser._id,
-            createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
-            updatedAt: new Date()
-        }));
+        // Add author and generate slug for each article
+        const articlesWithAuthor = sampleArticles.map(article => {
+            // Generate slug from title
+            const slug = article.title
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
+                
+            return {
+                ...article,
+                slug,
+                author: adminUserId,
+                createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random date within last 30 days
+                updatedAt: new Date()
+            };
+        });
         
         // Insert new articles
         const createdArticles = await Article.insertMany(articlesWithAuthor);
@@ -558,12 +557,12 @@ async function seedArticles() {
             console.log(`${index + 1}. ${article.title} (${article.category}) - ${article.views} views`);
         });
         
-        process.exit(0);
+        return createdArticles;
     } catch (error) {
         console.error('❌ Error seeding articles:', error);
-        process.exit(1);
+        throw error;
     }
 }
 
-// Run the seeding
-seedArticles();
+// Export the function to be used by seed-all-data.js
+module.exports = seedArticles;

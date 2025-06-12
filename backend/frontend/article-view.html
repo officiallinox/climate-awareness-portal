@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article - ClimAware Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Climate-focused Brand Colors */
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --primary-light: #d1fae5;
+            --secondary-color: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing */
+            --container-padding: 1.5rem;
+            --section-spacing: 4rem;
+        }
+        
+        /* Dark Theme Colors */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --border-light: #1e293b;
+        }
+        
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        a:hover {
+            color: var(--primary-hover);
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--bg-primary);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem var(--container-padding);
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .logo i {
+            margin-right: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-color);
+        }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            transition: color 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Article Content */
+        .article-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--bg-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .article-header {
+            margin-bottom: 2rem;
+        }
+        
+        .article-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .article-meta span {
+            display: flex;
+            align-items: center;
+        }
+        
+        .article-meta i {
+            margin-right: 0.5rem;
+        }
+        
+        .article-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--primary-light);
+            color: var(--primary-color);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .article-content h2 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+        
+        .article-content h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            font-weight: 600;
+        }
+        
+        .article-content ul, .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .article-content blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+        
+        .article-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        .article-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .article-share {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .share-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        
+        .share-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border-radius: 4px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Related Articles */
+        .related-articles {
+            margin-top: 3rem;
+        }
+        
+        .related-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .related-card {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .related-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .related-image {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        
+        .related-content {
+            padding: 1rem;
+        }
+        
+        .related-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .related-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 3rem 0;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-section h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-tertiary);
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .footer-bottom {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--bg-tertiary);
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Error State */
+        .error-container {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error-color);
+            margin-bottom: 1rem;
+        }
+        
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .error-message {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .retry-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .retry-btn:hover {
+            background-color: var(--primary-hover);
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .article-image {
+                height: 250px;
+            }
+            
+            .article-content {
+                font-size: 1rem;
+            }
+            
+            .article-actions {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .article-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">
+                <i class="fas fa-leaf"></i> ClimAware
+            </a>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/articles.html" class="active">Articles</a>
+                <a href="/initiatives.html">Initiatives</a>
+                <a href="/dashboard.html">Dashboard</a>
+            </nav>
+            <button class="theme-toggle" id="themeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div id="articleContainer" class="article-container">
+            <!-- Loading state shown initially -->
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p>Loading article...</p>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h3>ClimAware Portal</h3>
+                    <p>Your trusted source for climate awareness and environmental education.</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/articles.html">Articles</a></li>
+                        <li><a href="/initiatives.html">Initiatives</a></li>
+                        <li><a href="/dashboard.html">Dashboard</a></li>
+                        <li><a href="/about.html">About Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="/articles.html?category=climate-science">Climate Science</a></li>
+                        <li><a href="/articles.html?category=sustainability">Sustainability</a></li>
+                        <li><a href="/articles.html?category=renewable-energy">Renewable Energy</a></li>
+                        <li><a href="/articles.html?category=conservation">Conservation</a></li>
+                        <li><a href="/articles.html?category=policy">Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> info@climaware.org</li>
+                        <li><i class="fas fa-phone"></i> +255 123 456 789</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Dar es Salaam, Tanzania</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 ClimAware Portal. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Global variables
+        let article = null;
+        
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon(savedTheme);
+        }
+        
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcon(newTheme);
+        }
+        
+        function updateThemeToggleIcon(theme) {
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.innerHTML = theme === 'dark' 
+                    ? '<i class="fas fa-sun"></i>' 
+                    : '<i class="fas fa-moon"></i>';
+            }
+        }
+        
+        // Get article ID from URL
+        function getArticleIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id');
+        }
+        
+        // Load Article
+        async function loadArticle() {
+            const articleId = getArticleIdFromUrl();
+            
+            if (!articleId) {
+                showErrorState('No article ID provided');
+                return;
+            }
+            
+            // First, try to get the article from localStorage
+            const storedArticle = localStorage.getItem('currentArticle');
+            if (storedArticle) {
+                try {
+                    article = JSON.parse(storedArticle);
+                    console.log('Article loaded from localStorage:', article.title);
+                    renderArticle();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing stored article:', e);
+                    // Continue to API fetch if localStorage parsing fails
+                }
+            }
+            
+            // If not in localStorage, try to fetch from API
+            try {
+                // First try to get the article by ID
+                const response = await fetch(`/api/articles/id/${articleId}`);
+                
+                // If not found by ID, try by slug
+                if (!response.ok) {
+                    const slugResponse = await fetch(`/api/articles/slug/${articleId}`);
+                    
+                    if (!slugResponse.ok) {
+                        // If API fails, create a fallback article
+                        createFallbackArticle(articleId);
+                        return;
+                    }
+                    
+                    article = await slugResponse.json();
+                } else {
+                    article = await response.json();
+                }
+                
+                renderArticle();
+                
+            } catch (error) {
+                console.error('Error loading article:', error);
+                // Create a fallback article if all else fails
+                createFallbackArticle(articleId);
+            }
+        }
+        
+        // Create a fallback article when API fails
+        function createFallbackArticle(articleId) {
+            const categories = ['climate-science', 'sustainability', 'renewable-energy', 'conservation', 'policy'];
+            const category = categories[Math.floor(Math.random() * categories.length)];
+            
+            article = {
+                _id: articleId,
+                title: `Article about ${category.replace('-', ' ')}`,
+                category: category,
+                createdAt: new Date(),
+                readTime: Math.floor(Math.random() * 10) + 3,
+                viewCount: Math.floor(Math.random() * 500) + 50,
+                author: {
+                    name: 'ClimAware Team'
+                },
+                content: `
+                    <h2>Introduction to ${category.replace('-', ' ')}</h2>
+                    <p>This is a sample article about ${category.replace('-', ' ')}. The actual article content could not be loaded, so we're showing this placeholder content instead.</p>
+                    
+                    <p>Climate change is one of the most pressing challenges of our time. It affects every country and every person on our planet. The effects of climate change are already visible and will become more dramatic over time.</p>
+                    
+                    <h2>Key Points</h2>
+                    <ul>
+                        <li>Global temperatures have increased by about 1°C since pre-industrial times</li>
+                        <li>Sea levels are rising at an accelerating rate</li>
+                        <li>Extreme weather events are becoming more frequent and intense</li>
+                        <li>Many species are at risk of extinction due to changing habitats</li>
+                    </ul>
+                    
+                    <h2>What Can We Do?</h2>
+                    <p>There are many actions we can take to combat climate change:</p>
+                    <ol>
+                        <li>Reduce our carbon footprint by using renewable energy</li>
+                        <li>Conserve forests and plant trees to absorb CO2</li>
+                        <li>Adopt sustainable farming practices</li>
+                        <li>Reduce waste and increase recycling</li>
+                        <li>Support policies that address climate change</li>
+                    </ol>
+                    
+                    <p>By working together, we can make a difference and create a more sustainable future for all.</p>
+                `
+            };
+            
+            renderArticle();
+        }
+        
+        // Render Article
+        function renderArticle() {
+            const container = document.getElementById('articleContainer');
+            
+            if (!article) {
+                showErrorState('Article data is missing');
+                return;
+            }
+            
+            // Format date
+            const date = new Date(article.createdAt || article.date || Date.now());
+            const formattedDate = date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Get category display name
+            const categoryMap = {
+                'climate-science': 'Climate Science',
+                'sustainability': 'Sustainability',
+                'renewable-energy': 'Renewable Energy',
+                'conservation': 'Conservation',
+                'policy': 'Policy',
+                'education': 'Education'
+            };
+            
+            const categoryDisplay = categoryMap[article.category] || article.category || 'General';
+            
+            // Build HTML
+            const articleHTML = `
+                <div class="article-header">
+                    <span class="article-category">${categoryDisplay}</span>
+                    <h1 class="article-title">${article.title}</h1>
+                    <div class="article-meta">
+                        <span><i class="fas fa-user"></i> ${article.author?.name || 'ClimAware Team'}</span>
+                        <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                        <span><i class="fas fa-clock"></i> ${article.readTime || 5} min read</span>
+                        <span><i class="fas fa-eye"></i> ${article.viewCount || 0} views</span>
+                    </div>
+                </div>
+                
+                ${article.featuredImage ? 
+                    `<img src="${article.featuredImage}" alt="${article.title}" class="article-image">` : 
+                    ''}
+                
+                <div class="article-content">
+                    ${article.content || `<p>${article.summary}</p><p>Full content not available.</p>`}
+                </div>
+                
+                ${article.tags && article.tags.length > 0 ? `
+                <div class="article-tags">
+                    ${article.tags.map(tag => `<span class="article-tag">${tag}</span>`).join('')}
+                </div>
+                ` : ''}
+                
+                <div class="article-actions">
+                    <div class="article-share">
+                        <a href="#" class="share-btn" title="Share on Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="share-btn" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="share-btn" title="Share on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <a href="/articles.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Articles</a>
+                </div>
+                
+                ${article.relatedArticles && article.relatedArticles.length > 0 ? `
+                <div class="related-articles">
+                    <h2 class="related-title">Related Articles</h2>
+                    <div class="related-grid">
+                        ${article.relatedArticles.map(related => `
+                        <a href="/article-view.html?id=${related._id || related.slug}" class="related-card">
+                            <img src="${related.featuredImage || '/images/default-article.jpg'}" alt="${related.title}" class="related-image">
+                            <div class="related-content">
+                                <h3 class="related-card-title">${related.title}</h3>
+                                <div class="related-meta">
+                                    <span><i class="fas fa-clock"></i> ${related.readTime || 5} min read</span>
+                                </div>
+                            </div>
+                        </a>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            container.innerHTML = articleHTML;
+        }
+        
+        // Show Error State
+        function showErrorState(message = 'Failed to load article') {
+            const container = document.getElementById('articleContainer');
+            
+            container.innerHTML = `
+                <div class="error-container">
+                    <div class="error-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <h2 class="error-title">Article Not Found</h2>
+                    <p class="error-message">${message}</p>
+                    <a href="/articles.html" class="retry-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Articles
+                    </a>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            
+            // Set up theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', toggleTheme);
+            }
+            
+            // Load article data
+            loadArticle();
+        });
+    </script>
+</body>
+</html>

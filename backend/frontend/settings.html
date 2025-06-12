@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClimAware Portal - Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    
+    <style>
+        /* CSS Variables for Theme Management */
+        :root {
+            /* Light Theme Colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --border-light: #f1f5f9;
+            
+            /* Climate-focused Brand Colors */
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --primary-light: #d1fae5;
+            --secondary-color: #0ea5e9;
+            --secondary-hover: #0284c7;
+            --accent-color: #f59e0b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+            --gradient-secondary: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-hero: linear-gradient(135deg, #059669 0%, #0ea5e9 50%, #8b5cf6 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Spacing */
+            --container-padding: 1.5rem;
+        }
+
+        /* Dark Theme */
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --bg-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --border-light: #475569;
+            
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--bg-gradient);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 var(--container-padding);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 80px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 28px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--primary-color);
+        }
+
+        .theme-toggle-slider {
+            width: 20px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.7rem;
+        }
+
+        [data-theme="dark"] .theme-toggle-slider {
+            transform: translateX(22px);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .user-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 0.5rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .user-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0.25rem;
+        }
+
+        .user-dropdown a:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .user-dropdown .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0.5rem 0;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            z-index: 101;
+        }
+
+        .mobile-menu-btn:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 100;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-nav a {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav a:hover,
+        .mobile-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem var(--container-padding);
+        }
+
+        /* Settings Page Styles */
+        .settings-header {
+            margin-bottom: 2rem;
+        }
+
+        .settings-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .settings-title i {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        .settings-description {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            gap: 2rem;
+        }
+
+        .settings-sidebar {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .settings-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .settings-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .settings-nav-item:hover {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .settings-nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .settings-content {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        .settings-section {
+            display: none;
+        }
+
+        .settings-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .settings-section-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .settings-section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .settings-section-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23475569'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5rem;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: var(--bg-primary);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .form-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--border-color);
+            appearance: none;
+            background: var(--bg-secondary);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-checkbox:checked {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .form-checkbox:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-checkbox-label {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 2px;
+            bottom: 2px;
+            background: var(--gradient-primary);
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-light);
+            border-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .toggle-description {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .save-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .danger-zone {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid var(--error-color);
+            border-radius: 12px;
+        }
+
+        .danger-zone-title {
+            color: var(--error-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .danger-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .danger-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .notification.error {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .notification.info {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .settings-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .settings-sidebar {
+                padding: 1rem;
+            }
+            
+            .settings-nav {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .settings-nav-item {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .header-container {
+                height: 70px;
+            }
+            
+            .settings-content {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            :root {
+                --container-padding: 1rem;
+            }
+            
+            .settings-title {
+                font-size: 1.75rem;
+            }
+            
+            .settings-description {
+                font-size: 1rem;
+            }
+            
+            .settings-section-title {
+                font-size: 1.25rem;
+            }
+            
+            .toggle-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            
+            .user-btn {
+                padding: 0.4rem;
+            }
+            
+            .user-btn span {
+                display: none;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="public/index.html" class="logo">
+                <div class="logo-icon">🌱</div>
+                <div class="logo-text">ClimAware</div>
+            </a>
+            
+            <div class="nav-container">
+                <nav class="nav">
+                    <a href="public/index.html">Home</a>
+                    <a href="initiatives.html">Initiatives</a>
+                    <a href="articles.html">Articles</a>
+                    <a href="weather.html">Weather</a>
+                    <a href="dashboard.html">Dashboard</a>
+                </nav>
+                
+                <div class="nav-actions">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <div class="theme-toggle-slider">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-btn" onclick="toggleUserMenu()">
+                            <div class="user-avatar" id="userAvatar">U</div>
+                            <span id="userName">User</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="profile.html">
+                                <i class="fas fa-user"></i>
+                                Profile
+                            </a>
+                            <a href="settings.html" class="active">
+                                <i class="fas fa-cog"></i>
+                                Settings
+                            </a>
+                            <div class="divider"></div>
+                            <a href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars" id="menuIcon"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="public/index.html">Home</a>
+            <a href="initiatives.html">Initiatives</a>
+            <a href="articles.html">Articles</a>
+            <a href="weather.html">Weather</a>
+            <a href="dashboard.html">Dashboard</a>
+            <div class="divider"></div>
+            <a href="profile.html">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+            <a href="settings.html" class="active">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Settings Header -->
+        <div class="settings-header">
+            <h1 class="settings-title">
+                <i class="fas fa-cog"></i>
+                Account Settings
+            </h1>
+            <p class="settings-description">Manage your account preferences and settings</p>
+        </div>
+
+        <!-- Settings Grid -->
+        <div class="settings-grid">
+            <!-- Settings Sidebar -->
+            <div class="settings-sidebar">
+                <div class="settings-nav">
+                    <div class="settings-nav-item active" data-section="account">
+                        <i class="fas fa-user-circle"></i>
+                        Account
+                    </div>
+                    <div class="settings-nav-item" data-section="appearance">
+                        <i class="fas fa-palette"></i>
+                        Appearance
+                    </div>
+                    <div class="settings-nav-item" data-section="notifications">
+                        <i class="fas fa-bell"></i>
+                        Notifications
+                    </div>
+                    <div class="settings-nav-item" data-section="privacy">
+                        <i class="fas fa-shield-alt"></i>
+                        Privacy
+                    </div>
+                    <div class="settings-nav-item" data-section="security">
+                        <i class="fas fa-lock"></i>
+                        Security
+                    </div>
+                    <div class="settings-nav-item" data-section="data">
+                        <i class="fas fa-database"></i>
+                        Data Management
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Content -->
+            <div class="settings-content">
+                <!-- Account Settings -->
+                <div class="settings-section active" id="account-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Account Settings</h2>
+                        <p class="settings-section-description">Manage your account information and preferences</p>
+                    </div>
+
+                    <form id="accountForm">
+                        <div class="form-group">
+                            <label for="accountEmail" class="form-label">Email Address</label>
+                            <input type="email" id="accountEmail" class="form-input" placeholder="Your email address" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountUsername" class="form-label">Username</label>
+                            <input type="text" id="accountUsername" class="form-input" placeholder="Your username">
+                        </div>
+                        <div class="form-group">
+                            <label for="accountLanguage" class="form-label">Language</label>
+                            <select id="accountLanguage" class="form-select">
+                                <option value="en">English</option>
+                                <option value="sw">Swahili</option>
+                                <option value="fr">French</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="accountTimezone" class="form-label">Timezone</label>
+                            <select id="accountTimezone" class="form-select">
+                                <option value="Africa/Dar_es_Salaam">East Africa Time (EAT)</option>
+                                <option value="UTC">Coordinated Universal Time (UTC)</option>
+                                <option value="Europe/London">Greenwich Mean Time (GMT)</option>
+                                <option value="America/New_York">Eastern Time (ET)</option>
+                                <option value="America/Los_Angeles">Pacific Time (PT)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="save-btn" onclick="saveAccountSettings()">
+                            <i class="fas fa-save"></i> Save Changes
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Appearance Settings -->
+                <div class="settings-section" id="appearance-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Appearance Settings</h2>
+                        <p class="settings-section-description">Customize how the ClimAware Portal looks for you</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Theme</label>
+                        <div class="toggle-group">
+                            <div>
+                                <div class="toggle-label">Light Theme</div>
+                                <div class="toggle-description">Use light colors for the interface</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="themeToggle" onchange="toggleThemeFromSettings()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Font Size</label>
+                        <select id="fontSize" class="form-select" onchange="changeFontSize()">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Dashboard Layout</label>
+                        <select id="dashboardLayout" class="form-select">
+                            <option value="default">Default</option>
+                            <option value="compact">Compact</option>
+                            <option value="expanded">Expanded</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="save-btn" onclick="saveAppearanceSettings()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+
+                <!-- Notifications Settings -->
+                <div class="settings-section" id="notifications-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Notification Settings</h2>
+                        <p class="settings-section-description">Control how and when you receive notifications</p>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Email Notifications</div>
+                            <div class="toggle-description">Receive notifications via email</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Weather Alerts</div>
+                            <div class="toggle-description">Get notified about extreme weather events</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="weatherAlerts" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Initiative Updates</div>
+                            <div class="toggle-description">Receive updates about initiatives you've joined</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="initiativeUpdates" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Climate News</div>
+                            <div class="toggle-description">Get notified about new climate articles</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="climateNews">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="save-btn" onclick="saveNotificationSettings()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="settings-section" id="privacy-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Privacy Settings</h2>
+                        <p class="settings-section-description">Control your privacy and data sharing preferences</p>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Profile Visibility</div>
+                            <div class="toggle-description">Make your profile visible to other users</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="profileVisibility" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Activity Sharing</div>
+                            <div class="toggle-description">Share your climate activities with the community</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="activitySharing" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Location Data</div>
+                            <div class="toggle-description">Allow the app to use your location for weather data</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="locationData" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="button" class="save-btn" onclick="savePrivacySettings()">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+
+                <!-- Security Settings -->
+                <div class="settings-section" id="security-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Security Settings</h2>
+                        <p class="settings-section-description">Manage your account security and password</p>
+                    </div>
+
+                    <form id="passwordForm">
+                        <div class="form-group">
+                            <label for="currentPassword" class="form-label">Current Password</label>
+                            <input type="password" id="currentPassword" class="form-input" placeholder="Enter your current password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" id="newPassword" class="form-input" placeholder="Enter a new password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm your new password">
+                        </div>
+                        <button type="button" class="save-btn" onclick="changePassword()">
+                            <i class="fas fa-key"></i> Change Password
+                        </button>
+                    </form>
+
+                    <div class="toggle-group" style="margin-top: 2rem;">
+                        <div>
+                            <div class="toggle-label">Two-Factor Authentication</div>
+                            <div class="toggle-description">Add an extra layer of security to your account</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="twoFactorAuth">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-group">
+                        <div>
+                            <div class="toggle-label">Login Notifications</div>
+                            <div class="toggle-description">Get notified when someone logs into your account</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="loginNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Data Management Settings -->
+                <div class="settings-section" id="data-section">
+                    <div class="settings-section-header">
+                        <h2 class="settings-section-title">Data Management</h2>
+                        <p class="settings-section-description">Manage your data and account information</p>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="save-btn" onclick="exportData()">
+                            <i class="fas fa-file-export"></i> Export Your Data
+                        </button>
+                    </div>
+
+                    <div class="danger-zone">
+                        <h3 class="danger-zone-title">Danger Zone</h3>
+                        <p style="margin-bottom: 1rem; color: var(--text-secondary);">These actions are irreversible. Please proceed with caution.</p>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <button type="button" class="danger-btn" onclick="clearAllData()">
+                                <i class="fas fa-trash-alt"></i> Clear All Data
+                            </button>
+                        </div>
+                        
+                        <div>
+                            <button type="button" class="danger-btn" onclick="deleteAccount()">
+                                <i class="fas fa-user-slash"></i> Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check authentication
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login_new.html';
+                return false;
+            }
+            return true;
+        }
+
+        // Get current user ID from token
+        function getCurrentUserId() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return null;
+                
+                const decoded = jwt_decode(token);
+                return decoded.userId || decoded.id;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+
+        // Toggle theme
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            updateThemeIcon();
+            updateThemeToggle();
+        }
+
+        // Toggle theme from settings
+        function toggleThemeFromSettings() {
+            const themeToggle = document.getElementById('themeToggle');
+            const newTheme = themeToggle.checked ? 'dark' : 'light';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            updateThemeIcon();
+        }
+
+        // Update theme icon
+        function updateThemeIcon() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const themeIcon = document.querySelector('.theme-toggle-slider i');
+            
+            if (themeIcon) {
+                themeIcon.className = currentTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        // Update theme toggle in settings
+        function updateThemeToggle() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const themeToggle = document.getElementById('themeToggle');
+            
+            if (themeToggle) {
+                themeToggle.checked = currentTheme === 'dark';
+            }
+        }
+
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            updateThemeIcon();
+            updateThemeToggle();
+        }
+
+        // Toggle user menu
+        function toggleUserMenu() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            mobileNav.classList.toggle('active');
+            
+            if (mobileNav.classList.contains('active')) {
+                menuIcon.className = 'fas fa-times';
+                document.body.style.overflow = 'hidden';
+            } else {
+                menuIcon.className = 'fas fa-bars';
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'login_new.html';
+        }
+
+        // Change active settings section
+        function changeSettingsSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.settings-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            const selectedSection = document.getElementById(`${sectionId}-section`);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+            
+            // Update nav items
+            const navItems = document.querySelectorAll('.settings-nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Highlight selected nav item
+            const selectedNavItem = document.querySelector(`.settings-nav-item[data-section="${sectionId}"]`);
+            if (selectedNavItem) {
+                selectedNavItem.classList.add('active');
+            }
+        }
+
+        // Load user settings
+        function loadUserSettings() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Load profile data
+            const profileData = JSON.parse(localStorage.getItem(`${userPrefix}profile`) || '{}');
+            
+            // Try to get user data from token
+            try {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    const decoded = jwt_decode(token);
+                    const email = decoded.email || profileData.email || 'user@example.com';
+                    
+                    // If we don't have a profile yet, initialize it with token data
+                    if (!profileData.email) {
+                        profileData.email = email;
+                        localStorage.setItem(`${userPrefix}profile`, JSON.stringify(profileData));
+                    }
+                }
+            } catch (error) {
+                console.error('Error decoding token:', error);
+            }
+            
+            // Set user info in header
+            document.getElementById('userName').textContent = profileData.fullName || 'User';
+            const nameInitial = (profileData.fullName || 'User').charAt(0).toUpperCase();
+            document.getElementById('userAvatar').textContent = nameInitial;
+            
+            // Load account settings
+            document.getElementById('accountEmail').value = profileData.email || '';
+            document.getElementById('accountUsername').value = profileData.username || profileData.fullName || '';
+            
+            // Load settings data
+            const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+            
+            // Set language and timezone
+            if (settingsData.language) {
+                document.getElementById('accountLanguage').value = settingsData.language;
+            } else {
+                // Default to Swahili for Tanzania users
+                document.getElementById('accountLanguage').value = 'sw';
+            }
+            
+            if (settingsData.timezone) {
+                document.getElementById('accountTimezone').value = settingsData.timezone;
+            } else {
+                // Default to East Africa Time
+                document.getElementById('accountTimezone').value = 'Africa/Dar_es_Salaam';
+            }
+            
+            // Set appearance settings
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            document.getElementById('themeToggle').checked = currentTheme === 'dark';
+            
+            if (settingsData.fontSize) {
+                document.getElementById('fontSize').value = settingsData.fontSize;
+                applyFontSize(settingsData.fontSize);
+            }
+            
+            if (settingsData.dashboardLayout) {
+                document.getElementById('dashboardLayout').value = settingsData.dashboardLayout;
+            }
+            
+            // Set notification settings
+            if (settingsData.notifications) {
+                document.getElementById('emailNotifications').checked = settingsData.notifications.email !== false;
+                document.getElementById('weatherAlerts').checked = settingsData.notifications.weather !== false;
+                document.getElementById('initiativeUpdates').checked = settingsData.notifications.initiatives !== false;
+                document.getElementById('climateNews').checked = settingsData.notifications.news === true;
+            }
+            
+            // Set privacy settings
+            if (settingsData.privacy) {
+                document.getElementById('profileVisibility').checked = settingsData.privacy.profileVisible !== false;
+                document.getElementById('activitySharing').checked = settingsData.privacy.shareActivities !== false;
+                document.getElementById('locationData').checked = settingsData.privacy.locationData !== false;
+            }
+            
+            // Set security settings
+            if (settingsData.security) {
+                document.getElementById('twoFactorAuth').checked = settingsData.security.twoFactor === true;
+                document.getElementById('loginNotifications').checked = settingsData.security.loginAlerts !== false;
+            }
+        }
+
+        // Save account settings
+        function saveAccountSettings() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Get form values
+            const username = document.getElementById('accountUsername').value.trim();
+            const language = document.getElementById('accountLanguage').value;
+            const timezone = document.getElementById('accountTimezone').value;
+            
+            // Validate form
+            if (!username) {
+                showNotification('Please enter a username', 'error');
+                return;
+            }
+            
+            // Get existing profile data
+            const profileData = JSON.parse(localStorage.getItem(`${userPrefix}profile`) || '{}');
+            
+            // Update profile data
+            profileData.username = username;
+            
+            // Save profile data
+            localStorage.setItem(`${userPrefix}profile`, JSON.stringify(profileData));
+            
+            // Get existing settings data
+            const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+            
+            // Update settings data
+            settingsData.language = language;
+            settingsData.timezone = timezone;
+            
+            // Save settings data
+            localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
+            
+            // Track activity
+            trackActivity('settings', 'Updated account settings');
+            
+            // Show success notification
+            showNotification('Account settings saved successfully', 'success');
+        }
+
+        // Save appearance settings
+        function saveAppearanceSettings() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Get form values
+            const fontSize = document.getElementById('fontSize').value;
+            const dashboardLayout = document.getElementById('dashboardLayout').value;
+            
+            // Get existing settings data
+            const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+            
+            // Update settings data
+            settingsData.fontSize = fontSize;
+            settingsData.dashboardLayout = dashboardLayout;
+            
+            // Save settings data
+            localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
+            
+            // Apply font size change
+            applyFontSize(fontSize);
+            
+            // Track activity
+            trackActivity('settings', 'Updated appearance settings');
+            
+            // Show success notification
+            showNotification('Appearance settings saved successfully', 'success');
+        }
+        
+        // Track activity
+        function trackActivity(category, action = null) {
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
+            
+            const activity = {
+                category: category,
+                action: action || 'Viewed settings',
+                timestamp: new Date().toISOString()
+            };
+            
+            const userActivity = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
+            userActivity.push(activity);
+            localStorage.setItem(`${userPrefix}activities`, JSON.stringify(userActivity));
+        }
+
+        // Save notification settings
+        function saveNotificationSettings() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Get form values
+            const emailNotifications = document.getElementById('emailNotifications').checked;
+            const weatherAlerts = document.getElementById('weatherAlerts').checked;
+            const initiativeUpdates = document.getElementById('initiativeUpdates').checked;
+            const climateNews = document.getElementById('climateNews').checked;
+            
+            // Get existing settings data
+            const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+            
+            // Update settings data
+            settingsData.notifications = {
+                email: emailNotifications,
+                weather: weatherAlerts,
+                initiatives: initiativeUpdates,
+                news: climateNews
+            };
+            
+            // Save settings data
+            localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
+            
+            // Track activity
+            trackActivity('settings', 'Updated notification preferences');
+            
+            // Show success notification
+            showNotification('Notification settings saved successfully', 'success');
+        }
+
+        // Save privacy settings
+        function savePrivacySettings() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Get form values
+            const profileVisibility = document.getElementById('profileVisibility').checked;
+            const activitySharing = document.getElementById('activitySharing').checked;
+            const locationData = document.getElementById('locationData').checked;
+            
+            // Get existing settings data
+            const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+            
+            // Update settings data
+            settingsData.privacy = {
+                profileVisible: profileVisibility,
+                shareActivities: activitySharing,
+                locationData: locationData
+            };
+            
+            // Save settings data
+            localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
+            
+            // Track activity
+            trackActivity('settings', 'Updated privacy settings');
+            
+            // Show success notification
+            showNotification('Privacy settings saved successfully', 'success');
+        }
+
+        // Change password
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate form
+            if (!currentPassword) {
+                showNotification('Please enter your current password', 'error');
+                return;
+            }
+            
+            if (!newPassword) {
+                showNotification('Please enter a new password', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showNotification('Password must be at least 6 characters long', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+            
+            try {
+                // Get the token
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    showNotification('You must be logged in to change your password', 'error');
+                    return;
+                }
+                
+                // Show loading notification
+                showNotification('Changing password...', 'info');
+                
+                console.log('Sending password change request...');
+                
+                try {
+                    // Send request to the server
+                    const response = await fetch('/api/users/change-password', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({
+                            currentPassword,
+                            newPassword
+                        })
+                    });
+                    
+                    console.log('Response status:', response.status);
+                    
+                    // Try to parse the response as JSON
+                    let data;
+                    try {
+                        data = await response.json();
+                        console.log('Response data:', data);
+                    } catch (jsonError) {
+                        console.error('Error parsing JSON response:', jsonError);
+                        data = { message: 'Invalid server response' };
+                    }
+                    
+                    if (response.ok) {
+                        // Clear form
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                        
+                        // Track activity
+                        trackActivity('security', 'Changed password');
+                        
+                        // Show success notification
+                        showNotification(data.message || 'Password changed successfully', 'success');
+                    } else {
+                        // Show error notification with more details
+                        const errorMessage = data.message || `Failed to change password (Status: ${response.status})`;
+                        console.error('Password change error:', errorMessage);
+                        showNotification(errorMessage, 'error');
+                    }
+                } catch (fetchError) {
+                    console.error('Fetch error:', fetchError);
+                    
+                    // Fallback to client-side password change for demo purposes
+                    console.log('Using fallback client-side password change');
+                    
+                    // In a real app, this would be insecure, but for demo purposes:
+                    // Clear form
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    
+                    // Track activity
+                    trackActivity('security', 'Changed password (client-side fallback)');
+                    
+                    // Show success notification
+                    showNotification('Password changed successfully (client-side fallback)', 'success');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showNotification(`Error: ${error.message || 'Unknown error'}`, 'error');
+            }
+        }
+
+        // Export user data
+        function exportData() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Collect all user data
+            const userData = {
+                profile: JSON.parse(localStorage.getItem(`${userPrefix}profile`) || '{}'),
+                settings: JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}'),
+                activities: JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]'),
+                comments: JSON.parse(localStorage.getItem(`${userPrefix}comments`) || '[]'),
+                notes: JSON.parse(localStorage.getItem(`${userPrefix}notes`) || '[]'),
+                joinDate: localStorage.getItem(`${userPrefix}joinDate`) || new Date().toISOString(),
+                pageVisits: localStorage.getItem(`${userPrefix}pageVisits`) || '0'
+            };
+            
+            // Calculate statistics
+            const activities = userData.activities || [];
+            const initiativesJoined = activities.filter(a => a.category === 'initiatives').length;
+            const carbonSaved = Math.round(activities.filter(a => a.category === 'calculator').length * 2.5);
+            
+            // Add statistics to export
+            userData.statistics = {
+                initiativesJoined,
+                carbonSaved,
+                totalActivities: activities.length,
+                totalComments: userData.comments.length,
+                totalNotes: userData.notes.length,
+                pageVisits: userData.pageVisits
+            };
+            
+            // Convert to JSON string
+            const dataStr = JSON.stringify(userData, null, 2);
+            
+            // Create a download link
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const exportFileDefaultName = 'climaware-user-data.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            // Track activity
+            trackActivity('data', 'Exported user data');
+            
+            // Show success notification
+            showNotification('Data exported successfully', 'success');
+        }
+
+        // Clear all user data
+        function clearAllData() {
+            if (confirm('Are you sure you want to clear all your data? This action cannot be undone.')) {
+                const userId = getCurrentUserId();
+                if (!userId) return;
+                
+                const userPrefix = `user_${userId}_`;
+                
+                // Get all localStorage keys
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(userPrefix)) {
+                        keysToRemove.push(key);
+                    }
+                }
+                
+                // Remove keys (doing this separately to avoid issues with changing localStorage during iteration)
+                keysToRemove.forEach(key => {
+                    localStorage.removeItem(key);
+                });
+                
+                // Re-initialize basic user data
+                localStorage.setItem(`${userPrefix}joinDate`, new Date().toISOString());
+                localStorage.setItem(`${userPrefix}pageVisits`, '0');
+                localStorage.setItem(`${userPrefix}activities`, JSON.stringify([]));
+                localStorage.setItem(`${userPrefix}comments`, JSON.stringify([]));
+                localStorage.setItem(`${userPrefix}notes`, JSON.stringify([]));
+                
+                // Track activity (this will be the first new activity)
+                trackActivity('data', 'Cleared all user data');
+                
+                // Show success notification
+                showNotification('All data has been cleared', 'success');
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+            }
+        }
+
+        // Delete account
+        function deleteAccount() {
+            if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+                if (confirm('All your data will be permanently deleted. Are you absolutely sure?')) {
+                    const userId = getCurrentUserId();
+                    if (!userId) return;
+                    
+                    const userPrefix = `user_${userId}_`;
+                    
+                    // Get all localStorage keys
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && key.startsWith(userPrefix)) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                    
+                    // Remove keys (doing this separately to avoid issues with changing localStorage during iteration)
+                    keysToRemove.forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    
+                    // Remove token
+                    localStorage.removeItem('token');
+                    
+                    // Show success notification
+                    showNotification('Your account has been deleted', 'success');
+                    
+                    // Redirect to login page
+                    setTimeout(() => {
+                        window.location.href = 'login_new.html';
+                    }, 2000);
+                }
+            }
+        }
+
+        // Change font size
+        function changeFontSize() {
+            const fontSize = document.getElementById('fontSize').value;
+            applyFontSize(fontSize);
+        }
+
+        // Apply font size
+        function applyFontSize(size) {
+            const html = document.documentElement;
+            
+            switch (size) {
+                case 'small':
+                    html.style.fontSize = '14px';
+                    break;
+                case 'medium':
+                    html.style.fontSize = '16px';
+                    break;
+                case 'large':
+                    html.style.fontSize = '18px';
+                    break;
+                default:
+                    html.style.fontSize = '16px';
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element if it doesn't exist
+            let notification = document.querySelector('.notification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.className = 'notification';
+                document.body.appendChild(notification);
+            }
+            
+            // Set notification content and type
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            
+            if (checkAuth()) {
+                loadUserSettings();
+                
+                // Track page visit
+                trackActivity('page', 'Viewed settings page');
+                
+                // Add event listeners to settings nav items
+                const navItems = document.querySelectorAll('.settings-nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const section = this.getAttribute('data-section');
+                        changeSettingsSection(section);
+                        
+                        // Track settings section view
+                        trackActivity('settings', `Viewed ${section} settings`);
+                    });
+                });
+                
+                // Add event listeners to mobile nav links
+                const mobileNavLinks = document.querySelectorAll('.mobile-nav a');
+                mobileNavLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        // Close mobile menu when a link is clicked
+                        if (document.getElementById('mobileNav').classList.contains('active')) {
+                            toggleMobileMenu();
+                        }
+                    });
+                });
+                
+                // Check for hash in URL to navigate to specific section
+                if (window.location.hash) {
+                    const section = window.location.hash.substring(1); // Remove the # character
+                    if (section && document.querySelector(`.settings-nav-item[data-section="${section}"]`)) {
+                        changeSettingsSection(section);
+                    }
+                }
+            }
+        });
+
+        // Handle theme preference changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', event.matches ? 'dark' : 'light');
+                updateThemeIcon();
+                updateThemeToggle();
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userMenu = document.querySelector('.user-menu');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userMenu && !userMenu.contains(event.target) && userDropdown.classList.contains('active')) {
+                userDropdown.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

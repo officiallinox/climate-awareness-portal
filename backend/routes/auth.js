@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
 const { authMiddleware } = require('../middleware/auth');
 
@@ -129,6 +130,81 @@ router.get('/verify', authMiddleware, async (req, res) => {
     } catch (error) {
         console.error('Token verification error:', error);
         res.status(500).json({ message: 'Token verification failed' });
+    }
+});
+
+// Forgot Password endpoint
+router.post('/forgot-password', async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+        
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            // For security reasons, don't reveal that the user doesn't exist
+            return res.status(200).json({ message: 'If your email is registered, you will receive a password reset link' });
+        }
+        
+        // Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpiry = Date.now() + 3600000; // 1 hour from now
+        
+        // Save token to user
+        user.resetPasswordToken = resetToken;
+        user.resetPasswordExpires = resetTokenExpiry;
+        await user.save();
+        
+        // Create reset URL
+        const resetUrl = `${req.protocol}://${req.get('host')}/login_new.html?token=${resetToken}`;
+        
+        // In a real application, you would send an email with the reset link
+        console.log('Password reset link:', resetUrl);
+        
+        // For demo purposes, we'll return the reset URL directly in the response
+        // In a production environment, you would send this via email
+        res.status(200).json({ 
+            message: 'If your email is registered, you will receive a password reset link',
+            resetUrl: resetUrl // Always include the URL for testing
+        });
+    } catch (error) {
+        console.error('Forgot password error:', error);
+        res.status(500).json({ message: 'Failed to process password reset request' });
+    }
+});
+
+// Reset Password endpoint
+router.post('/reset-password', async (req, res) => {
+    try {
+        const { token, password } = req.body;
+        
+        if (!token || !password) {
+            return res.status(400).json({ message: 'Token and password are required' });
+        }
+        
+        // Find user with valid reset token
+        const user = await User.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+        
+        if (!user) {
+            return res.status(400).json({ message: 'Invalid or expired reset token' });
+        }
+        
+        // Update password
+        user.password = password; // Password will be hashed by the pre-save hook
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save();
+        
+        res.status(200).json({ message: 'Password has been reset successfully' });
+    } catch (error) {
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'Failed to reset password' });
     }
 });
 

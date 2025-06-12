@@ -6,6 +6,7 @@ const { authMiddleware, adminOnly } = require('../middleware/auth');
 // User dashboard routes (put these first to avoid conflicts)
 router.get('/profile', authMiddleware, userController.getUserProfile);
 router.put('/profile', authMiddleware, userController.updateUserProfile);
+router.put('/change-password', authMiddleware, userController.changePassword);
 
 // Note: Admin routes have been moved to /api/admin/* to avoid conflicts
 

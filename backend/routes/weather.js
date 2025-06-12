@@ -50,18 +50,10 @@ router.get('/current', async (req, res) => {
     } catch (error) {
         console.error(`[Weather API] Error fetching weather for ${city}:`, error.message);
         
-        // Provide fallback data for Tanzania cities
-        if (error.response?.status === 404 || apiKey === 'demo_key') {
-            const fallbackData = generateTanzaniaFallbackWeather(city);
-            console.log(`[Weather API] Using fallback data for ${city}`);
-            res.json(fallbackData);
-        } else {
-            res.status(500).json({ 
-                error: 'Failed to fetch weather data',
-                message: `Unable to get weather information for ${city}`,
-                fallback: generateTanzaniaFallbackWeather(city)
-            });
-        }
+        // Always provide fallback data for any error
+        const fallbackData = generateTanzaniaFallbackWeather(city);
+        console.log(`[Weather API] Using fallback data for ${city}`);
+        res.json(fallbackData);
     }
 });
 
@@ -236,16 +228,10 @@ router.get('/forecast', async (req, res) => {
     } catch (error) {
         console.error(`[Weather API] Error fetching forecast for ${city}:`, error.message);
         
-        if (error.response?.status === 404 || apiKey === 'demo_key') {
-            const fallbackForecast = generateTanzaniaFallbackForecast(city, days);
-            console.log(`[Weather API] Using fallback forecast for ${city}`);
-            res.json(fallbackForecast);
-        } else {
-            res.status(500).json({ 
-                error: 'Failed to fetch forecast data',
-                message: `Unable to get forecast for ${city}`
-            });
-        }
+        // Always provide fallback forecast data
+        const fallbackForecast = generateTanzaniaFallbackForecast(city, days);
+        console.log(`[Weather API] Using fallback forecast for ${city}`);
+        res.json(fallbackForecast);
     }
 });
 
@@ -354,10 +340,83 @@ router.get('/tanzania-overview', async (req, res) => {
         
     } catch (error) {
         console.error('[Weather API] Error fetching Tanzania overview:', error);
-        res.status(500).json({ 
-            error: 'Failed to fetch Tanzania weather overview',
-            message: 'Unable to get comprehensive weather data for Tanzania'
-        });
+        
+        // Generate fallback data for all cities
+        const fallbackOverview = {
+            country: 'Tanzania',
+            timestamp: new Date().toISOString(),
+            summary: {
+                averageTemperature: 25,
+                averageHumidity: 70,
+                averageWindSpeed: 5.2,
+                totalCities: tanzaniaCities.length
+            },
+            cities: tanzaniaCities.map(city => {
+                const fallback = generateTanzaniaFallbackWeather(city);
+                return {
+                    city: city,
+                    temperature: fallback.temperature,
+                    description: fallback.description,
+                    humidity: fallback.humidity,
+                    windSpeed: fallback.windSpeed,
+                    coordinates: fallback.coordinates,
+                    fallback: true
+                };
+            }),
+            climateZones: {
+                coastal: ['Dar es Salaam', 'Zanzibar'].map(city => {
+                    const fallback = generateTanzaniaFallbackWeather(city);
+                    return {
+                        city: city,
+                        temperature: fallback.temperature,
+                        description: fallback.description,
+                        humidity: fallback.humidity,
+                        windSpeed: fallback.windSpeed,
+                        coordinates: fallback.coordinates,
+                        fallback: true
+                    };
+                }),
+                highland: ['Arusha', 'Mbeya'].map(city => {
+                    const fallback = generateTanzaniaFallbackWeather(city);
+                    return {
+                        city: city,
+                        temperature: fallback.temperature,
+                        description: fallback.description,
+                        humidity: fallback.humidity,
+                        windSpeed: fallback.windSpeed,
+                        coordinates: fallback.coordinates,
+                        fallback: true
+                    };
+                }),
+                central: ['Dodoma', 'Tabora'].map(city => {
+                    const fallback = generateTanzaniaFallbackWeather(city);
+                    return {
+                        city: city,
+                        temperature: fallback.temperature,
+                        description: fallback.description,
+                        humidity: fallback.humidity,
+                        windSpeed: fallback.windSpeed,
+                        coordinates: fallback.coordinates,
+                        fallback: true
+                    };
+                }),
+                lake: ['Mwanza'].map(city => {
+                    const fallback = generateTanzaniaFallbackWeather(city);
+                    return {
+                        city: city,
+                        temperature: fallback.temperature,
+                        description: fallback.description,
+                        humidity: fallback.humidity,
+                        windSpeed: fallback.windSpeed,
+                        coordinates: fallback.coordinates,
+                        fallback: true
+                    };
+                })
+            }
+        };
+        
+        console.log('[Weather API] Using fallback data for Tanzania overview');
+        res.json(fallbackOverview);
     }
 });
 

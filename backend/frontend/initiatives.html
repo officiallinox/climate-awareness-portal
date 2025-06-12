@@ -101,10 +101,12 @@
         .header-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 1rem 2rem;
+            padding: 0 var(--container-padding);
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            height: 80px;
+            position: relative;
         }
 
         .logo {
@@ -258,10 +260,11 @@
             top: 100%;
             left: 0;
             right: 0;
-            background: var(--bg-overlay);
+            background: var(--bg-primary);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border-color);
             padding: 1rem 2rem;
+            z-index: 99;
         }
 
         .mobile-nav.active {
@@ -277,6 +280,16 @@
             padding: 1rem;
             text-align: center;
             border-radius: 12px;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .mobile-nav nav a:hover,
+        .mobile-nav nav a.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
         }
 
         /* Page Header */
@@ -709,23 +722,52 @@
             .filters-container {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 1rem;
             }
 
             .search-box {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            .filter-dropdown {
                 width: 100%;
             }
 
             .initiative-actions {
                 flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .initiative-actions button {
+                width: 100%;
             }
 
             .page-stats {
-                gap: 1rem;
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .stat-item {
+                text-align: center;
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2.25rem;
+                text-align: center;
+            }
+
+            .page-subtitle {
+                text-align: center;
+                font-size: 1rem;
             }
 
             .footer-content {
                 grid-template-columns: 1fr;
                 text-align: center;
+                gap: 2rem;
             }
         }
 
@@ -743,7 +785,37 @@
             }
 
             .page-header {
-                padding: 6rem 0 3rem;
+                padding: 5rem 0 2.5rem;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .stat-number {
+                font-size: 1.75rem;
+            }
+
+            .stat-label {
+                font-size: 0.9rem;
+            }
+
+            .initiative-title {
+                font-size: 1.25rem;
+            }
+
+            .initiative-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .mobile-nav {
+                padding: 0.75rem 1rem;
             }
         }
 
@@ -773,7 +845,7 @@
 </head>
 <body>
     <!-- Header -->
-    <header>
+    <header class="header">
         <div class="header-container">
             <a href="public/index.html" class="logo">
                 <div class="logo-icon">🌍</div>
@@ -794,16 +866,16 @@
                             <i class="fas fa-sun"></i>
                         </div>
                     </div>
-                    <a href="login.html" class="login-btn" id="loginBtn">
+                    <a href="login_new.html" class="login-btn" id="loginBtn">
                         <i class="fas fa-user"></i>
                         Login
                     </a>
                 </div>
-                
-                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
+            
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
         
         <div class="mobile-nav" id="mobileNav">
@@ -812,7 +884,7 @@
                 <a href="initiatives.html" class="active">Initiatives</a>
                 <a href="articles.html">Articles</a>
                 <a href="weather.html">Weather</a>
-                <a href="login.html">Login</a>
+                <a href="login_new.html">Login</a>
             </nav>
         </div>
     </header>
@@ -998,7 +1070,7 @@
                 loginBtn.href = 'dashboard.html';
             } else {
                 loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
-                loginBtn.href = 'login.html';
+                loginBtn.href = 'login_new.html';
             }
         }
 
@@ -1028,11 +1100,27 @@
         // Update Statistics
         function updateStatistics() {
             const totalInitiatives = allInitiatives.length;
-            const totalParticipants = allInitiatives.reduce((sum, init) => sum + (init.participants || 0), 0);
+            
+            // Calculate total participants correctly by checking the participants array length
+            const totalParticipants = allInitiatives.reduce((sum, init) => {
+                // Check if participants is an array and use its length
+                if (Array.isArray(init.participants)) {
+                    return sum + init.participants.length;
+                }
+                // If participantCount is available, use that
+                else if (typeof init.participantCount === 'number') {
+                    return sum + init.participantCount;
+                }
+                // Fallback to a reasonable number
+                else {
+                    return sum + 15;
+                }
+            }, 0);
+            
             const completedProjects = allInitiatives.filter(init => init.status === 'completed').length;
             
             animateCounter('totalInitiatives', totalInitiatives);
-            animateCounter('totalParticipants', totalParticipants || totalInitiatives * 15); // Fallback calculation
+            animateCounter('totalParticipants', totalParticipants);
             animateCounter('impactMade', completedProjects || Math.floor(totalInitiatives * 0.3));
         }
 
@@ -1227,7 +1315,7 @@
                 showNotification('Please login to join initiatives', 'info');
                 setTimeout(() => {
                     localStorage.setItem('redirectAfterLogin', 'initiatives.html');
-                    window.location.href = 'login.html';
+                    window.location.href = 'login_new.html';
                 }, 2000);
                 return;
             }
@@ -1255,12 +1343,28 @@
                         joinBtn.setAttribute('onclick', `leaveInitiative('${initiativeId}')`);
                     }
                     
+                    // Show "What's Next" modal
+                    showWhatsNextModal(initiativeId);
+                    
                     // Reload initiatives to show updated participant count
                     setTimeout(() => {
                         loadInitiatives();
                     }, 1000);
                 } else {
-                    showNotification(data.error || 'Failed to join initiative', 'error');
+                    // Check if it's a profile completion error
+                    if (data.error && data.error.includes('complete your profile')) {
+                        showNotification(data.error, 'warning', 8000);
+                        
+                        // Ask user if they want to update their profile
+                        setTimeout(() => {
+                            if (confirm(data.error + '\n\n' + (data.details || '') + '\n\nWould you like to update your profile now?')) {
+                                // Redirect to profile page
+                                window.location.href = '/profile.html';
+                            }
+                        }, 1000);
+                    } else {
+                        showNotification(data.error || 'Failed to join initiative', 'error');
+                    }
                 }
             } catch (error) {
                 console.error('Error joining initiative:', error);
@@ -1317,8 +1421,13 @@
         function showInitiativeDetails(initiativeId) {
             const initiative = allInitiatives.find(init => (init._id || init.id) === initiativeId);
             if (initiative) {
-                // Here you could open a modal or navigate to a details page
-                showNotification(`More details about "${initiative.title}" coming soon!`, 'info');
+                // Store the initiative data in localStorage for the initiative view page
+                localStorage.setItem('currentInitiative', JSON.stringify(initiative));
+                
+                // Navigate to the initiative view page
+                window.location.href = `/initiative-view.html?id=${initiativeId}`;
+            } else {
+                showNotification('Initiative not found', 'error');
             }
         }
 
@@ -1367,7 +1476,7 @@
         }
 
         // Notification System
-        function showNotification(message, type = 'info') {
+        function showNotification(message, type = 'info', duration = 3000) {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
             notification.innerHTML = `
@@ -1397,7 +1506,268 @@
                 if (notification.parentElement) {
                     notification.remove();
                 }
-            }, 5000);
+            }, duration);
+        }
+        
+        // Show What's Next Modal after joining an initiative
+        function showWhatsNextModal(initiativeId) {
+            const initiative = allInitiatives.find(init => (init._id || init.id) === initiativeId);
+            if (!initiative) return;
+            
+            // Create modal element
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'whatsNextModal';
+            
+            const formattedDate = new Date(initiative.date).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2><i class="fas fa-check-circle" style="color: var(--success-color);"></i> You've Joined ${initiative.title}</h2>
+                        <button class="close-btn" onclick="closeModal('whatsNextModal')">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <h3>What's Next?</h3>
+                        <div class="next-steps">
+                            <div class="next-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Mark Your Calendar</h4>
+                                    <p>This initiative is scheduled for <strong>${formattedDate}</strong> at <strong>${initiative.time || '10:00 AM'}</strong>.</p>
+                                    <a href="#" class="add-calendar-btn">
+                                        <i class="fas fa-calendar-plus"></i> Add to Calendar
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="next-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Prepare for the Initiative</h4>
+                                    <p>Make sure you have everything you need:</p>
+                                    <ul>
+                                        ${initiative.requirements ? 
+                                            initiative.requirements.map(req => `<li>${req}</li>`).join('') : 
+                                            `<li>Comfortable clothing</li>
+                                             <li>Water bottle</li>
+                                             <li>Positive attitude</li>`
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="next-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Invite Friends</h4>
+                                    <p>Share this initiative with friends and family to make an even bigger impact!</p>
+                                    <div class="share-buttons">
+                                        <a href="#" class="share-btn"><i class="fab fa-facebook"></i></a>
+                                        <a href="#" class="share-btn"><i class="fab fa-twitter"></i></a>
+                                        <a href="#" class="share-btn"><i class="fab fa-whatsapp"></i></a>
+                                        <a href="#" class="share-btn"><i class="fas fa-envelope"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="view-details-section">
+                            <a href="/initiative-view.html?id=${initiativeId}" class="view-details-btn">
+                                <i class="fas fa-info-circle"></i> View Initiative Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add modal to the page
+            document.body.appendChild(modal);
+            
+            // Add styles for the modal if they don't exist
+            if (!document.getElementById('modalStyles')) {
+                const styleElement = document.createElement('style');
+                styleElement.id = 'modalStyles';
+                styleElement.textContent = `
+                    .modal {
+                        display: none;
+                        position: fixed;
+                        z-index: 1000;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.5);
+                        opacity: 0;
+                        transition: opacity 0.3s ease;
+                    }
+                    
+                    .modal.show {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        opacity: 1;
+                    }
+                    
+                    .modal-content {
+                        background-color: var(--bg-primary);
+                        border-radius: 8px;
+                        max-width: 600px;
+                        width: 90%;
+                        max-height: 90vh;
+                        overflow-y: auto;
+                        box-shadow: var(--shadow-lg);
+                        transform: translateY(-20px);
+                        transition: transform 0.3s ease;
+                    }
+                    
+                    .modal.show .modal-content {
+                        transform: translateY(0);
+                    }
+                    
+                    .modal-header {
+                        padding: 1.5rem;
+                        border-bottom: 1px solid var(--border-color);
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                    }
+                    
+                    .modal-header h2 {
+                        margin: 0;
+                        font-size: 1.5rem;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    }
+                    
+                    .close-btn {
+                        background: none;
+                        border: none;
+                        font-size: 1.5rem;
+                        cursor: pointer;
+                        color: var(--text-secondary);
+                    }
+                    
+                    .modal-body {
+                        padding: 1.5rem;
+                    }
+                    
+                    .next-steps {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1.5rem;
+                        margin: 1.5rem 0;
+                    }
+                    
+                    .next-step {
+                        display: flex;
+                        gap: 1rem;
+                    }
+                    
+                    .step-number {
+                        width: 36px;
+                        height: 36px;
+                        background-color: var(--primary-color);
+                        color: white;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        flex-shrink: 0;
+                    }
+                    
+                    .step-content {
+                        flex: 1;
+                    }
+                    
+                    .step-content h4 {
+                        margin-top: 0;
+                        margin-bottom: 0.5rem;
+                    }
+                    
+                    .add-calendar-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.5rem 1rem;
+                        background-color: var(--bg-secondary);
+                        color: var(--text-primary);
+                        border-radius: 4px;
+                        text-decoration: none;
+                        margin-top: 0.5rem;
+                        font-size: 0.9rem;
+                    }
+                    
+                    .add-calendar-btn:hover {
+                        background-color: var(--bg-tertiary);
+                    }
+                    
+                    .share-buttons {
+                        display: flex;
+                        gap: 0.5rem;
+                        margin-top: 0.5rem;
+                    }
+                    
+                    .share-btn {
+                        width: 36px;
+                        height: 36px;
+                        border-radius: 50%;
+                        background-color: var(--bg-secondary);
+                        color: var(--text-primary);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        text-decoration: none;
+                    }
+                    
+                    .share-btn:hover {
+                        background-color: var(--primary-color);
+                        color: white;
+                    }
+                    
+                    .view-details-section {
+                        text-align: center;
+                        margin-top: 2rem;
+                    }
+                    
+                    .view-details-btn {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.75rem 1.5rem;
+                        background-color: var(--primary-color);
+                        color: white;
+                        border-radius: 4px;
+                        text-decoration: none;
+                        font-weight: 500;
+                    }
+                    
+                    .view-details-btn:hover {
+                        background-color: var(--primary-hover);
+                    }
+                `;
+                document.head.appendChild(styleElement);
+            }
+            
+            // Show the modal
+            setTimeout(() => {
+                modal.classList.add('show');
+            }, 10);
+        }
+        
+        // Close modal function
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
         }
 
         // Event Listeners

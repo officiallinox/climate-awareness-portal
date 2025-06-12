@@ -17,21 +17,27 @@ const userSchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: true
+        required: false
     },
     gender: {
         type: String,
-        enum: ['male', 'female'],
-        required: true
+        enum: ['male', 'female', 'other', 'prefer not to say'],
+        required: false
     },
     dob: {
         type: Date,
-        required: true
+        required: false
     },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user'
+    },
+    resetPasswordToken: {
+        type: String
+    },
+    resetPasswordExpires: {
+        type: Date
     },
     initiatives: {
         joined: [{
@@ -92,18 +98,29 @@ userSchema.pre('save', async function(next) {
     if (!this.isModified('password')) return next();
     
     try {
+        console.log('Hashing password for user:', this._id);
         // Hash password with cost of 12
         const hashedPassword = await bcrypt.hash(this.password, 12);
         this.password = hashedPassword;
+        console.log('Password hashed successfully');
         next();
     } catch (error) {
+        console.error('Error hashing password:', error);
         next(error);
     }
 });
 
 // Instance method to check password
 userSchema.methods.comparePassword = async function(candidatePassword) {
-    return bcrypt.compare(candidatePassword, this.password);
+    console.log('Comparing password for user:', this._id);
+    try {
+        const isMatch = await bcrypt.compare(candidatePassword, this.password);
+        console.log('Password match result:', isMatch);
+        return isMatch;
+    } catch (error) {
+        console.error('Error comparing passwords:', error);
+        throw error;
+    }
 };
 
 // Method to join initiative

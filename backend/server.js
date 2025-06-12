@@ -13,12 +13,14 @@ const weatherRoutes = require('./routes/weather');
 const userRoutes = require('./routes/userRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const chatbotRoutes = require('./routes/chatbot');
+const alternativeChatbotRoutes = require('./alternative-chatbot');
+const geminiChatbotRoutes = require('./gemini-chatbot');
 const publicRoutes = require('./routes/public');
 const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
-const PORT = 3000;
-const MONGO_URI = "mongodb://localhost:27017/climate_portal";
+const PORT = process.env.PORT || 3000;
+const MONGO_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/climate_portal";
 
 // Middleware
 app.use(cors());
@@ -36,7 +38,10 @@ app.use('/api/initiatives', initiativeRoutes);
 app.use('/api/weather', weatherRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/chatbot', chatbotRoutes);
+// Use the Gemini-powered chatbot
+// app.use('/api/chatbot', chatbotRoutes); // OpenAI (quota exceeded)
+// app.use('/api/chatbot', alternativeChatbotRoutes); // Rule-based alternative
+app.use('/api/chatbot', geminiChatbotRoutes); // Google Gemini
 app.use('/api/public', publicRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 
@@ -59,7 +64,7 @@ app.get('/weather.html', (req, res) => {
 });
 
 app.get('/login.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'login.html'));
+    res.redirect('/login_new.html');
 });
 
 app.get('/login_new.html', (req, res) => {
@@ -67,7 +72,8 @@ app.get('/login_new.html', (req, res) => {
 });
 
 app.get('/user.html', (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend', 'user.html'));
+    // Redirect to dashboard.html instead of the deleted user.html
+    res.redirect('/dashboard.html');
 });
 
 app.get('/admin.html', (req, res) => {
@@ -84,6 +90,10 @@ app.get('/dashboard.html', (req, res) => {
 
 app.get('/weather-test.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'weather-test.html'));
+});
+
+app.get('/mobile-nav-test.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'mobile-nav-test.html'));
 });
 
 app.get('/test_login.html', (req, res) => {
@@ -109,9 +119,14 @@ app.get('/api/test', async (req, res) => {
 });
 
 // MongoDB connection
-mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
   })
-  .catch(err => console.error('❌ MongoDB error:', err));
+  .catch(err => {
+    console.error('❌ MongoDB error:', err);
+    console.log('⚠️ Starting server without database connection...');
+    // Start the server anyway to allow testing of non-database features
+    app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT} (without database)`));
+  });

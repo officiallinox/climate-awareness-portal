@@ -299,10 +299,51 @@
             padding: 0.5rem;
             border-radius: 8px;
             transition: all 0.3s ease;
+            z-index: 101;
         }
 
         .mobile-menu-btn:hover {
             background: var(--bg-secondary);
+        }
+        
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 100;
+            padding: 6rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+        
+        .mobile-nav a {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav a:hover,
+        .mobile-nav a.active {
+            background: var(--primary-light);
+            color: var(--primary-color);
         }
 
         /* Main Content */
@@ -558,6 +599,40 @@
             color: var(--text-secondary);
             font-size: 0.9rem;
         }
+        
+        /* Carbon Calculator Info Box */
+        .calculator-info-box {
+            background-color: var(--bg-secondary);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .calculator-info-text {
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+        
+        .calculator-info-text i {
+            color: var(--primary-color);
+            margin-right: 6px;
+        }
+        
+        .modal-info {
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-tertiary);
+        }
+        
+        /* Dark mode adjustments for calculator info */
+        [data-theme="dark"] .calculator-info-box {
+            border-color: var(--primary-color);
+            background-color: var(--bg-tertiary);
+        }
 
         /* Recent Activity */
         .activity-list {
@@ -577,9 +652,7 @@
             transition: all 0.3s ease;
         }
 
-        .activity-item:hover {
-            background: var(--primary-light);
-        }
+        /* Removed hover effect as requested */
 
         .activity-icon {
             width: 40px;
@@ -855,10 +928,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .activity-item:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
+        /* Removed hover effect as requested */
 
         .activity-info {
             flex: 1;
@@ -979,6 +1049,12 @@
         }
 
         /* Comments Section */
+        .comment-form {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 1.5rem;
+        }
+        
         .comment-textarea {
             width: 100%;
             padding: 0.75rem;
@@ -998,6 +1074,23 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
         }
+        
+        .add-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-self: flex-end;
+        }
+        
+        .add-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
 
         .comment-item {
             background: var(--bg-secondary);
@@ -1008,10 +1101,7 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .comment-item:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
+        /* Removed hover effect as requested */
 
         .comment-header {
             display: flex;
@@ -1276,10 +1366,33 @@
             margin-right: 0.5rem;
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
+        /* Enhanced Responsive Design */
+        @media (max-width: 1200px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .climate-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .main-content {
+                padding: 1.5rem var(--container-padding);
+            }
+            
+            .welcome-section {
+                padding: 1.5rem;
+            }
+            
+            .welcome-title {
+                font-size: 2.2rem;
+            }
+            
+            .dashboard-card {
+                padding: 1.25rem;
             }
         }
 
@@ -1292,34 +1405,124 @@
                 display: block;
             }
             
+            .header-container {
+                height: 70px;
+                position: relative;
+                z-index: 102;
+            }
+            
             .welcome-title {
                 font-size: 2rem;
             }
             
             .quick-stats {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
             }
             
             .prediction-details {
                 grid-template-columns: 1fr;
             }
+            
+            .activity-stats {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .comment-form {
+                flex-direction: column;
+            }
+            
+            .comment-textarea {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .add-btn {
+                align-self: flex-end;
+            }
+            
+            .forecast-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .activity-form {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            /* Mobile menu specific styles */
+            body.menu-open {
+                overflow: hidden;
+            }
+            
+            .mobile-nav {
+                overflow-y: auto;
+            }
+            
+            .mobile-nav .divider {
+                width: 100%;
+                height: 1px;
+                background: var(--border-color);
+                margin: 1rem 0;
+            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 576px) {
             :root {
                 --container-padding: 1rem;
             }
             
             .welcome-section {
-                padding: 1.5rem;
+                padding: 1.25rem;
             }
             
             .welcome-title {
                 font-size: 1.75rem;
             }
             
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+            
             .quick-stats {
                 grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .climate-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .user-btn {
+                padding: 0.4rem;
+            }
+            
+            .user-btn span {
+                display: none;
+            }
+            
+            .logo-text {
+                display: none;
+            }
+            
+            .forecast-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .activity-item {
+                flex-direction: column;
+            }
+            
+            .activity-item .delete-btn {
+                align-self: flex-end;
+                margin-top: 0.5rem;
             }
         }
 
@@ -1349,6 +1552,43 @@
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Notification System */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .notification.error {
+            background-color: var(--error-color);
+            color: white;
+        }
+        
+        .notification.info {
+            background-color: var(--secondary-color);
+            color: white;
         }
     </style>
 </head>
@@ -1385,13 +1625,17 @@
                         </div>
                         
                         <div class="user-dropdown" id="userDropdown">
-                            <a href="#" onclick="showProfile()">
+                            <a href="profile.html">
                                 <i class="fas fa-user"></i>
                                 Profile
                             </a>
-                            <a href="#" onclick="showSettings()">
+                            <a href="settings.html">
                                 <i class="fas fa-cog"></i>
                                 Settings
+                            </a>
+                            <a href="settings.html#security">
+                                <i class="fas fa-key"></i>
+                                Change Password
                             </a>
                             <div class="divider"></div>
                             <a href="#" onclick="logout()">
@@ -1403,9 +1647,35 @@
                 </div>
                 
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-bars" id="menuIcon"></i>
                 </button>
             </div>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="public/index.html">Home</a>
+            <a href="initiatives.html">Initiatives</a>
+            <a href="articles.html">Articles</a>
+            <a href="weather.html">Weather</a>
+            <a href="#" class="active">Dashboard</a>
+            <div class="divider"></div>
+            <a href="profile.html">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+            <a href="settings.html">
+                <i class="fas fa-cog"></i>
+                Settings
+            </a>
+            <a href="settings.html#security">
+                <i class="fas fa-key"></i>
+                Change Password
+            </a>
+            <a href="#" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
         </div>
     </header>
 
@@ -1516,6 +1786,14 @@
                         </div>
                     </a>
                     
+                    <div class="calculator-info-box">
+                        <p class="calculator-info-text">
+                            <i class="fas fa-info-circle"></i> 
+                            Our Carbon Calculator helps you understand your environmental impact, compare it to local averages, 
+                            and get personalized tips to reduce your footprint. Track your progress over time!
+                        </p>
+                    </div>
+                    
                     <a href="#" class="action-btn" onclick="trackActivity('carbon_calculator')">
                         <div class="action-icon">
                             <i class="fas fa-calculator"></i>
@@ -1565,6 +1843,10 @@
                 <div class="activity-list" id="activityList">
                     <!-- User's activities will be populated here -->
                 </div>
+                
+                <div style="margin-top: 1.5rem; display: flex; gap: 1rem;">
+                    <button onclick="refreshActivities()" class="add-btn" style="flex: 1; background: var(--secondary-color);">🔄 Refresh Activities</button>
+                </div>
             </div>
 
             <!-- 7-Day Weather Forecast -->
@@ -1574,7 +1856,7 @@
                         <div class="card-icon">
                             <i class="fas fa-cloud-sun"></i>
                         </div>
-                        7-Day Weather Forecast
+                        6-Day Weather Forecast
                     </h2>
                <button onclick="refreshWeather()" class="refresh-btn">
                         <i class="fas fa-sync-alt"></i>
@@ -1609,7 +1891,7 @@
                 </div>
                 <div class="comment-form">
                     <textarea id="commentText" placeholder="Share your climate observations, thoughts, or experiences..." class="comment-textarea"></textarea>
-                    <button onclick="addComment()" class="add-btn">Add Note</button>
+                    <button onclick="addComment()" class="add-btn">📝 Add Note</button>
                 </div>
                 <div class="comment-list" id="commentList">
                     <!-- Comments will be populated here -->
@@ -1636,6 +1918,14 @@
                 <button class="modal-close" onclick="closeCarbonModal()">
                     <i class="fas fa-times"></i>
                 </button>
+            </div>
+            
+            <div class="calculator-info-box modal-info">
+                <p class="calculator-info-text">
+                    <i class="fas fa-lightbulb"></i> 
+                    This calculator estimates your monthly carbon emissions based on your transportation choices and energy usage. 
+                    The results will help you understand your environmental impact and identify ways to reduce it.
+                </p>
             </div>
             
             <form id="carbonForm">
@@ -1720,7 +2010,7 @@
             const notes = document.getElementById('activityNotes').value.trim();
 
             if (!name || !date) {
-                alert('Please fill in activity name and date');
+                showNotification('Please fill in activity name and date', 'error');
                 return;
             }
 
@@ -1749,13 +2039,13 @@
                     displayActivities();
                     updateActivityStats();
                     clearActivityForm();
-                    alert('Activity added successfully!');
+                    showNotification('Activity added successfully!', 'success');
                 } else {
-                    alert('Failed to add activity');
+                    showNotification('Failed to add activity', 'error');
                 }
             } catch (error) {
                 console.error('Error adding activity:', error);
-                alert('Error adding activity');
+                showNotification('Error adding activity', 'error');
             }
         }
 
@@ -1815,6 +2105,8 @@
             if (!confirm('Are you sure you want to delete this activity?')) {
                 return;
             }
+            
+            showNotification('Deleting activity...', 'info');
 
             try {
                 const token = localStorage.getItem('token');
@@ -1829,12 +2121,13 @@
                     activities.splice(index, 1);
                     displayActivities();
                     updateActivityStats();
+                    showNotification('Activity deleted successfully', 'success');
                 } else {
-                    alert('Failed to delete activity');
+                    showNotification('Failed to delete activity', 'error');
                 }
             } catch (error) {
                 console.error('Error deleting activity:', error);
-                alert('Error deleting activity');
+                showNotification('Error deleting activity', 'error');
             }
         }
 
@@ -1937,7 +2230,7 @@
         }
 
         function createMockForecast(currentWeather) {
-            // Create a mock 7-day forecast based on current weather
+            // Create a mock 6-day forecast based on current weather
             const mockForecast = {
                 list: []
             };
@@ -2267,14 +2560,28 @@
                 alert('Please enter a comment');
                 return;
             }
-
+            
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) {
+                alert('You must be logged in to add notes');
+                return;
+            }
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
+            
             const comment = {
+                id: Date.now().toString(),
                 text,
-                category: 'climate',
-                isPublic: false
+                category: 'observation', // Changed from 'climate' to a valid enum value
+                isPublic: false,
+                date: new Date().toISOString(),
+                author: currentUser ? currentUser.name : 'You'
             };
 
             try {
+                // First try API endpoint
                 const token = localStorage.getItem('token');
                 const response = await fetch('/api/users/comments', {
                     method: 'POST',
@@ -2286,22 +2593,55 @@
                 });
 
                 if (response.ok) {
+                    // If API works, use the returned comment
                     const newComment = await response.json();
                     comments.unshift(newComment);
-                    displayComments();
-                    document.getElementById('commentText').value = '';
-                    alert('Note added successfully!');
                 } else {
-                    alert('Failed to add note');
+                    // If API fails, use local storage
+                    comments.unshift(comment);
+                    // Store in user-specific localStorage
+                    localStorage.setItem(`${userPrefix}comments`, JSON.stringify(comments));
                 }
+                
+                displayComments();
+                document.getElementById('commentText').value = '';
+                showNotification('Note added successfully!', 'success');
             } catch (error) {
                 console.error('Error adding comment:', error);
-                alert('Error adding note');
+                
+                // Fallback to localStorage on error
+                comments.unshift(comment);
+                localStorage.setItem(`${userPrefix}comments`, JSON.stringify(comments));
+                displayComments();
+                document.getElementById('commentText').value = '';
+                showNotification('Note added to local storage', 'info');
+            }
+        }
+        
+        // Get current user ID from token
+        function getCurrentUserId() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return null;
+                
+                const decoded = jwt_decode(token);
+                return decoded.userId || decoded.id || decoded._id;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
             }
         }
 
         async function loadComments() {
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
+            
             try {
+                // First try API endpoint
                 const token = localStorage.getItem('token');
                 const response = await fetch('/api/users/comments', {
                     headers: {
@@ -2311,15 +2651,27 @@
 
                 if (response.ok) {
                     comments = await response.json();
-                    displayComments();
+                } else {
+                    // If API fails, use local storage
+                    comments = JSON.parse(localStorage.getItem(`${userPrefix}comments`) || '[]');
                 }
+                
+                displayComments();
             } catch (error) {
                 console.error('Error loading comments:', error);
+                // Fallback to localStorage on error
+                comments = JSON.parse(localStorage.getItem(`${userPrefix}comments`) || '[]');
+                displayComments();
             }
         }
 
         function displayComments() {
             const commentList = document.getElementById('commentList');
+            
+            if (!commentList) {
+                console.error('Comment list element not found');
+                return;
+            }
             
             if (comments.length === 0) {
                 commentList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 1rem;">No notes yet. Share your climate observations!</p>';
@@ -2334,6 +2686,9 @@
                     day: 'numeric'
                 });
                 
+                // Use comment.id for localStorage items, comment._id for API items
+                const commentId = comment._id || comment.id;
+                
                 return `
                     <div class="comment-item">
                         <div class="comment-header">
@@ -2341,7 +2696,7 @@
                             <div class="comment-date">${formattedDate}</div>
                         </div>
                         <div class="comment-text">${comment.text}</div>
-                        <button onclick="deleteComment('${comment._id}')" class="delete-btn" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.8rem;">Delete</button>
+                        <button onclick="deleteComment('${commentId}')" class="delete-btn" style="margin-top: 0.5rem; padding: 0.25rem 0.5rem; font-size: 0.8rem;">Delete</button>
                     </div>
                 `;
             }).join('');
@@ -2351,8 +2706,16 @@
             if (!confirm('Are you sure you want to delete this note?')) {
                 return;
             }
+            
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
 
             try {
+                // First try API endpoint
                 const token = localStorage.getItem('token');
                 const response = await fetch(`/api/users/comments/${commentId}`, {
                     method: 'DELETE',
@@ -2362,14 +2725,25 @@
                 });
 
                 if (response.ok) {
+                    // If API works, filter by _id
                     comments = comments.filter(c => c._id !== commentId);
-                    displayComments();
                 } else {
-                    alert('Failed to delete note');
+                    // If API fails, filter by id
+                    comments = comments.filter(c => (c._id !== commentId && c.id !== commentId));
+                    // Update localStorage
+                    localStorage.setItem(`${userPrefix}comments`, JSON.stringify(comments));
                 }
+                
+                displayComments();
+                showNotification('Note deleted successfully', 'success');
             } catch (error) {
                 console.error('Error deleting comment:', error);
-                alert('Error deleting note');
+                
+                // Fallback to localStorage on error
+                comments = comments.filter(c => (c._id !== commentId && c.id !== commentId));
+                localStorage.setItem(`${userPrefix}comments`, JSON.stringify(comments));
+                displayComments();
+                showNotification('Note deleted from local storage', 'info');
             }
         }
 
@@ -2412,22 +2786,49 @@
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('active');
         }
+        
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuIcon = document.getElementById('menuIcon');
+            
+            mobileNav.classList.toggle('active');
+            document.body.classList.toggle('menu-open');
+            
+            // Change icon based on menu state
+            if (mobileNav.classList.contains('active')) {
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        }
 
-        // Close dropdown when clicking outside
+        // Close dropdown and mobile menu when clicking outside
         document.addEventListener('click', function(e) {
+            // Close user dropdown
             const userMenu = document.querySelector('.user-menu');
             if (!userMenu.contains(e.target)) {
                 document.getElementById('userDropdown').classList.remove('active');
+            }
+            
+            // Close mobile menu when clicking outside
+            const mobileNav = document.getElementById('mobileNav');
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            if (mobileNav.classList.contains('active') && 
+                !mobileNav.contains(e.target) && 
+                !mobileMenuBtn.contains(e.target)) {
+                toggleMobileMenu();
             }
         });
 
         // Authentication
         function checkAuth() {
             const token = localStorage.getItem('token');
-            const user = localStorage.getItem('user');
             
-            if (!token || !user) {
-                window.location.href = 'login.html';
+            if (!token) {
+                window.location.href = 'login_new.html';
                 return false;
             }
             
@@ -2436,19 +2837,77 @@
                 const currentTime = Date.now() / 1000;
                 
                 if (decoded.exp <= currentTime) {
+                    // Token expired
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
-                    window.location.href = 'login.html';
+                    window.location.href = 'login_new.html';
                     return false;
                 }
                 
-                currentUser = JSON.parse(user);
+                // Token is valid, check for user data
+                let userData = localStorage.getItem('user');
+                
+                if (!userData) {
+                    // Create user data from token if possible
+                    console.log("Creating user data from token");
+                    
+                    // Fetch user data from API using the token
+                    fetch('/api/users/profile', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data._id) {
+                            // The API returns the user object directly
+                            localStorage.setItem('user', JSON.stringify(data));
+                            currentUser = data;
+                            updateUserInfo();
+                        } else {
+                            // Fallback to creating user from token
+                            const fallbackUser = {
+                                id: decoded.userId || decoded.id || "unknown",
+                                name: decoded.name || "User",
+                                email: decoded.email || "",
+                                role: decoded.role || "user"
+                            };
+                            localStorage.setItem('user', JSON.stringify(fallbackUser));
+                            currentUser = fallbackUser;
+                            updateUserInfo();
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error fetching user data:", err);
+                        // Fallback to creating user from token
+                        const fallbackUser = {
+                            id: decoded.userId || decoded.id || "unknown",
+                            name: decoded.name || "User",
+                            email: decoded.email || "",
+                            role: decoded.role || "user"
+                        };
+                        localStorage.setItem('user', JSON.stringify(fallbackUser));
+                        currentUser = fallbackUser;
+                        updateUserInfo();
+                    });
+                    
+                    // Return a temporary user object for immediate use
+                    userData = JSON.stringify({
+                        id: decoded.userId || decoded.id || "unknown",
+                        name: "User",
+                        email: decoded.email || "",
+                        role: decoded.role || "user"
+                    });
+                }
+                
+                currentUser = JSON.parse(userData);
                 updateUserInfo();
                 return true;
             } catch (error) {
+                console.error("Auth error:", error);
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
-                window.location.href = 'login.html';
+                window.location.href = 'login_new.html';
                 return false;
             }
         }
@@ -2466,9 +2925,27 @@
         }
 
         function logout() {
+            // Get user ID before removing token
+            const userId = getCurrentUserId();
+            
+            // Clear auth data
             localStorage.removeItem('token');
             localStorage.removeItem('user');
-            window.location.href = 'login.html';
+            
+            // Clear user-specific data
+            if (userId) {
+                const userPrefix = `user_${userId}_`;
+                
+                // Get all localStorage keys
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith(userPrefix)) {
+                        localStorage.removeItem(key);
+                    }
+                }
+            }
+            
+            window.location.href = 'login_new.html';
         }
 
         // Load User Data
@@ -2570,8 +3047,15 @@
         // Load Real Activity Tracker
         async function loadActivityTracker() {
             try {
+                // Get current user ID
+                const userId = getCurrentUserId();
+                if (!userId) return;
+                
+                // Use user-specific storage key
+                const userPrefix = `user_${userId}_`;
+                
                 // Get user's actual activity from localStorage
-                const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
+                const userActivity = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
                 const activityStats = calculateActivityStats(userActivity);
                 
                 displayActivityTracker(activityStats, userActivity);
@@ -2669,12 +3153,19 @@
         // Old weather functions removed - using enhanced weather forecast instead
 
         async function loadUserStats() {
-            const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
-            const userJoinDate = localStorage.getItem('userJoinDate') || new Date().toISOString();
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
+            
+            const userActivity = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
+            const userJoinDate = localStorage.getItem(`${userPrefix}joinDate`) || new Date().toISOString();
             
             // Calculate real stats
             const daysActive = Math.floor((new Date() - new Date(userJoinDate)) / (1000 * 60 * 60 * 24)) + 1;
-            const pageVisits = parseInt(localStorage.getItem('pageVisits') || '0');
+            const pageVisits = parseInt(localStorage.getItem(`${userPrefix}pageVisits`) || '0');
             const initiativesJoined = userActivity.filter(a => a.category === 'initiatives').length;
             const carbonSaved = Math.round(userActivity.filter(a => a.category === 'calculator').length * 2.5); // Estimate
             
@@ -2685,20 +3176,27 @@
             document.getElementById('carbonSaved').textContent = carbonSaved;
             
             // Track this page visit
-            localStorage.setItem('pageVisits', (pageVisits + 1).toString());
+            localStorage.setItem(`${userPrefix}pageVisits`, (pageVisits + 1).toString());
         }
 
         // Activity Tracking
         function trackActivity(category, action = null) {
+            // Get current user ID
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific storage key
+            const userPrefix = `user_${userId}_`;
+            
             const activity = {
                 category: category,
                 action: action || getDefaultAction(category),
                 timestamp: new Date().toISOString()
             };
             
-            const userActivity = JSON.parse(localStorage.getItem('userActivity') || '[]');
+            const userActivity = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
             userActivity.push(activity);
-            localStorage.setItem('userActivity', JSON.stringify(userActivity));
+            localStorage.setItem(`${userPrefix}activities`, JSON.stringify(userActivity));
             
             // Open carbon calculator if that's the action
             if (category === 'carbon_calculator') {
@@ -2862,13 +3360,13 @@
             }, 3000);
         }
 
-        // Profile and Settings (placeholder functions)
+        // Profile and Settings navigation functions
         function showProfile() {
-            showNotification('Profile page coming soon!', 'info');
+            window.location.href = 'profile.html';
         }
 
         function showSettings() {
-            showNotification('Settings page coming soon!', 'info');
+            window.location.href = 'settings.html';
         }
 
         // Error Display Functions
@@ -2896,17 +3394,167 @@
 
         // Old weather error function removed - using enhanced weather forecast instead
 
-        // Initialize user join date if not exists
+        // Initialize user data if not exists
         function initializeUserData() {
-            if (!localStorage.getItem('userJoinDate')) {
-                localStorage.setItem('userJoinDate', new Date().toISOString());
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            // Use user-specific keys for storage
+            const userPrefix = `user_${userId}_`;
+            
+            // Initialize all user-specific data
+            if (!localStorage.getItem(`${userPrefix}joinDate`)) {
+                localStorage.setItem(`${userPrefix}joinDate`, new Date().toISOString());
             }
-            if (!localStorage.getItem('pageVisits')) {
-                localStorage.setItem('pageVisits', '0');
+            if (!localStorage.getItem(`${userPrefix}pageVisits`)) {
+                localStorage.setItem(`${userPrefix}pageVisits`, '0');
             }
-            if (!localStorage.getItem('userActivity')) {
-                localStorage.setItem('userActivity', JSON.stringify([]));
+            if (!localStorage.getItem(`${userPrefix}activities`)) {
+                localStorage.setItem(`${userPrefix}activities`, JSON.stringify([]));
             }
+            if (!localStorage.getItem(`${userPrefix}comments`)) {
+                localStorage.setItem(`${userPrefix}comments`, JSON.stringify([]));
+            }
+        }
+        
+        // Get current user ID from token
+        function getCurrentUserId() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return null;
+                
+                const decoded = jwt_decode(token);
+                return decoded.userId || decoded.id;
+            } catch (error) {
+                console.error('Error getting user ID:', error);
+                return null;
+            }
+        }
+        
+        // Clear all user-specific data on logout
+        function clearUserData() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            
+            // Get all localStorage keys
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith(userPrefix)) {
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+        
+        // Add a note
+        function addNote() {
+            const noteText = document.getElementById('noteText').value.trim();
+            if (!noteText) {
+                showNotification('Please enter a note', 'error');
+                return;
+            }
+            
+            const userId = getCurrentUserId();
+            if (!userId) {
+                showNotification('You must be logged in to add notes', 'error');
+                return;
+            }
+            
+            const userPrefix = `user_${userId}_`;
+            const notes = JSON.parse(localStorage.getItem(`${userPrefix}notes`) || '[]');
+            
+            const newNote = {
+                id: Date.now().toString(),
+                text: noteText,
+                date: new Date().toISOString()
+            };
+            
+            notes.unshift(newNote); // Add to beginning of array
+            localStorage.setItem(`${userPrefix}notes`, JSON.stringify(notes));
+            
+            document.getElementById('noteText').value = '';
+            displayNotes();
+            showNotification('Note added successfully', 'success');
+        }
+        
+        // Display notes
+        function displayNotes() {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            const notes = JSON.parse(localStorage.getItem(`${userPrefix}notes`) || '[]');
+            const notesList = document.getElementById('notesList');
+            
+            if (notes.length === 0) {
+                notesList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 1rem;">No notes yet. Add your first note above!</p>';
+                return;
+            }
+            
+            notesList.innerHTML = notes.map((note, index) => `
+                <div class="comment-item">
+                    <div class="comment-header">
+                        <div class="comment-author">Note</div>
+                        <div class="comment-date">${new Date(note.date).toLocaleString()}</div>
+                    </div>
+                    <div class="comment-text">${note.text}</div>
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <button onclick="deleteNote('${note.id}')" class="delete-btn">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Delete a note
+        function deleteNote(noteId) {
+            const userId = getCurrentUserId();
+            if (!userId) return;
+            
+            const userPrefix = `user_${userId}_`;
+            let notes = JSON.parse(localStorage.getItem(`${userPrefix}notes`) || '[]');
+            
+            notes = notes.filter(note => note.id !== noteId);
+            localStorage.setItem(`${userPrefix}notes`, JSON.stringify(notes));
+            
+            displayNotes();
+            showNotification('Note deleted', 'info');
+        }
+        
+        // Refresh activities
+        function refreshActivities() {
+            showNotification('Refreshing activities...', 'info');
+            loadActivities().then(() => {
+                showNotification('Activities refreshed successfully', 'success');
+            }).catch(error => {
+                console.error('Error refreshing activities:', error);
+                showNotification('Failed to refresh activities', 'error');
+            });
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Create notification element if it doesn't exist
+            let notification = document.querySelector('.notification');
+            if (!notification) {
+                notification = document.createElement('div');
+                notification.className = 'notification';
+                document.body.appendChild(notification);
+            }
+            
+            // Set notification content and type
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            
+            // Show notification
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         // Initialize everything
@@ -2921,6 +3569,17 @@
                 loadActivities();
                 loadComments();
                 loadWeatherForecast();
+                
+                // Add event listeners to mobile nav links
+                const mobileNavLinks = document.querySelectorAll('.mobile-nav a');
+                mobileNavLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        // Close mobile menu when a link is clicked
+                        if (document.getElementById('mobileNav').classList.contains('active')) {
+                            toggleMobileMenu();
+                        }
+                    });
+                });
             }
         });
 
@@ -2940,48 +3599,8 @@
         });
     </script>
 
-    <!-- Notification Styles -->
+    <!-- Modal Styles -->
     <style>
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 10000;
-            transform: translateX(400px);
-            opacity: 0;
-            transition: all 0.3s ease;
-            max-width: 300px;
-        }
-
-        .notification.show {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        .notification.success {
-            border-color: var(--success-color);
-            color: var(--success-color);
-        }
-
-        .notification.error {
-            border-color: var(--error-color);
-            color: var(--error-color);
-        }
-
-        .notification.info {
-            border-color: var(--secondary-color);
-            color: var(--secondary-color);
-        }
-
-        /* Modal Styles */
         .modal-overlay {
             position: fixed;
             top: 0;

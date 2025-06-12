@@ -2,11 +2,8 @@ const mongoose = require('mongoose');
 const Initiative = require('./models/Initiative');
 const User = require('./models/User');
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/climaware', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+// This function will be called by seed-all-data.js
+// We don't connect to MongoDB here anymore
 
 const sampleInitiatives = [
     {
@@ -40,7 +37,7 @@ const sampleInitiatives = [
     {
         title: "Dar es Salaam Mangrove Restoration",
         description: "Help us restore the vital mangrove ecosystems along Dar es Salaam's coastline. We'll be planting mangrove seedlings and cleaning up plastic waste that threatens marine life. This project directly protects our coast from rising sea levels while supporting local fishing communities.",
-        category: "coastal-restoration",
+        category: "conservation",
         status: "upcoming",
         date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 2 weeks from now
         time: "06:30 AM",
@@ -274,45 +271,25 @@ const sampleInitiatives = [
     }
 ];
 
-async function seedInitiatives() {
+async function seedInitiatives(adminId) {
     try {
         console.log('🌱 Starting initiative seeding...');
         
-        // Find an admin user to be the organizer
-        let adminUser = await User.findOne({ role: 'admin' });
-        
-        // If no admin exists, create one
-        if (!adminUser) {
-            console.log('📝 Creating admin user...');
-            adminUser = new User({
-                name: 'ClimAware Admin',
-                email: 'admin@climaware.org',
-                password: 'admin123',
-                phone: '+1-555-0100',
-                gender: 'male',
-                dob: new Date('1985-01-01'),
-                role: 'admin',
-                profile: {
-                    bio: 'ClimAware Portal Administrator',
-                    location: {
-                        city: 'San Francisco',
-                        state: 'CA',
-                        country: 'USA'
-                    }
-                }
-            });
-            await adminUser.save();
-            console.log('✅ Admin user created');
+        // Use the provided admin ID or find an admin user
+        let adminUserId = adminId;
+        if (!adminUserId) {
+            const adminUser = await User.findOne({ role: 'admin' });
+            if (adminUser) {
+                adminUserId = adminUser._id;
+            } else {
+                throw new Error('No admin user found and no admin ID provided');
+            }
         }
-        
-        // Clear existing initiatives
-        await Initiative.deleteMany({});
-        console.log('🗑️ Cleared existing initiatives');
         
         // Add organizer to each initiative
         const initiativesWithOrganizer = sampleInitiatives.map(initiative => ({
             ...initiative,
-            organizer: adminUser._id
+            organizer: adminUserId
         }));
         
         // Insert new initiatives
@@ -320,7 +297,7 @@ async function seedInitiatives() {
         console.log(`✅ Created ${createdInitiatives.length} initiatives`);
         
         // Update admin user's organized initiatives
-        await User.findByIdAndUpdate(adminUser._id, {
+        await User.findByIdAndUpdate(adminUserId, {
             'initiatives.organized': createdInitiatives.map(init => init._id),
             'stats.initiativesOrganized': createdInitiatives.length
         });
@@ -331,12 +308,12 @@ async function seedInitiatives() {
             console.log(`${index + 1}. ${init.title} (${init.category}) - ${init.status}`);
         });
         
-        process.exit(0);
+        return createdInitiatives;
     } catch (error) {
         console.error('❌ Error seeding initiatives:', error);
-        process.exit(1);
+        throw error;
     }
 }
 
-// Run the seeding
-seedInitiatives();
+// Export the function to be used by seed-all-data.js
+module.exports = seedInitiatives;

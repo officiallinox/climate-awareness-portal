@@ -278,6 +278,16 @@
             padding: 1rem;
             text-align: center;
             border-radius: 12px;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .mobile-nav nav a:hover,
+        .mobile-nav nav a.active {
+            color: var(--primary-color);
+            background: var(--primary-light);
         }
 
         /* Hero Section */
@@ -333,6 +343,23 @@
             margin-bottom: 1.5rem;
             line-height: 1.1;
             animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        
+        .impact-highlight {
+            background: linear-gradient(135deg, #34d399, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            display: inline-block;
+        }
+        
+        [data-theme="dark"] .impact-highlight {
+            color: #a3e635;
+            background: none;
+            -webkit-text-fill-color: #a3e635;
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(163, 230, 53, 0.5);
         }
 
         .hero-subtitle {
@@ -466,6 +493,8 @@
             margin-bottom: 1rem;
             line-height: 1.2;
         }
+        
+
 
         .section-subtitle {
             font-size: 1.2rem;
@@ -895,7 +924,7 @@
                             <i class="fas fa-sun"></i>
                         </div>
                     </div>
-                    <a href="../login.html" class="login-btn">
+                    <a href="../login_new.html" class="login-btn">
                         <i class="fas fa-user"></i>
                         Login
                     </a>
@@ -913,7 +942,7 @@
                 <a href="../initiatives.html">Initiatives</a>
                 <a href="../articles.html">Articles</a>
                 <a href="../weather.html">Weather</a>
-                <a href="../login.html">Login</a>
+                <a href="../login_new.html">Login</a>
             </nav>
         </div>
     </header>
@@ -927,7 +956,7 @@
             </div>
             
             <h1 class="hero-title">
-                From Ideas to <span style="background: linear-gradient(135deg, #34d399, #60a5fa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Impact</span>
+                From Ideas to <span class="impact-highlight">Impact</span>
             </h1>
             
             <p class="hero-subtitle">
@@ -1267,7 +1296,7 @@
             setTimeout(() => {
                 // Store the intended destination (dashboard)
                 localStorage.setItem('redirectAfterLogin', '../dashboard.html');
-                window.location.href = '../login.html';
+                window.location.href = '../login_new.html';
             }, 2000);
         }
 
@@ -1464,7 +1493,7 @@
             } else {
                 // User not logged in, keep login button as is
                 loginBtn.innerHTML = '<i class="fas fa-user"></i> Login';
-                loginBtn.href = '../login.html';
+                loginBtn.href = '../login_new.html';
             }
         }
 
