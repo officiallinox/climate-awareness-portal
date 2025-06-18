@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -190,7 +191,7 @@
             font-size: 0.9rem;
         }
 
-        .dark-mode-toggle {
+        .dark-mode-toggle, .lang-toggle {
             background-color: var(--bg-secondary);
             color: var(--text-primary);
             border: 1px solid var(--border-color);
@@ -202,10 +203,15 @@
             font-size: 1.2rem;
         }
 
-        .dark-mode-toggle:hover {
+        .dark-mode-toggle:hover, .lang-toggle:hover {
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
+        }
+        
+        .lang-toggle {
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
         }
 
         .logout-btn {
@@ -1404,6 +1410,7 @@
             }
             
             .dark-mode-toggle,
+            .lang-toggle,
             .logout-btn {
                 padding: 0.5rem;
                 font-size: 0.9rem;
@@ -1931,7 +1938,7 @@
                 <div class="logo-icon">
                     <i class="fas fa-leaf"></i>
                 </div>
-                ClimAware Admin
+                <span data-i18n="nav.admin">ClimAware Admin</span>
             </a>
             
             <div class="header-actions">
@@ -1947,9 +1954,13 @@
                 
                 <button class="dark-mode-toggle" onclick="toggleTheme()">🌙</button>
                 
+                <button class="lang-toggle" onclick="toggleLanguage()">
+                    <span id="currentLang">EN</span>
+                </button>
+                
                 <button class="logout-btn" onclick="logout()">
                     <i class="fas fa-sign-out-alt"></i>
-                    Logout
+                    <span data-i18n="nav.logout">Logout</span>
                 </button>
             </div>
         </div>
@@ -1961,7 +1972,7 @@
         <aside class="sidebar">
             <h3 class="sidebar-title">
                 <i class="fas fa-tachometer-alt"></i>
-                Dashboard
+                <span data-i18n="nav.dashboard">Dashboard</span>
             </h3>
             
             <nav>
@@ -1969,37 +1980,32 @@
                     <li class="nav-item">
                         <a href="#" class="nav-link active" onclick="showSection('overview')">
                             <i class="fas fa-chart-line nav-icon"></i>
-                            Overview
+                            <span data-i18n="admin.overview">Overview</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link" onclick="showSection('users')">
                             <i class="fas fa-users nav-icon"></i>
-                            Users
+                            <span data-i18n="admin.users">Users</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link" onclick="showSection('initiatives')">
                             <i class="fas fa-seedling nav-icon"></i>
-                            Initiatives
+                            <span data-i18n="admin.initiatives">Initiatives</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link" onclick="showSection('articles')">
                             <i class="fas fa-newspaper nav-icon"></i>
-                            Articles
+                            <span data-i18n="admin.articles">Articles</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('activities')">
-                            <i class="fas fa-chart-bar nav-icon"></i>
-                            Activities
-                        </a>
-                    </li>
+                    <!-- Activities management removed - users manage their own activities -->
                     <li class="nav-item">
                         <a href="#" class="nav-link" onclick="showSection('comments')">
                             <i class="fas fa-comments nav-icon"></i>
-                            Comments
+                            <span data-i18n="admin.comments">Comments</span>
                         </a>
                     </li>
                 </ul>
@@ -2012,11 +2018,11 @@
             <section id="overview" class="content-section active">
                 <div class="dashboard-header">
                     <div class="header-content">
-                        <h1 class="dashboard-title">Dashboard Overview</h1>
-                        <p class="dashboard-subtitle">Monitor your climate awareness portal's performance and user engagement</p>
+                        <h1 class="dashboard-title" data-i18n="admin.dashboardTitle">Dashboard Overview</h1>
+                        <p class="dashboard-subtitle" data-i18n="admin.dashboardSubtitle">Monitor your climate awareness portal's performance and user engagement</p>
                     </div>
                     <button class="refresh-btn" onclick="refreshData()">
-                        <i class="fas fa-sync-alt"></i> Refresh Data
+                        <i class="fas fa-sync-alt"></i> <span data-i18n="admin.refreshData">Refresh Data</span>
                     </button>
                 </div>
 
@@ -2055,36 +2061,21 @@
                         <div class="stat-label">Published Articles</div>
                     </div>
 
+                    <!-- User Activities card removed - users manage their own activities -->
+                    
                     <div class="stat-card">
                         <div class="stat-header">
                             <div class="stat-icon">
-                                <i class="fas fa-chart-line"></i>
+                                <i class="fas fa-comment-dots"></i>
                             </div>
-                            <div class="stat-change positive">+25%</div>
+                            <div class="stat-change positive" id="commentGrowthIndicator">+0%</div>
                         </div>
-                        <div class="stat-value" id="totalActivities">0</div>
-                        <div class="stat-label">User Activities</div>
+                        <div class="stat-value" id="totalComments">0</div>
+                        <div class="stat-label">User Comments</div>
                     </div>
                 </div>
 
                 <!-- Charts section removed as requested -->
-
-                <!-- Recent Activity -->
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Recent User Activity</h3>
-                        <button class="btn btn-secondary" onclick="refreshData()">
-                            <i class="fas fa-sync-alt"></i>
-                            Refresh
-                        </button>
-                    </div>
-                    <div id="recentActivityTable">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading recent activities...
-                        </div>
-                    </div>
-                </div>
             </section>
 
             <!-- Users Section -->
@@ -2173,31 +2164,7 @@
                 </div>
             </section>
 
-            <!-- Activities Section -->
-            <section id="activities" class="content-section">
-                <div class="dashboard-header">
-                    <h1 class="dashboard-title">User Activities</h1>
-                    <p class="dashboard-subtitle">Monitor user engagement and activity patterns</p>
-                </div>
-
-                <div class="table-container">
-                    <div class="table-header">
-                        <h3 class="table-title">Recent Activities</h3>
-                        <div class="table-actions">
-                            <button class="btn btn-secondary" onclick="refreshActivities()">
-                                <i class="fas fa-sync-alt"></i>
-                                Refresh
-                            </button>
-                        </div>
-                    </div>
-                    <div id="activitiesTable">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading activities...
-                        </div>
-                    </div>
-                </div>
-            </section>
+            <!-- Activities Section removed - users manage their own activities -->
 
             <!-- Comments Section -->
             <section id="comments" class="content-section">
@@ -2640,7 +2607,7 @@
                     loadUsers();
                     loadInitiatives();
                     loadArticles();
-                    loadActivities();
+                    // loadActivities() removed - users manage their own activities
                     loadComments();
                 } else {
                     console.error('Failed to load dashboard data:', response.status, response.statusText);
@@ -2656,7 +2623,7 @@
                     loadUsers();
                     loadInitiatives();
                     loadArticles();
-                    loadActivities();
+                    // loadActivities() removed - users manage their own activities
                     loadComments();
                 }
             } catch (error) {
@@ -2672,7 +2639,7 @@
                     loadUsers();
                     loadInitiatives();
                     loadArticles();
-                    loadActivities();
+                    // loadActivities() removed - users manage their own activities
                     loadComments();
                 } catch (e) {
                     console.error('Error loading additional data:', e);
@@ -2728,31 +2695,83 @@
             
             console.log('Updating dashboard stats with:', stats);
             
-            // Ensure we have minimum values for all stats
+            // Ensure we have minimum values for all stats - using real MongoDB data
             const safeStats = {
-                totalUsers: stats.totalUsers || 50,
-                totalInitiatives: stats.totalInitiatives || 10,
-                totalArticles: stats.totalArticles || 20,
-                totalActivities: stats.totalActivities || 100,
-                userGrowth: stats.userGrowth || 12,
-                initiativeGrowth: stats.initiativeGrowth || 8,
-                articleGrowth: stats.articleGrowth || 15,
-                activityGrowth: stats.activityGrowth || 25
+                totalUsers: stats.totalUsers || 0,
+                totalInitiatives: stats.totalInitiatives || 0,
+                totalArticles: stats.totalArticles || 0,
+                totalComments: stats.totalComments || 0,
+
+                userGrowth: stats.userGrowth || 0,
+                initiativeGrowth: stats.initiativeGrowth || 0,
+                articleGrowth: stats.articleGrowth || 0,
+                commentGrowth: stats.commentGrowth || 0,
+
             };
             
-            // Update count values
-            document.getElementById('totalUsers').textContent = safeStats.totalUsers;
-            document.getElementById('totalInitiatives').textContent = safeStats.totalInitiatives;
-            document.getElementById('totalArticles').textContent = safeStats.totalArticles;
-            document.getElementById('totalActivities').textContent = safeStats.totalActivities;
+            console.log('Safe stats for display:', safeStats);
+            
+            // Update count values with animation
+            animateCounter('totalUsers', safeStats.totalUsers);
+            animateCounter('totalInitiatives', safeStats.totalInitiatives);
+            animateCounter('totalArticles', safeStats.totalArticles);
+            animateCounter('totalComments', safeStats.totalComments);
+
             
             // Update growth percentages
-            updateGrowthIndicator('totalUsers', safeStats.userGrowth);
-            updateGrowthIndicator('totalInitiatives', safeStats.initiativeGrowth);
-            updateGrowthIndicator('totalArticles', safeStats.articleGrowth);
-            updateGrowthIndicator('totalActivities', safeStats.activityGrowth);
+            updateGrowthIndicator('totalUsers', safeStats.userGrowth, 'userGrowth');
+            updateGrowthIndicator('totalInitiatives', safeStats.initiativeGrowth, 'initiativeGrowth');
+            updateGrowthIndicator('totalArticles', safeStats.articleGrowth, 'articleGrowth');
+            updateGrowthIndicator('totalComments', safeStats.commentGrowth, 'commentGrowthIndicator');
+
             
             console.log('Dashboard stats updated successfully');
+        }
+
+        // Animation functions for dynamic dashboard
+        function animateCounter(elementId, targetValue, duration = 1500) {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.warn(`Element ${elementId} not found for animation`);
+                return;
+            }
+            
+            const startValue = parseInt(element.textContent) || 0;
+            const increment = (targetValue - startValue) / (duration / 16);
+            let currentValue = startValue;
+            
+            element.style.opacity = '1';
+            
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if ((increment > 0 && currentValue >= targetValue) || 
+                    (increment < 0 && currentValue <= targetValue)) {
+                    currentValue = targetValue;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(currentValue);
+            }, 16);
+        }
+
+        // Enhanced growth indicator function
+        function updateGrowthIndicator(statName, growthValue, indicatorId) {
+            const indicatorElement = document.getElementById(indicatorId);
+            if (!indicatorElement) {
+                console.warn(`Growth indicator ${indicatorId} not found`);
+                return;
+            }
+            
+            const isPositive = growthValue >= 0;
+            const displayValue = Math.abs(growthValue);
+            
+            indicatorElement.textContent = `${isPositive ? '+' : '-'}${displayValue}%`;
+            indicatorElement.className = `stat-change ${isPositive ? 'positive' : 'negative'}`;
+            
+            // Add animation
+            indicatorElement.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                indicatorElement.style.transform = 'scale(1)';
+            }, 200);
         }
         
         // Update growth indicator for a specific stat
@@ -3048,7 +3067,7 @@
                 if (response.ok) {
                     const activities = await response.json();
                     displayActivitiesTable(activities);
-                    displayRecentActivityTable(activities.slice(0, 10)); // Show recent 10
+
                 }
             } catch (error) {
                 console.error('Error loading activities:', error);
@@ -3106,40 +3125,6 @@
             document.getElementById('activitiesTable').innerHTML = tableHtml;
         }
 
-        // Display recent activity table
-        function displayRecentActivityTable(activities) {
-            const tableHtml = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Activity</th>
-                            <th>Type</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${activities.map(activity => `
-                            <tr>
-                                <td>
-                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                        <div class="user-avatar-small">${activity.user?.name?.charAt(0).toUpperCase() || 'U'}</div>
-                                        <span style="font-weight: 600;">${activity.user?.name || 'Unknown User'}</span>
-                                    </div>
-                                </td>
-                                <td>${activity.name}</td>
-                                <td>
-                                    <span class="status-badge status-pending">${activity.type}</span>
-                                </td>
-                                <td>${new Date(activity.date).toLocaleDateString()}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            document.getElementById('recentActivityTable').innerHTML = tableHtml;
-        }
-
         // Load comments
         async function loadComments() {
             try {
@@ -3191,7 +3176,10 @@
                                 </td>
                                 <td>
                                     <div style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                        ${comment.text || 'No text'}
+                                        ${comment.content || comment.text || 'No content'}
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                        Category: ${comment.category || 'general'}
                                     </div>
                                 </td>
                                 <td>${comment.createdAt || comment.date ? new Date(comment.createdAt || comment.date).toLocaleDateString() : 'Unknown'}</td>
@@ -4803,6 +4791,23 @@
                 console.error('Toggle button not found');
             }
         }
+        
+        // Language toggle function
+        function toggleLanguage() {
+            const currentLang = localStorage.getItem('language') || 'en';
+            const newLang = currentLang === 'en' ? 'sw' : 'en';
+            
+            localStorage.setItem('language', newLang);
+            
+            // Update language display
+            const langDisplay = document.getElementById('currentLang');
+            if (langDisplay) {
+                langDisplay.textContent = newLang.toUpperCase();
+            }
+            
+            // Apply translations
+            applyTranslations();
+        }
 
         // Logout
         function logout() {
@@ -4852,6 +4857,65 @@
             }
         }
 
+        // Apply translations based on selected language
+        function applyTranslations() {
+            const lang = localStorage.getItem('language') || 'en';
+            console.log('Applying translations for language:', lang);
+            
+            // Update language display
+            const langDisplay = document.getElementById('currentLang');
+            if (langDisplay) {
+                langDisplay.textContent = lang.toUpperCase();
+            }
+            
+            // Get all elements with data-i18n attribute
+            const elements = document.querySelectorAll('[data-i18n]');
+            
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const keys = key.split('.');
+                
+                // Navigate through the translations object
+                let translation = translations[lang];
+                for (const k of keys) {
+                    if (translation && translation[k]) {
+                        translation = translation[k];
+                    } else {
+                        console.warn(`Translation not found for key: ${key} in language: ${lang}`);
+                        return;
+                    }
+                }
+                
+                // Apply the translation
+                if (typeof translation === 'string') {
+                    element.textContent = translation;
+                }
+            });
+            
+            // Handle placeholder translations
+            const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                const keys = key.split('.');
+                
+                // Navigate through the translations object
+                let translation = translations[lang];
+                for (const k of keys) {
+                    if (translation && translation[k]) {
+                        translation = translation[k];
+                    } else {
+                        console.warn(`Placeholder translation not found for key: ${key} in language: ${lang}`);
+                        return;
+                    }
+                }
+                
+                // Apply the translation to placeholder
+                if (typeof translation === 'string') {
+                    element.placeholder = translation;
+                }
+            });
+        }
+        
         // Initialize theme on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing theme...');
@@ -4871,6 +4935,16 @@
                 toggleBtn.textContent = icon;
                 console.log('Toggle button set to:', icon);
             }
+            
+            // Initialize language
+            const currentLang = localStorage.getItem('language') || 'en';
+            const langDisplay = document.getElementById('currentLang');
+            if (langDisplay) {
+                langDisplay.textContent = currentLang.toUpperCase();
+            }
+            
+            // Apply translations
+            applyTranslations();
             
             // Initialize the dashboard
             checkAuth();

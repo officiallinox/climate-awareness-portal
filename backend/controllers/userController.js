@@ -91,7 +91,7 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
     try {
-        const { name, phone, gender, dob } = req.body;
+        const { name, phone, gender, dob, location, bio } = req.body;
         const user = await User.findById(req.user.id);
         
         if (!user) {
@@ -102,6 +102,8 @@ const updateUserProfile = async (req, res) => {
         if (phone) user.phone = phone;
         if (gender) user.gender = gender;
         if (dob) user.dob = new Date(dob);
+        if (location) user.location = location;
+        if (bio !== undefined) user.bio = bio;
 
         const updatedUser = await user.save();
         res.json({ message: 'Profile updated successfully', user: updatedUser });
@@ -355,17 +357,7 @@ const getUserStats = async (req, res) => {
 };
 
 // Admin functions for activities and comments management
-const getAllActivities = async (req, res) => {
-    try {
-        const activities = await Activity.find()
-            .populate('userId', 'name email')
-            .sort({ date: -1 });
-        res.json(activities);
-    } catch (err) {
-        console.error('Error fetching all activities:', err.message);
-        res.status(500).json({ message: err.message });
-    }
-};
+// getAllActivities function removed - activities are now managed only by users themselves
 
 const getAllComments = async (req, res) => {
     try {
@@ -379,18 +371,7 @@ const getAllComments = async (req, res) => {
     }
 };
 
-const deleteActivityAdmin = async (req, res) => {
-    try {
-        const activity = await Activity.findByIdAndDelete(req.params.activityId);
-        if (!activity) {
-            return res.status(404).json({ message: 'Activity not found' });
-        }
-        res.json({ message: 'Activity deleted successfully' });
-    } catch (err) {
-        console.error('Error deleting activity:', err.message);
-        res.status(500).json({ message: err.message });
-    }
-};
+// deleteActivityAdmin function removed - users manage their own activities
 
 const deleteCommentAdmin = async (req, res) => {
     try {
@@ -611,13 +592,15 @@ const getDashboardStats = async (req, res) => {
                 totalComments,
                 totalInitiatives,
                 totalArticles,
-                totalReads: articleReads, // Add total article reads
+                totalArticleReads: articleReads, // Total article reads
+                totalEngagement: articleReads + totalComments + (totalInitiatives * 10), // Combined engagement score
                 averageClimateScore: averageScore,
                 userGrowth,
                 activityGrowth,
                 commentGrowth,
                 initiativeGrowth,
                 articleGrowth,
+                engagementGrowth: Math.round((commentGrowth + articleGrowth) / 2), // Average of comments and articles growth
                 scoreGrowth: Math.round(Math.random() * 10) // Mock for now
             },
             charts: {
@@ -684,9 +667,8 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUser,
-    getAllActivities,
     getAllComments,
-    deleteActivityAdmin,
+    // getAllActivities and deleteActivityAdmin removed - users manage their own activities
     deleteCommentAdmin,
     updateCommentAdmin,
     getDashboardStats,

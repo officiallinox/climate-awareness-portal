@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     <style>
         
         * {
@@ -938,11 +940,11 @@
         
         <div class="mobile-nav" id="mobileNav">
             <nav>
-                <a href="#" class="active">Home</a>
-                <a href="../initiatives.html">Initiatives</a>
-                <a href="../articles.html">Articles</a>
-                <a href="../weather.html">Weather</a>
-                <a href="../login_new.html">Login</a>
+                <a href="#" class="active" data-i18n="nav.home">Home</a>
+                <a href="../initiatives.html" data-i18n="nav.initiatives">Initiatives</a>
+                <a href="../articles.html" data-i18n="nav.articles">Articles</a>
+                <a href="../weather.html" data-i18n="nav.weather">Weather</a>
+                <a href="../login_new.html" data-i18n="nav.login">Login</a>
             </nav>
         </div>
     </header>
@@ -952,14 +954,14 @@
         <div class="hero-container">
             <div class="hero-badge">
                 <i class="fas fa-leaf"></i>
-                Climate Action Starts Here
+                <span data-i18n="home.heroTagline">Climate Action Starts Here</span>
             </div>
             
             <h1 class="hero-title">
-                From Ideas to <span class="impact-highlight">Impact</span>
+                <span data-i18n="home.heroTitle1">From Ideas to</span> <span class="impact-highlight" data-i18n="home.heroTitle2">Impact</span>
             </h1>
             
-            <p class="hero-subtitle">
+            <p class="hero-subtitle" data-i18n="home.heroSubtitle">
                 Join us for a season of meaningful engagement and community-driven action. 
                 Connect with like-minded individuals and participate in hands-on activities that foster 
                 environmental awareness, creativity, and sustainable living.
@@ -968,11 +970,11 @@
             <div class="hero-actions">
                 <a href="#" class="cta-primary" onclick="handleGetStarted(event)">
                     <i class="fas fa-rocket"></i>
-                    Get Started
+                    <span data-i18n="common.getStarted">Get Started</span>
                 </a>
                 <a href="#features" class="cta-secondary">
                     <i class="fas fa-play"></i>
-                    Learn More
+                    <span data-i18n="common.learnMore">Learn More</span>
                 </a>
             </div>
             
@@ -1001,9 +1003,9 @@
     <section class="features-section" id="features">
         <div class="section-container">
             <div class="section-header scroll-animate">
-                <div class="section-badge">Our Features</div>
-                <h2 class="section-title">Everything You Need for Climate Action</h2>
-                <p class="section-subtitle">
+                <div class="section-badge" data-i18n="home.featuresSection">Our Features</div>
+                <h2 class="section-title" data-i18n="home.featuresTitle">Everything You Need for Climate Action</h2>
+                <p class="section-subtitle" data-i18n="home.featuresSubtitle">
                     Discover powerful tools and resources designed to help you make a meaningful impact on our planet.
                 </p>
             </div>
@@ -1082,9 +1084,9 @@
     <section class="impact-section">
         <div class="section-container">
             <div class="section-header scroll-animate">
-                <div class="section-badge">Our Impact</div>
-                <h2 class="section-title">Making a Real Difference</h2>
-                <p class="section-subtitle">
+                <div class="section-badge" data-i18n="home.impactSection">Our Impact</div>
+                <h2 class="section-title" data-i18n="home.impactTitle">Making a Real Difference</h2>
+                <p class="section-subtitle" data-i18n="home.impactSubtitle">
                     Together, we're creating measurable positive change for our planet and future generations.
                 </p>
             </div>

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -1002,6 +1003,18 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label class="form-label" data-i18n="settings.language">Language</label>
+                        <select id="languageSelector" class="form-select" onchange="changeLanguage()">
+                            <option value="en" data-i18n="settings.english">English</option>
+                            <option value="sw" data-i18n="settings.swahili">Swahili</option>
+                        </select>
+                        <div class="form-help">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Change the language of the entire website</span>
+                        </div>
+                    </div>
+
                     <button type="button" class="save-btn" onclick="saveAppearanceSettings()">
                         <i class="fas fa-save"></i> Save Changes
                     </button>
@@ -1385,6 +1398,18 @@
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
             document.getElementById('themeToggle').checked = currentTheme === 'dark';
             
+            // Set language selector
+            if (document.getElementById('languageSelector')) {
+                if (settingsData.language) {
+                    document.getElementById('languageSelector').value = settingsData.language;
+                    // Apply language
+                    updatePageLanguage(settingsData.language);
+                } else {
+                    // Default to English
+                    document.getElementById('languageSelector').value = 'en';
+                }
+            }
+            
             if (settingsData.fontSize) {
                 document.getElementById('fontSize').value = settingsData.fontSize;
                 applyFontSize(settingsData.fontSize);
@@ -1460,6 +1485,25 @@
             showNotification('Account settings saved successfully', 'success');
         }
 
+        // Change language
+        function changeLanguage() {
+            const language = document.getElementById('languageSelector').value;
+            updatePageLanguage(language);
+            
+            // Save to localStorage
+            const userId = getCurrentUserId();
+            if (userId) {
+                const userPrefix = `user_${userId}_`;
+                const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
+                settingsData.language = language;
+                localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
+            }
+            
+            // Show success notification
+            const message = language === 'en' ? 'Language changed to English' : 'Lugha imebadilishwa kuwa Kiswahili';
+            showNotification(message, 'success');
+        }
+        
         // Save appearance settings
         function saveAppearanceSettings() {
             const userId = getCurrentUserId();
@@ -1470,6 +1514,7 @@
             // Get form values
             const fontSize = document.getElementById('fontSize').value;
             const dashboardLayout = document.getElementById('dashboardLayout').value;
+            const language = document.getElementById('languageSelector').value;
             
             // Get existing settings data
             const settingsData = JSON.parse(localStorage.getItem(`${userPrefix}settings`) || '{}');
@@ -1477,12 +1522,16 @@
             // Update settings data
             settingsData.fontSize = fontSize;
             settingsData.dashboardLayout = dashboardLayout;
+            settingsData.language = language;
             
             // Save settings data
             localStorage.setItem(`${userPrefix}settings`, JSON.stringify(settingsData));
             
             // Apply font size change
             applyFontSize(fontSize);
+            
+            // Apply language change
+            updatePageLanguage(language);
             
             // Track activity
             trackActivity('settings', 'Updated appearance settings');

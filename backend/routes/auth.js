@@ -11,8 +11,8 @@ router.post('/register', async (req, res) => {
     const { name, phone, email, password, gender, dob } = req.body;
     
     // Validate required fields
-    if (!name || !phone || !email || !password || !gender || !dob) {
-      return res.status(400).json({ message: 'All fields are required' });
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: 'Name, email and password are required' });
     }
 
     // Check if user already exists
@@ -24,12 +24,20 @@ router.post('/register', async (req, res) => {
     // Create new user (password will be hashed automatically by the pre-save hook)
     const user = new User({ 
       name, 
-      phone, 
       email, 
-      password, 
-      gender, 
-      dob: new Date(dob)
+      password
     });
+    
+    // Add optional fields if provided
+    if (phone) {
+      // In the frontend, we're using the location field as phone
+      // So we'll save it as both phone and location
+      user.phone = phone;
+      user.location = phone; // Store location from the phone field
+    }
+    
+    if (gender) user.gender = gender;
+    if (dob) user.dob = new Date(dob);
     
     await user.save();
 
@@ -102,6 +110,9 @@ router.post('/login', async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                location: user.location || '',
+                gender: user.gender || '',
+                phone: user.phone || '',
                 role: user.role,
                 isAdmin: isAdmin
             }
@@ -124,6 +135,9 @@ router.get('/verify', authMiddleware, async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
+            location: user.location || '',
+            gender: user.gender || '',
+            phone: user.phone || '',
             role: user.role,
             isAdmin: user.role === 'admin'
         });

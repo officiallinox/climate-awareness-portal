@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -865,28 +866,28 @@
                             <div class="profile-card-icon">
                                 <i class="fas fa-user"></i>
                             </div>
-                            Personal Information
+                            <span data-i18n="profile.personalInfo">Personal Information</span>
                         </h2>
                     </div>
                     <form id="profileForm">
                         <div class="form-group">
-                            <label for="fullName" class="form-label">Full Name</label>
-                            <input type="text" id="fullName" class="form-input" placeholder="Your full name">
+                            <label for="fullName" class="form-label" data-i18n="profile.fullName">Full Name</label>
+                            <input type="text" id="fullName" class="form-input" data-i18n-placeholder="profile.fullNamePlaceholder" placeholder="Your full name">
                         </div>
                         <div class="form-group">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" id="email" class="form-input" placeholder="Your email address" disabled>
+                            <label for="email" class="form-label" data-i18n="profile.email">Email Address</label>
+                            <input type="email" id="email" class="form-input" data-i18n-placeholder="profile.emailPlaceholder" placeholder="Your email address" disabled>
                         </div>
                         <div class="form-group">
-                            <label for="location" class="form-label">Location</label>
-                            <input type="text" id="location" class="form-input" placeholder="Your location (e.g., Dar es Salaam, Tanzania)">
+                            <label for="location" class="form-label" data-i18n="profile.location">Location</label>
+                            <input type="text" id="location" class="form-input" data-i18n-placeholder="profile.locationPlaceholder" placeholder="Your location (e.g., Dar es Salaam, Tanzania)">
                         </div>
                         <div class="form-group">
-                            <label for="bio" class="form-label">Bio</label>
-                            <textarea id="bio" class="form-textarea" placeholder="Tell us about yourself and your interest in climate awareness"></textarea>
+                            <label for="bio" class="form-label" data-i18n="profile.bio">Bio</label>
+                            <textarea id="bio" class="form-textarea" data-i18n-placeholder="profile.bioPlaceholder" placeholder="Tell us about yourself and your interest in climate awareness"></textarea>
                         </div>
                         <button type="button" class="save-btn" onclick="saveProfile()">
-                            <i class="fas fa-save"></i> Save Changes
+                            <i class="fas fa-save"></i> <span data-i18n="profile.saveChanges">Save Changes</span>
                         </button>
                     </form>
                 </div>
@@ -1080,54 +1081,63 @@
             if (!userId) return;
             
             const userPrefix = `user_${userId}_`;
-            
-            // Load profile data from localStorage
-            const profileData = JSON.parse(localStorage.getItem(`${userPrefix}profile`) || '{}');
-            const joinDate = localStorage.getItem(`${userPrefix}joinDate`) || new Date().toISOString();
-            
-            // Calculate real stats from activities
-            const userActivities = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
-            const initiativesJoined = userActivities.filter(a => a.category === 'initiatives').length || 0;
-            const carbonSaved = Math.round(userActivities.filter(a => a.category === 'calculator').length * 2.5) || 0;
-            
-            // Try to get user data from token
-            try {
-                const token = localStorage.getItem('token');
-                if (token) {
-                    const decoded = jwt_decode(token);
-                    const email = decoded.email || profileData.email || 'user@example.com';
-                    
-                    // If we don't have a profile yet, initialize it with token data
-                    if (!profileData.email) {
-                        profileData.email = email;
-                        localStorage.setItem(`${userPrefix}profile`, JSON.stringify(profileData));
-                    }
-                }
-            } catch (error) {
-                console.error('Error decoding token:', error);
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login_new.html';
+                return;
             }
             
-            // Set profile header data
-            document.getElementById('profileName').textContent = profileData.fullName || 'User';
-            document.getElementById('profileEmail').textContent = profileData.email || 'user@example.com';
-            document.getElementById('memberSince').textContent = new Date(joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            document.getElementById('initiativesCount').textContent = initiativesJoined;
-            document.getElementById('carbonSaved').textContent = carbonSaved;
-            
-            // Set avatar initial
-            const avatarElement = document.getElementById('profileAvatar');
-            const nameInitial = (profileData.fullName || 'User').charAt(0).toUpperCase();
-            avatarElement.textContent = nameInitial;
-            
-            // Set form values
-            document.getElementById('fullName').value = profileData.fullName || '';
-            document.getElementById('email').value = profileData.email || '';
-            document.getElementById('location').value = profileData.location || '';
-            document.getElementById('bio').value = profileData.bio || '';
-            
-            // Update user menu
-            document.getElementById('userName').textContent = profileData.fullName || 'User';
-            document.getElementById('userAvatar').textContent = nameInitial;
+            try {
+                // Fetch user profile from API
+                const response = await fetch('/api/users/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+               
+                if (!response.ok) {
+                    throw new Error('Failed to fetch profile data');
+                }
+                
+                 const userData = await response.json();
+                console.log('Fetched user data:', userData);
+                
+                // Calculate join date from user ID (MongoDB ObjectId contains a timestamp)
+                const joinDate = userId ? new Date(parseInt(userId.substring(0, 8), 16) * 1000).toISOString() : new Date().toISOString();
+                
+                // Calculate stats from activities
+                const userActivities = JSON.parse(localStorage.getItem(`${userPrefix}activities`) || '[]');
+                const initiativesJoined = userData.stats?.initiativesJoined || userActivities.filter(a => a.category === 'initiatives').length || 0;
+                const carbonSaved = userData.stats?.co2Reduced || Math.round(userActivities.filter(a => a.category === 'calculator').length * 2.5) || 0;
+                
+                // Set profile header data
+                document.getElementById('profileName').textContent = userData.name || 'User';
+                document.getElementById('profileEmail').textContent = userData.email || 'user@example.com';
+                document.getElementById('memberSince').textContent = new Date(joinDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('initiativesCount').textContent = initiativesJoined;
+                document.getElementById('carbonSaved').textContent = carbonSaved;
+                
+                // Set avatar initial
+                const avatarElement = document.getElementById('profileAvatar');
+                const nameInitial = (userData.name || 'User').charAt(0).toUpperCase();
+                avatarElement.textContent = nameInitial;
+                
+                // Set form values
+                document.getElementById('fullName').value = userData.name || '';
+                document.getElementById('email').value = userData.email || '';
+                document.getElementById('location').value = userData.location || '';
+                document.getElementById('bio').value = userData.bio || '';
+                
+                // Update user menu
+                document.getElementById('userName').textContent = userData.name || 'User';
+                document.getElementById('userAvatar').textContent = nameInitial;
+                
+            } catch (error) {
+                console.error('Error loading user profile:', error);
+                showNotification('Failed to load profile data', 'error');
+            }
             
             // Load recent activities
             loadRecentActivities();
@@ -1357,48 +1367,71 @@
         }
 
         // Save profile
-        function saveProfile() {
+        async function saveProfile() {
             const userId = getCurrentUserId();
             if (!userId) return;
             
-            const userPrefix = `user_${userId}_`;
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'login_new.html';
+                return;
+            }
             
             // Get form values
-            const fullName = document.getElementById('fullName').value.trim();
+            const name = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
             const location = document.getElementById('location').value.trim();
             const bio = document.getElementById('bio').value.trim();
             
             // Validate form
-            if (!fullName) {
+            if (!name) {
                 showNotification('Please enter your full name', 'error');
                 return;
             }
             
-            // Save profile data
+            // Prepare profile data
             const profileData = {
-                fullName,
-                email,
+                name,
                 location,
                 bio
             };
             
-            localStorage.setItem(`${userPrefix}profile`, JSON.stringify(profileData));
-            
-            // Update UI
-            document.getElementById('profileName').textContent = fullName;
-            document.getElementById('userName').textContent = fullName;
-            
-            // Update avatar initial
-            const nameInitial = fullName.charAt(0).toUpperCase();
-            document.getElementById('profileAvatar').textContent = nameInitial;
-            document.getElementById('userAvatar').textContent = nameInitial;
-            
-            // Track activity
-            trackActivity('profile', 'Updated profile information');
-            
-            // Show success notification
-            showNotification('Profile updated successfully', 'success');
+            try {
+                // Save profile data to API
+                const response = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to update profile');
+                }
+                
+                const updatedUser = await response.json();
+                console.log('Profile updated:', updatedUser);
+                
+                // Update UI
+                document.getElementById('profileName').textContent = name;
+                document.getElementById('userName').textContent = name;
+                
+                // Update avatar initial
+                const nameInitial = name.charAt(0).toUpperCase();
+                document.getElementById('profileAvatar').textContent = nameInitial;
+                document.getElementById('userAvatar').textContent = nameInitial;
+                
+                // Track activity
+                trackActivity('profile', 'Updated profile information');
+                
+                // Show success notification
+                showNotification('Profile updated successfully', 'success');
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                showNotification('Failed to update profile', 'error');
+            }
         }
 
         // Edit interests

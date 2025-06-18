@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #047857;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #059669;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 ClimAware Dashboard Test</h1>
+    
+    <div class="test-section">
+        <h2>📍 Tanzanian Cities Weather Test</h2>
+        <p>Test the weather functionality for different Tanzanian cities:</p>
+        
+        <button onclick="testWeatherForCity('Dar es Salaam')">Test Dar es Salaam</button>
+        <button onclick="testWeatherForCity('Dodoma')">Test Dodoma</button>
+        <button onclick="testWeatherForCity('Arusha')">Test Arusha</button>
+        <button onclick="testWeatherForCity('Mbeya')">Test Mbeya</button>
+        <button onclick="testWeatherForCity('Tanga')">Test Tanga</button>
+        <button onclick="testWeatherForCity('Songea')">Test Songea</button>
+        
+        <div id="weatherResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🌙 Dark Mode Test</h2>
+        <p>Test theme persistence:</p>
+        
+        <button onclick="testThemePersistence()">Test Theme Persistence</button>
+        <button onclick="clearThemeStorage()">Clear Theme Storage</button>
+        <button onclick="checkCurrentTheme()">Check Current Theme</button>
+        
+        <div id="themeResult" class="result" style="display: none;"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🚀 Dashboard Links</h2>
+        <p>Quick access to dashboard:</p>
+        
+        <button onclick="openDashboard()">Open Dashboard</button>
+        <button onclick="openDashboardNewTab()">Open Dashboard (New Tab)</button>
+    </div>
+
+    <script>
+        // Test weather functionality
+        function testWeatherForCity(city) {
+            const result = document.getElementById('weatherResult');
+            result.style.display = 'block';
+            result.innerHTML = `
+                <h3>🌤️ Testing weather for ${city}</h3>
+                <p><strong>Expected features:</strong></p>
+                <ul>
+                    <li>✅ Mock weather data should be generated</li>
+                    <li>✅ Temperature should be realistic for ${city}</li>
+                    <li>✅ Climate recommendations should be location-specific</li>
+                    <li>✅ Seasonal suggestions should be included</li>
+                </ul>
+                <p><em>Open the dashboard and select "${city}" from the weather dropdown to test!</em></p>
+            `;
+        }
+
+        // Test theme persistence
+        function testThemePersistence() {
+            const result = document.getElementById('themeResult');
+            result.style.display = 'block';
+            
+            const currentTheme = localStorage.getItem('theme');
+            const expectedDefault = 'dark';
+            
+            result.innerHTML = `
+                <h3>🎨 Theme Persistence Test</h3>
+                <p><strong>Current stored theme:</strong> ${currentTheme || 'None'}</p>
+                <p><strong>Expected default:</strong> ${expectedDefault}</p>
+                <p><strong>Status:</strong> ${currentTheme === expectedDefault ? '✅ Correct' : '⚠️ Will be set to dark on dashboard load'}</p>
+                <p><em>The dashboard should open in dark mode by default and remember your theme preference!</em></p>
+            `;
+        }
+
+        function clearThemeStorage() {
+            localStorage.removeItem('theme');
+            testThemePersistence();
+        }
+
+        function checkCurrentTheme() {
+            testThemePersistence();
+        }
+
+        // Dashboard links
+        function openDashboard() {
+            window.location.href = './backend/frontend/dashboard.html';
+        }
+
+        function openDashboardNewTab() {
+            window.open('./backend/frontend/dashboard.html', '_blank');
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 Dashboard test page loaded');
+            testThemePersistence();
+        });
+    </script>
+</body>
+</html>

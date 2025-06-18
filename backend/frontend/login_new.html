@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -761,7 +762,7 @@
                 <div class="form-group">
                     <label for="loginEmail" class="form-label">
                         <i class="fas fa-envelope"></i>
-                        Email Address
+                        <span data-i18n="auth.emailAddress">Email Address</span>
                     </label>
                     <div class="form-input-container">
                         <input 
@@ -770,6 +771,7 @@
                             name="email" 
                             class="form-input" 
                             placeholder="Enter your email"
+                            data-i18n-placeholder="auth.emailPlaceholder"
                             required
                         >
                         <i class="fas fa-envelope form-icon"></i>
@@ -783,7 +785,7 @@
                 <div class="form-group">
                     <label for="loginPassword" class="form-label">
                         <i class="fas fa-lock"></i>
-                        Password
+                        <span data-i18n="auth.password">Password</span>
                     </label>
                     <div class="form-input-container">
                         <input 
@@ -792,6 +794,7 @@
                             name="password" 
                             class="form-input" 
                             placeholder="Enter your password"
+                            data-i18n-placeholder="auth.passwordPlaceholder"
                             required
                         >
                         <i class="fas fa-lock form-icon"></i>
@@ -807,7 +810,7 @@
 
                 <button type="submit" class="btn btn-primary btn-full">
                     <i class="fas fa-sign-in-alt"></i>
-                    Sign In
+                    <span data-i18n="auth.signIn">Sign In</span>
                 </button>
 
                 <div id="loginMessage" class="form-error text-center mt-2" style="display: none;">
@@ -1203,19 +1206,77 @@
                 if (response.ok) {
                     // Store token and user data
                     localStorage.setItem('token', data.token);
+                    localStorage.setItem('userSession', 'active');
+                    localStorage.setItem('loginTime', new Date().toISOString());
+                    sessionStorage.setItem('justLoggedIn', 'true');
                     
                     // Store user data if available
                     if (data.user) {
                         console.log("Storing user data:", data.user);
                         localStorage.setItem('user', JSON.stringify(data.user));
+                        localStorage.setItem('username', data.user.name || data.user.email);
+                        
+                        // Save complete user profile for dashboard
+                        const userProfile = {
+                            id: data.user._id || data.user.id,
+                            name: data.user.name,
+                            email: data.user.email,
+                            phone: data.user.phone || '',
+                            location: data.user.location || '',
+                            bio: data.user.bio || '',
+                            gender: data.user.gender || '',
+                            dob: data.user.dob || '',
+                            role: data.user.role || 'user',
+                            stats: data.user.stats || {
+                                initiativesJoined: 0,
+                                initiativesCompleted: 0,
+                                initiativesOrganized: 0,
+                                co2Reduced: 0,
+                                treesPlanted: 0,
+                                wasteCollected: 0,
+                                totalActivities: 0,
+                                totalComments: 0,
+                                currentStreak: 0,
+                                longestStreak: 0
+                            },
+                            dashboardPreferences: data.user.dashboardPreferences || {
+                                theme: 'dark',
+                                notifications: {
+                                    dailyReminders: true,
+                                    weatherAlerts: true,
+                                    achievementNotifications: true
+                                },
+                                privacy: {
+                                    shareData: false,
+                                    autoSave: true
+                                }
+                            },
+                            joinedAt: data.user.createdAt || new Date().toISOString(),
+                            lastLogin: new Date().toISOString()
+                        };
+                        
+                        localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                        
+                        // Also update dashboard user display data
+                        localStorage.setItem('userDisplayName', userProfile.name);
+                        localStorage.setItem('userDisplayEmail', userProfile.email);
+                        
+                        console.log("Complete user profile saved:", userProfile);
                     }
                     
+                    showMessage('loginMessage', '✅ Login successful! Redirecting...', 'success');
+                    
+                    // Set flag for welcome message
+                    sessionStorage.setItem('justLoggedIn', 'true');
+                    
                     // Redirect based on role
-                    if (data.user && data.user.role === 'admin') {
-                        window.location.href = 'admin.html';
-                    } else {
-                        window.location.href = 'dashboard.html';
-                    }
+                    setTimeout(() => {
+                        if (data.user && data.user.role === 'admin') {
+                            window.location.href = 'admin.html';
+                        } else {
+                            window.location.href = 'dashboard.html';
+                        }
+                    }, 1000);
                 } else {
                     showMessage('loginMessage', data.message || 'Login failed');
                 }
@@ -1248,7 +1309,7 @@
                 email: email,
                 password: password,
                 confirmPassword: confirmPassword,
-                phone: location, // Using location as phone since we don't have a phone field
+                phone: location, // We're using the location field as phone in the backend
                 gender: gender,
                 dob: age ? new Date(new Date().getFullYear() - age, 0, 1).toISOString() : null // Convert age to a date of birth
             };

@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const Initiative = require('../models/Initiative');
 const Article = require('../models/Article');
+const Activity = require('../models/Activity');
+const Comment = require('../models/Comment');
 
 // Get user dashboard data
 exports.getDashboardData = async (req, res) => {
@@ -192,6 +194,9 @@ exports.updateUserProfile = async (req, res) => {
         delete updates.stats;
         delete updates.initiatives;
         
+        // Log the update request
+        console.log('Updating user profile with data:', updates);
+        
         const user = await User.findByIdAndUpdate(
             userId,
             { ...updates },
@@ -262,3 +267,339 @@ exports.getUserStats = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+// ACTIVITIES CRUD OPERATIONS
+
+// Get user activities
+exports.getUserActivities = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        const activities = await Activity.find({ userId })
+            .sort({ date: -1 })
+            .limit(100); // Limit to last 100 activities
+        
+        res.json(activities);
+    } catch (error) {
+        console.error('Error fetching user activities:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Create activity
+exports.createActivity = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        const activityData = {
+            ...req.body,
+            userId
+        };
+        
+        const activity = new Activity(activityData);
+        await activity.save();
+        
+        // Update user stats
+        await updateUserActivityStats(userId);
+        
+        res.status(201).json(activity);
+    } catch (error) {
+        console.error('Error creating activity:', error);
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Update activity
+exports.updateActivity = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const activityId = req.params.id;
+        
+        const activity = await Activity.findOneAndUpdate(
+            { _id: activityId, userId },
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+        
+        res.json(activity);
+    } catch (error) {
+        console.error('Error updating activity:', error);
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Delete activity
+exports.deleteActivity = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const activityId = req.params.id;
+        
+        const activity = await Activity.findOneAndDelete({ _id: activityId, userId });
+        
+        if (!activity) {
+            return res.status(404).json({ error: 'Activity not found' });
+        }
+        
+        // Update user stats
+        await updateUserActivityStats(userId);
+        
+        res.json({ message: 'Activity deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting activity:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// COMMENTS CRUD OPERATIONS
+
+// Get user comments
+exports.getUserComments = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        
+        const comments = await Comment.find({ userId })
+            .sort({ createdAt: -1 })
+            .limit(50); // Limit to last 50 comments
+        
+        res.json(comments);
+    } catch (error) {
+        console.error('Error fetching user comments:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Create comment
+exports.createComment = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        
+        const commentData = {
+            ...req.body,
+            userId,
+            author: user.name || user.email
+        };
+        
+        const comment = new Comment(commentData);
+        await comment.save();
+        
+        // Update user stats
+        await User.findByIdAndUpdate(userId, {
+            $inc: { 'stats.totalComments': 1 }
+        });
+        
+        res.status(201).json(comment);
+    } catch (error) {
+        console.error('Error creating comment:', error);
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Update comment
+exports.updateComment = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const commentId = req.params.id;
+        
+        const comment = await Comment.findOneAndUpdate(
+            { _id: commentId, userId },
+            req.body,
+            { new: true, runValidators: true }
+        );
+        
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        res.json(comment);
+    } catch (error) {
+        console.error('Error updating comment:', error);
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Delete comment
+exports.deleteComment = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const commentId = req.params.id;
+        
+        const comment = await Comment.findOneAndDelete({ _id: commentId, userId });
+        
+        if (!comment) {
+            return res.status(404).json({ error: 'Comment not found' });
+        }
+        
+        // Update user stats
+        await User.findByIdAndUpdate(userId, {
+            $inc: { 'stats.totalComments': -1 }
+        });
+        
+        res.json({ message: 'Comment deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// BULK SYNC OPERATION
+
+// Sync dashboard data (for offline capability)
+exports.syncDashboardData = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { activities, comments, preferences } = req.body;
+        
+        const results = {
+            activities: { created: 0, updated: 0, errors: 0 },
+            comments: { created: 0, updated: 0, errors: 0 },
+            preferences: { updated: false }
+        };
+        
+        // Sync activities
+        if (activities && Array.isArray(activities)) {
+            for (const activityData of activities) {
+                try {
+                    if (activityData.id) {
+                        // Update existing activity
+                        const updated = await Activity.findOneAndUpdate(
+                            { _id: activityData.id, userId },
+                            { ...activityData, userId },
+                            { new: true, upsert: true }
+                        );
+                        results.activities.updated++;
+                    } else {
+                        // Create new activity
+                        const activity = new Activity({ ...activityData, userId });
+                        await activity.save();
+                        results.activities.created++;
+                    }
+                } catch (error) {
+                    console.error('Error syncing activity:', error);
+                    results.activities.errors++;
+                }
+            }
+        }
+        
+        // Sync comments
+        if (comments && Array.isArray(comments)) {
+            const user = await User.findById(userId);
+            
+            for (const commentData of comments) {
+                try {
+                    if (commentData.id) {
+                        // Update existing comment
+                        await Comment.findOneAndUpdate(
+                            { _id: commentData.id, userId },
+                            { ...commentData, userId, author: user.name || user.email },
+                            { new: true, upsert: true }
+                        );
+                        results.comments.updated++;
+                    } else {
+                        // Create new comment
+                        const comment = new Comment({ 
+                            ...commentData, 
+                            userId, 
+                            author: user.name || user.email 
+                        });
+                        await comment.save();
+                        results.comments.created++;
+                    }
+                } catch (error) {
+                    console.error('Error syncing comment:', error);
+                    results.comments.errors++;
+                }
+            }
+        }
+        
+        // Sync preferences
+        if (preferences) {
+            try {
+                await User.findByIdAndUpdate(userId, {
+                    dashboardPreferences: preferences
+                });
+                results.preferences.updated = true;
+            } catch (error) {
+                console.error('Error syncing preferences:', error);
+            }
+        }
+        
+        // Update user stats
+        await updateUserActivityStats(userId);
+        
+        res.json(results);
+    } catch (error) {
+        console.error('Error syncing dashboard data:', error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+// Helper function to update user activity stats
+async function updateUserActivityStats(userId) {
+    try {
+        const activities = await Activity.find({ userId });
+        const totalActivities = activities.length;
+        
+        // Calculate streak
+        const sortedActivities = activities
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        let currentStreak = 0;
+        let longestStreak = 0;
+        let tempStreak = 0;
+        let lastDate = null;
+        
+        for (const activity of sortedActivities) {
+            const activityDate = new Date(activity.date).toDateString();
+            
+            if (lastDate && activityDate !== lastDate) {
+                const daysDiff = (new Date(activityDate) - new Date(lastDate)) / (1000 * 60 * 60 * 24);
+                
+                if (daysDiff === 1) {
+                    tempStreak++;
+                } else {
+                    longestStreak = Math.max(longestStreak, tempStreak);
+                    tempStreak = 1;
+                }
+            } else if (!lastDate) {
+                tempStreak = 1;
+            }
+            
+            lastDate = activityDate;
+        }
+        
+        longestStreak = Math.max(longestStreak, tempStreak);
+        
+        // Calculate current streak from today backwards
+        const today = new Date().toDateString();
+        const recentActivities = sortedActivities.reverse();
+        
+        for (const activity of recentActivities) {
+            const activityDate = new Date(activity.date).toDateString();
+            const daysDiff = (new Date(today) - new Date(activityDate)) / (1000 * 60 * 60 * 24);
+            
+            if (daysDiff <= 1) {
+                currentStreak++;
+            } else {
+                break;
+            }
+        }
+        
+        const lastActivityDate = sortedActivities.length > 0 ? 
+            sortedActivities[0].date : null;
+        
+        await User.findByIdAndUpdate(userId, {
+            'stats.totalActivities': totalActivities,
+            'stats.currentStreak': currentStreak,
+            'stats.longestStreak': longestStreak,
+            'stats.lastActivityDate': lastActivityDate
+        });
+        
+    } catch (error) {
+        console.error('Error updating user activity stats:', error);
+    }
+}

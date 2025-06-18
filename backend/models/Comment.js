@@ -6,9 +6,15 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    text: {
+    content: {
         type: String,
         required: true,
+        trim: true,
+        maxlength: 1000
+    },
+    // Support both 'content' and 'text' for backward compatibility
+    text: {
+        type: String,
         trim: true,
         maxlength: 1000
     },
@@ -18,7 +24,7 @@ const commentSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['observation', 'experience', 'tip', 'question', 'general'],
+        enum: ['general', 'tip', 'experience', 'question', 'achievement', 'challenge'],
         default: 'general'
     },
     tags: [{
@@ -40,5 +46,18 @@ const commentSchema = new mongoose.Schema({
 // Index for efficient queries
 commentSchema.index({ userId: 1, createdAt: -1 });
 commentSchema.index({ isPublic: 1, createdAt: -1 });
+
+// Pre-save hook to handle both content and text fields
+commentSchema.pre('save', function(next) {
+    // If text is provided but not content, use text as content
+    if (this.text && !this.content) {
+        this.content = this.text;
+    }
+    // If content is provided but not text, use content as text for backward compatibility
+    if (this.content && !this.text) {
+        this.text = this.content;
+    }
+    next();
+});
 
 module.exports = mongoose.model('Comment', commentSchema);

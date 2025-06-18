@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizontal Activity Cards Test</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --primary-color: #059669;
+            --error-color: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .activity-item {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .activity-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .activity-item:hover::before {
+            opacity: 1;
+        }
+
+        .activity-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            min-height: 90px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .activity-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+
+        .activity-badge {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .activity-details {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-details span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(5, 150, 105, 0.1);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+        }
+
+        .activity-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .activity-item:hover .activity-actions {
+            opacity: 1;
+        }
+
+        .edit-btn, .share-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .share-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .delete-btn {
+            background: var(--error-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 45px;
+            height: 45px;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .recent-activity {
+            border-left: 4px solid var(--primary-color);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(5, 150, 105, 0.05) 100%);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .demo-note {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #f59e0b;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Horizontal Activity Cards Demo</h1>
+        
+        <div class="demo-note">
+            <strong>✨ Enhanced Features:</strong> Hover over cards to see animations, try the edit/share buttons!
+        </div>
+
+        <!-- Sample Activity Cards -->
+        <div class="activity-item recent-activity">
+            <div class="activity-info">
+                <div class="activity-header">
+                    <div class="activity-name">Switched to LED light bulbs in living room</div>
+                    <div class="activity-badge">⚡ Energy</div>
+                </div>
+                <div class="activity-details">
+                    <span class="date-info">📅 Dec 14, 2024 (2h ago)</span>
+                    <span class="location-info">🌍 Dar es Salaam</span>
+                    <span class="weather-info">🌡️ 28°C</span>
+                </div>
+                <div class="activity-actions">
+                    <button class="edit-btn" onclick="alert('Edit functionality!')">✏️</button>
+                    <button class="share-btn" onclick="alert('Share functionality!')">📤</button>
+                </div>
+            </div>
+            <button class="delete-btn" onclick="alert('Delete functionality!')">🗑️</button>
+        </div>
+
+        <div class="activity-item">
+            <div class="activity-info">
+                <div class="activity-header">
+                    <div class="activity-name">Took public bus instead of private car</div>
+                    <div class="activity-badge">🚗 Transportation</div>
+                </div>
+                <div class="activity-details">
+                    <span class="date-info">📅 Dec 13, 2024 (1d ago)</span>
+                    <span class="location-info">🌍 Dodoma</span>
+                </div>
+                <div class="activity-actions">
+                    <button class="edit-btn" onclick="alert('Edit functionality!')">✏️</button>
+                    <button class="share-btn" onclick="alert('Share functionality!')">📤</button>
+                </div>
+            </div>
+            <button class="delete-btn" onclick="alert('Delete functionality!')">🗑️</button>
+        </div>
+
+        <div class="activity-item">
+            <div class="activity-info">
+                <div class="activity-header">
+                    <div class="activity-name">Collected rainwater for garden irrigation</div>
+                    <div class="activity-badge">💧 Water</div>
+                </div>
+                <div class="activity-details">
+                    <span class="date-info">📅 Dec 12, 2024 (2d ago)</span>
+                    <span class="location-info">🌍 Arusha</span>
+                    <span class="weather-info">🌡️ 24°C</span>
+                </div>
+                <div class="activity-actions">
+                    <button class="edit-btn" onclick="alert('Edit functionality!')">✏️</button>
+                    <button class="share-btn" onclick="alert('Share functionality!')">📤</button>
+                </div>
+            </div>
+            <button class="delete-btn" onclick="alert('Delete functionality!')">🗑️</button>
+        </div>
+
+        <div class="activity-item">
+            <div class="activity-info">
+                <div class="activity-header">
+                    <div class="activity-name">Planted 5 native trees in community garden</div>
+                    <div class="activity-badge">🌱 Eco-Friendly</div>
+                </div>
+                <div class="activity-details">
+                    <span class="date-info">📅 Dec 10, 2024 (4d ago)</span>
+                    <span class="location-info">🌍 Mwanza</span>
+                </div>
+                <div class="activity-actions">
+                    <button class="edit-btn" onclick="alert('Edit functionality!')">✏️</button>
+                    <button class="share-btn" onclick="alert('Share functionality!')">📤</button>
+                </div>
+            </div>
+            <button class="delete-btn" onclick="alert('Delete functionality!')">🗑️</button>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 12px;">
+            <h3 style="margin-top: 0; color: var(--primary-color);">✨ Features Demonstrated:</h3>
+            <ul style="color: var(--text-secondary); line-height: 1.6;">
+                <li>🎨 <strong>Horizontal layout</strong> - Cards now lie horizontally with better space utilization</li>
+                <li>🔄 <strong>Hover animations</strong> - Smooth transitions and visual feedback</li>
+                <li>✏️ <strong>Edit functionality</strong> - Users can modify activity names</li>
+                <li>📤 <strong>Share feature</strong> - Share activities via native sharing or clipboard</li>
+                <li>🏷️ <strong>Type badges</strong> - Visual indicators for different activity types</li>
+                <li>⭐ <strong>Recent indicator</strong> - Special styling for activities within 24 hours</li>
+                <li>🔍 <strong>Enhanced filtering</strong> - Filter by time period and activity type</li>
+                <li>📱 <strong>Responsive design</strong> - Adapts to different screen sizes</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -1027,10 +1029,10 @@
             
             <div class="nav-container">
                 <nav class="nav">
-                    <a href="public/index.html">Home</a>
-                    <a href="initiatives.html">Initiatives</a>
-                    <a href="articles.html">Articles</a>
-                    <a href="weather.html" class="active">Weather</a>
+                    <a href="public/index.html" data-i18n="nav.home">Home</a>
+                    <a href="initiatives.html" data-i18n="nav.initiatives">Initiatives</a>
+                    <a href="articles.html" data-i18n="nav.articles">Articles</a>
+                    <a href="weather.html" class="active" data-i18n="nav.weather">Weather</a>
                 </nav>
                 
                 <div class="nav-actions">
@@ -1041,7 +1043,7 @@
                     </div>
                     <a href="login_new.html" class="login-btn" id="loginBtn">
                         <i class="fas fa-user"></i>
-                        Login
+                        <span data-i18n="nav.login">Login</span>
                     </a>
                 </div>
             </div>
@@ -1053,11 +1055,11 @@
         
         <div class="mobile-nav" id="mobileNav">
             <nav>
-                <a href="public/index.html">Home</a>
-                <a href="initiatives.html">Initiatives</a>
-                <a href="articles.html">Articles</a>
-                <a href="weather.html" class="active">Weather</a>
-                <a href="login_new.html">Login</a>
+                <a href="public/index.html" data-i18n="nav.home">Home</a>
+                <a href="initiatives.html" data-i18n="nav.initiatives">Initiatives</a>
+                <a href="articles.html" data-i18n="nav.articles">Articles</a>
+                <a href="weather.html" class="active" data-i18n="nav.weather">Weather</a>
+                <a href="login_new.html" data-i18n="nav.login">Login</a>
             </nav>
         </div>
     </header>
@@ -1065,8 +1067,8 @@
     <!-- Page Header -->
     <section class="page-header">
         <div class="page-header-content">
-            <h1 class="page-title">Tanzania Climate Data</h1>
-            <p class="page-subtitle">
+            <h1 class="page-title" data-i18n="weather.title">Tanzania Climate Data</h1>
+            <p class="page-subtitle" data-i18n="weather.subtitle">
                 Real-time weather conditions, climate statistics, and environmental monitoring 
                 across Tanzania's diverse regions and ecosystems.
             </p>
@@ -1091,36 +1093,36 @@
             <!-- Interactive Map -->
             <section class="map-section">
                 <div class="section-header">
-                    <h2 class="section-title">Interactive Climate Map</h2>
-                    <p class="section-subtitle">
+                    <h2 class="section-title" data-i18n="weather.mapTitle">Interactive Climate Map</h2>
+                    <p class="section-subtitle" data-i18n="weather.mapSubtitle">
                         Explore real-time weather conditions across Tanzania's major cities and regions
                     </p>
                 </div>
                 
                 <div class="map-container">
                     <div class="map-header">
-                        <h3 class="map-title">Tanzania Weather Map</h3>
-                        <p class="map-subtitle">Click on markers to view detailed weather information</p>
+                        <h3 class="map-title" data-i18n="weather.tanzaniaMap">Tanzania Weather Map</h3>
+                        <p class="map-subtitle" data-i18n="weather.mapInstructions">Click on markers to view detailed weather information</p>
                     </div>
                     <div id="tanzaniaMap"></div>
                     <div class="map-legend">
-                        <h4 class="legend-title">Legend</h4>
+                        <h4 class="legend-title" data-i18n="weather.legend">Legend</h4>
                         <div class="legend-items">
                             <div class="legend-item">
                                 <div class="legend-color" style="background: #059669;"></div>
-                                <span>Major Cities</span>
+                                <span data-i18n="weather.majorCities">Major Cities</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color" style="background: #0ea5e9;"></div>
-                                <span>Coastal Areas</span>
+                                <span data-i18n="weather.coastalAreas">Coastal Areas</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color" style="background: #f59e0b;"></div>
-                                <span>Highland Regions</span>
+                                <span data-i18n="weather.highlandRegions">Highland Regions</span>
                             </div>
                             <div class="legend-item">
                                 <div class="legend-color" style="background: #ef4444;"></div>
-                                <span>Arid Zones</span>
+                                <span data-i18n="weather.aridZones">Arid Zones</span>
                             </div>
                         </div>
                     </div>
@@ -1130,8 +1132,8 @@
             <!-- Regional Weather Data -->
             <section class="regional-weather">
                 <div class="section-header">
-                    <h2 class="section-title">Regional Weather Conditions</h2>
-                    <p class="section-subtitle">
+                    <h2 class="section-title" data-i18n="weather.regionalTitle">Regional Weather Conditions</h2>
+                    <p class="section-subtitle" data-i18n="weather.regionalSubtitle">
                         Current weather data from Tanzania's major cities and climate zones
                     </p>
                 </div>
@@ -1147,8 +1149,8 @@
             <!-- Climate Statistics -->
             <section class="climate-stats">
                 <div class="section-header">
-                    <h2 class="section-title">Tanzania Climate Statistics</h2>
-                    <p class="section-subtitle">
+                    <h2 class="section-title" data-i18n="weather.statsTitle">Tanzania Climate Statistics</h2>
+                    <p class="section-subtitle" data-i18n="weather.statsSubtitle">
                         Key environmental indicators and climate trends for Tanzania
                     </p>
                 </div>

@@ -19,9 +19,17 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    location: {
+        type: String,
+        required: false
+    },
+    bio: {
+        type: String,
+        required: false
+    },
     gender: {
         type: String,
-        enum: ['male', 'female', 'other', 'prefer not to say'],
+        enum: ['male', 'female',],
         required: false
     },
     dob: {
@@ -84,6 +92,56 @@ const userSchema = new mongoose.Schema({
         wasteCollected: {
             type: Number,
             default: 0
+        },
+        // Dashboard-specific stats
+        totalActivities: {
+            type: Number,
+            default: 0
+        },
+        totalComments: {
+            type: Number,
+            default: 0
+        },
+        currentStreak: {
+            type: Number,
+            default: 0
+        },
+        longestStreak: {
+            type: Number,
+            default: 0
+        },
+        lastActivityDate: Date
+    },
+    // Dashboard preferences
+    dashboardPreferences: {
+        theme: {
+            type: String,
+            enum: ['light', 'dark'],
+            default: 'dark'
+        },
+        notifications: {
+            dailyReminders: {
+                type: Boolean,
+                default: true
+            },
+            weatherAlerts: {
+                type: Boolean,
+                default: true
+            },
+            achievementNotifications: {
+                type: Boolean,
+                default: true
+            }
+        },
+        privacy: {
+            shareData: {
+                type: Boolean,
+                default: false
+            },
+            autoSave: {
+                type: Boolean,
+                default: true
+            }
         }
     }
 }, {

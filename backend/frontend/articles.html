@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="/public/js/common-header.js"></script>
     
     <style>
         /* CSS Variables for Theme Management */
@@ -1217,10 +1219,10 @@
             
             <div class="nav-container">
                 <nav class="nav">
-                    <a href="public/index.html">Home</a>
-                    <a href="initiatives.html">Initiatives</a>
-                    <a href="articles.html" class="active">Articles</a>
-                    <a href="weather.html">Weather</a>
+                    <a href="public/index.html" data-i18n="nav.home">Home</a>
+                    <a href="initiatives.html" data-i18n="nav.initiatives">Initiatives</a>
+                    <a href="articles.html" class="active" data-i18n="nav.articles">Articles</a>
+                    <a href="weather.html" data-i18n="nav.weather">Weather</a>
                 </nav>
                 
                 <div class="nav-actions">
@@ -1231,7 +1233,7 @@
                     </div>
                     <a href="login_new.html" class="login-btn" id="loginBtn">
                         <i class="fas fa-user"></i>
-                        Login
+                        <span data-i18n="nav.login">Login</span>
                     </a>
                 </div>
             </div>
@@ -1243,11 +1245,11 @@
         
         <div class="mobile-nav" id="mobileNav">
             <nav>
-                <a href="public/index.html">Home</a>
-                <a href="initiatives.html">Initiatives</a>
-                <a href="articles.html" class="active">Articles</a>
-                <a href="weather.html">Weather</a>
-                <a href="login_new.html">Login</a>
+                <a href="public/index.html" data-i18n="nav.home">Home</a>
+                <a href="initiatives.html" data-i18n="nav.initiatives">Initiatives</a>
+                <a href="articles.html" class="active" data-i18n="nav.articles">Articles</a>
+                <a href="weather.html" data-i18n="nav.weather">Weather</a>
+                <a href="login_new.html" data-i18n="nav.login">Login</a>
             </nav>
         </div>
     </header>
@@ -1255,8 +1257,8 @@
     <!-- Page Header -->
     <section class="page-header">
         <div class="page-header-content">
-            <h1 class="page-title">Climate Knowledge Hub</h1>
-            <p class="page-subtitle">
+            <h1 class="page-title" data-i18n="articles.pageTitle">Climate Knowledge Hub</h1>
+            <p class="page-subtitle" data-i18n="articles.pageSubtitle">
                 Explore our comprehensive collection of climate science articles, sustainability guides, 
                 and environmental insights. Get instant answers from our AI Climate Assistant powered by real-time data.
             </p>

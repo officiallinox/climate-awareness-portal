@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Horizontal Activity Cards</title>
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --border-color: #e2e8f0;
+            --primary-color: #059669;
+            --error-color: #ef4444;
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --gradient-primary: linear-gradient(135deg, #059669 0%, #0ea5e9 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            color: var(--text-primary);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .test-info {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        /* HORIZONTAL ACTIVITY CARDS */
+        .activity-item {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: flex-start !important;
+            justify-content: space-between !important;
+            min-height: 120px !important;
+            background: var(--bg-secondary) !important;
+            border-radius: 16px !important;
+            padding: 1.5rem !important;
+            margin-bottom: 1rem !important;
+            border: 1px solid var(--border-color) !important;
+            position: relative !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            transition: all 0.3s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .activity-info {
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            height: 100% !important;
+            padding-right: 1rem !important;
+        }
+
+        .activity-header {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: flex-start !important;
+            margin-bottom: 0.75rem !important;
+            gap: 1rem !important;
+            width: 100% !important;
+        }
+
+        .activity-name {
+            flex: 1 !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            color: var(--text-primary) !important;
+        }
+
+        .activity-badge {
+            background: var(--gradient-primary) !important;
+            color: white !important;
+            padding: 0.3rem 0.8rem !important;
+            border-radius: 12px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+        }
+
+        .activity-details {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 0.75rem !important;
+            margin-bottom: 0.75rem !important;
+        }
+
+        .activity-details span {
+            background: rgba(5, 150, 105, 0.1) !important;
+            padding: 0.4rem 0.8rem !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+        }
+
+        .activity-actions {
+            display: flex !important;
+            gap: 0.5rem !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .edit-btn, .share-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .share-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .delete-btn {
+            position: absolute !important;
+            top: 1rem !important;
+            right: 1rem !important;
+            background: var(--error-color) !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.5rem !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-size: 1rem !important;
+            width: 40px !important;
+            height: 40px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626 !important;
+            transform: scale(1.1);
+        }
+
+        .recent-activity {
+            border-left: 4px solid var(--primary-color) !important;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(5, 150, 105, 0.05) 100%) !important;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .comparison-section {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .old-card {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .old-card h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .old-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .activity-header {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            
+            .activity-badge {
+                align-self: flex-start !important;
+            }
+            
+            .activity-details {
+                flex-direction: column !important;
+                gap: 0.5rem !important;
+            }
+            
+            .delete-btn {
+                position: static !important;
+                align-self: flex-end !important;
+                margin-top: 1rem !important;
+            }
+
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Horizontal Activity Cards - Working Demo</h1>
+        
+        <div class="test-info">
+            <strong>✅ This demo shows the horizontal layout working correctly</strong><br>
+            The cards below demonstrate the new horizontal design with all features functional.
+        </div>
+
+        <div class="comparison">
+            <div class="comparison-section">
+                <div class="comparison-title">❌ Old Vertical Layout</div>
+                <div class="old-card">
+                    <h4>Switched to LED bulbs</h4>
+                    <p>Energy • Dec 14, 2024</p>
+                    <p>Dar es Salaam • 28°C</p>
+                </div>
+                <div class="old-card">
+                    <h4>Took public transport</h4>
+                    <p>Transportation • Dec 13, 2024</p>
+                    <p>Dodoma</p>
+                </div>
+            </div>
+
+            <div class="comparison-section">
+                <div class="comparison-title">✅ New Horizontal Layout</div>
+                
+                <!-- HORIZONTAL CARDS -->
+                <div class="activity-item recent-activity">
+                    <div class="activity-info">
+                        <div class="activity-header">
+                            <div class="activity-name">Switched to LED light bulbs in living room</div>
+                            <div class="activity-badge">⚡ Energy</div>
+                        </div>
+                        <div class="activity-details">
+                            <span>📅 Dec 14, 2024 (2h ago)</span>
+                            <span>🌍 Dar es Salaam</span>
+                            <span>🌡️ 28°C</span>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="edit-btn" onclick="alert('Edit feature!')">✏️</button>
+                            <button class="share-btn" onclick="alert('Share feature!')">📤</button>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="alert('Delete feature!')">🗑️</button>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div class="activity-header">
+                            <div class="activity-name">Took public bus instead of private car</div>
+                            <div class="activity-badge">🚗 Transportation</div>
+                        </div>
+                        <div class="activity-details">
+                            <span>📅 Dec 13, 2024 (1d ago)</span>
+                            <span>🌍 Dodoma</span>
+                        </div>
+                        <div class="activity-actions">
+                            <button class="edit-btn" onclick="alert('Edit feature!')">✏️</button>
+                            <button class="share-btn" onclick="alert('Share feature!')">📤</button>
+                        </div>
+                    </div>
+                    <button class="delete-btn" onclick="alert('Delete feature!')">🗑️</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(5, 150, 105, 0.1); border-radius: 12px; border: 1px solid rgba(5, 150, 105, 0.3);">
+            <h3 style="margin-top: 0; color: var(--primary-color);">✨ Horizontal Layout Features:</h3>
+            <ul style="color: var(--text-secondary); line-height: 1.6;">
+                <li>🎨 <strong>Horizontal Layout:</strong> Cards span the full width with content arranged horizontally</li>
+                <li>🏷️ <strong>Badges:</strong> Activity type badges positioned on the right side of the header</li>
+                <li>📊 <strong>Better Information Density:</strong> More details visible at once</li>
+                <li>🎮 <strong>Interactive Elements:</strong> Edit and share buttons for each activity</li>
+                <li>🗑️ <strong>Positioned Delete:</strong> Delete button positioned in top-right corner</li>
+                <li>⭐ <strong>Recent Indicator:</strong> Special styling for recent activities (colored left border)</li>
+                <li>📱 <strong>Responsive:</strong> Adapts to mobile screens by stacking elements vertically</li>
+                <li>🎭 <strong>Hover Effects:</strong> Smooth animations on hover</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 2rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px; text-align: center;">
+            <p style="margin: 0; color: var(--text-secondary);">
+                <strong>📋 Note:</strong> This demo shows exactly how the horizontal cards should look in the dashboard.
+                If you're not seeing this layout in the main dashboard, there might be CSS conflicts or the changes haven't been applied properly.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
